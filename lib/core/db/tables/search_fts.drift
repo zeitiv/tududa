@@ -1,0 +1,111 @@
+-- Full-text index over everything searchable. One row per live entity row.
+--
+-- Maintained by the triggers below, so DAOs never touch it. Contract for DAOs:
+-- write rows with INSERT or UPSERT (`insertOnConflictUpdate`); do NOT use
+-- INSERT OR REPLACE (SQLite does not fire delete triggers for it, which leaves
+-- stale index rows). Rows with pending_delete = 1 are not indexed. If the index
+-- is ever suspect, call `AppDatabase.rebuildSearchIndex()`.
+--
+-- `title` and `body` are the two searchable columns; `entity` and `local_id`
+-- identify the source row. Query with `AppDatabase.searchIndex(ftsQuery(text))`.
+
+import 'tasks.dart';
+import 'notes.dart';
+import 'projects.dart';
+import 'tags.dart';
+import 'areas.dart';
+
+CREATE VIRTUAL TABLE search_fts USING fts5(
+  entity UNINDEXED,
+  local_id UNINDEXED,
+  title,
+  body,
+  tokenize = 'unicode61 remove_diacritics 2'
+);
+
+searchIndex: SELECT entity, local_id, title, bm25(search_fts) AS score
+  FROM search_fts
+  WHERE search_fts MATCH :query
+  ORDER BY score
+  LIMIT :max;
+
+CREATE TRIGGER search_tasks_ai AFTER INSERT ON tasks BEGIN
+  INSERT INTO search_fts (entity, local_id, title, body)
+    SELECT 'task', new.local_id, new.name, coalesce(new.note, '') WHERE new.pending_delete = 0;
+END;
+
+CREATE TRIGGER search_tasks_au AFTER UPDATE ON tasks
+WHEN old.name IS NOT new.name OR old.note IS NOT new.note OR old.pending_delete IS NOT new.pending_delete BEGIN
+  DELETE FROM search_fts WHERE entity = 'task' AND local_id = old.local_id;
+  INSERT INTO search_fts (entity, local_id, title, body)
+    SELECT 'task', new.local_id, new.name, coalesce(new.note, '') WHERE new.pending_delete = 0;
+END;
+
+CREATE TRIGGER search_tasks_ad AFTER DELETE ON tasks BEGIN
+  DELETE FROM search_fts WHERE entity = 'task' AND local_id = old.local_id;
+END;
+
+CREATE TRIGGER search_notes_ai AFTER INSERT ON notes BEGIN
+  INSERT INTO search_fts (entity, local_id, title, body)
+    SELECT 'note', new.local_id, coalesce(new.title, ''), coalesce(new.content, '') WHERE new.pending_delete = 0;
+END;
+
+CREATE TRIGGER search_notes_au AFTER UPDATE ON notes
+WHEN old.title IS NOT new.title OR old.content IS NOT new.content OR old.pending_delete IS NOT new.pending_delete BEGIN
+  DELETE FROM search_fts WHERE entity = 'note' AND local_id = old.local_id;
+  INSERT INTO search_fts (entity, local_id, title, body)
+    SELECT 'note', new.local_id, coalesce(new.title, ''), coalesce(new.content, '') WHERE new.pending_delete = 0;
+END;
+
+CREATE TRIGGER search_notes_ad AFTER DELETE ON notes BEGIN
+  DELETE FROM search_fts WHERE entity = 'note' AND local_id = old.local_id;
+END;
+
+CREATE TRIGGER search_projects_ai AFTER INSERT ON projects BEGIN
+  INSERT INTO search_fts (entity, local_id, title, body)
+    SELECT 'project', new.local_id, new.name, coalesce(new.description, '') WHERE new.pending_delete = 0;
+END;
+
+CREATE TRIGGER search_projects_au AFTER UPDATE ON projects
+WHEN old.name IS NOT new.name OR old.description IS NOT new.description OR old.pending_delete IS NOT new.pending_delete BEGIN
+  DELETE FROM search_fts WHERE entity = 'project' AND local_id = old.local_id;
+  INSERT INTO search_fts (entity, local_id, title, body)
+    SELECT 'project', new.local_id, new.name, coalesce(new.description, '') WHERE new.pending_delete = 0;
+END;
+
+CREATE TRIGGER search_projects_ad AFTER DELETE ON projects BEGIN
+  DELETE FROM search_fts WHERE entity = 'project' AND local_id = old.local_id;
+END;
+
+CREATE TRIGGER search_tags_ai AFTER INSERT ON tags BEGIN
+  INSERT INTO search_fts (entity, local_id, title, body)
+    SELECT 'tag', new.local_id, new.name, '' WHERE new.pending_delete = 0;
+END;
+
+CREATE TRIGGER search_tags_au AFTER UPDATE ON tags
+WHEN old.name IS NOT new.name OR old.pending_delete IS NOT new.pending_delete BEGIN
+  DELETE FROM search_fts WHERE entity = 'tag' AND local_id = old.local_id;
+  INSERT INTO search_fts (entity, local_id, title, body)
+    SELECT 'tag', new.local_id, new.name, '' WHERE new.pending_delete = 0;
+END;
+
+CREATE TRIGGER search_tags_ad AFTER DELETE ON tags BEGIN
+  DELETE FROM search_fts WHERE entity = 'tag' AND local_id = old.local_id;
+END;
+
+CREATE TRIGGER search_areas_ai AFTER INSERT ON areas BEGIN
+  INSERT INTO search_fts (entity, local_id, title, body)
+    SELECT 'area', new.local_id, new.name, coalesce(new.description, '') WHERE new.pending_delete = 0;
+END;
+
+CREATE TRIGGER search_areas_au AFTER UPDATE ON areas
+WHEN old.name IS NOT new.name OR old.description IS NOT new.description OR old.pending_delete IS NOT new.pending_delete BEGIN
+  DELETE FROM search_fts WHERE entity = 'area' AND local_id = old.local_id;
+  INSERT INTO search_fts (entity, local_id, title, body)
+    SELECT 'area', new.local_id, new.name, coalesce(new.description, '') WHERE new.pending_delete = 0;
+END;
+
+CREATE TRIGGER search_areas_ad AFTER DELETE ON areas BEGIN
+  DELETE FROM search_fts WHERE entity = 'area' AND local_id = old.local_id;
+END;
+

@@ -105,6 +105,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.1"
+  charcode:
+    dependency: transitive
+    description:
+      name: charcode
+      sha256: fb0f1107cac15a5ea6ef0a6ef71a807b9e4267c713bb93e00e92d737cc8dbd8a
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
   checked_yaml:
     dependency: transitive
     description:
@@ -133,10 +141,10 @@ packages:
     dependency: transitive
     description:
       name: code_assets
-      sha256: "83ccdaa064c980b5596c35dd64a8d3ecc68620174ab9b90b6343b753aa721687"
+      sha256: "828110d598123b5ea96c00c9f3c72105bf79f8ee36c20a39b26209ade421ec57"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "2.1.0"
   code_builder:
     dependency: transitive
     description:
@@ -146,7 +154,7 @@ packages:
     source: hosted
     version: "4.11.1"
   collection:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: collection
       sha256: "2f5709ae4d3d59dd8f7cd309b4e023046b57d8a6c82130785d2b0e5868084e76"
@@ -249,6 +257,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
+  drift:
+    dependency: "direct main"
+    description:
+      name: drift
+      sha256: "6cc0b623c0e83f7080524d8396e9301b1d78b9c66a4fdceeb0f798211303254c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.34.0"
+  drift_dev:
+    dependency: "direct dev"
+    description:
+      name: drift_dev
+      sha256: "9cfff1576b49725da0d32c040651a41ae195e8c4af8d8da301593e41d7abc2f7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.34.0"
+  drift_flutter:
+    dependency: "direct main"
+    description:
+      name: drift_flutter
+      sha256: "91acf4bee7c3c84467cba46455aa70e5292a3b889f4582645d74f2e5a8c106f2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.1"
   equatable:
     dependency: "direct main"
     description:
@@ -457,10 +489,10 @@ packages:
     dependency: transitive
     description:
       name: hooks
-      sha256: e79ed1e8e1929bc6ecb6ec85f0cb519c887aa5b423705ded0d0f2d9226def388
+      sha256: eaac480a35ec0814146c2c48d96aaa829e0e44a7662c88ae84c9edf4bc35651f
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.2"
+    version: "2.2.0"
   http:
     dependency: transitive
     description:
@@ -657,10 +689,10 @@ packages:
     dependency: transitive
     description:
       name: native_toolchain_c
-      sha256: "6ba77bb18063eebe9de401f5e6437e95e1438af0a87a3a39084fbd37c90df572"
+      sha256: "90eaad8059ebc2004a63810a4696ea9acdb02473e47ed3b6b3bafb100ac77e31"
       url: "https://pub.dev"
     source: hosted
-    version: "0.17.6"
+    version: "0.19.5"
   nm:
     dependency: transitive
     description:
@@ -673,10 +705,10 @@ packages:
     dependency: transitive
     description:
       name: objective_c
-      sha256: "100a1c87616ab6ed41ec263b083c0ef3261ee6cd1dc3b0f35f8ddfa4f996fe52"
+      sha256: "5c80c2ad6e2c0397de5db38c6d653e69616a3397e13aa7633bf39eb668f2041b"
       url: "https://pub.dev"
     source: hosted
-    version: "9.3.0"
+    version: "9.6.2"
   package_config:
     dependency: transitive
     description:
@@ -781,6 +813,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.5.0"
+  process:
+    dependency: transitive
+    description:
+      name: process
+      sha256: "4242ba3508d37e01808bdf71ad1d5bb93a8d671bf2e7450e6b1b353fb0808891"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.6"
   pub_semver:
     dependency: transitive
     description:
@@ -797,6 +837,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
+  recase:
+    dependency: transitive
+    description:
+      name: recase
+      sha256: e4eb4ec2dcdee52dcf99cb4ceabaffc631d7424ee55e56f280bc039737f89213
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
+  record_use:
+    dependency: transitive
+    description:
+      name: record_use
+      sha256: "1cb8564af8d43b464294411db9217f5ec04891c6f22ee2c32d73ae05e88a6bd2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   riverpod:
     dependency: transitive
     description:
@@ -906,6 +962,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.2"
+  sqlcipher_flutter_libs:
+    dependency: transitive
+    description:
+      name: sqlcipher_flutter_libs
+      sha256: "38d62d659d2fb8739bf25a42c9a350d1fdd6c29a5a61f13a946778ec75d27929"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0+eol"
+  sqlite3:
+    dependency: "direct main"
+    description:
+      name: sqlite3
+      sha256: "144132790ec1947fad9f3ddceffd0af2ab80a1f0d1e81a4d094ee6707ec3df0b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.7.1"
+  sqlite3_flutter_libs:
+    dependency: transitive
+    description:
+      name: sqlite3_flutter_libs
+      sha256: "3ed7553eee7bb368f8950f58ba29f634e06e813c029aff6a0d60862b96de8454"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.0+eol"
+  sqlparser:
+    dependency: transitive
+    description:
+      name: sqlparser
+      sha256: "40bdddb306a727be9ce510bd2d2b9a6c9db6c586d846ef7b22e3990a2b24f02d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.44.5"
   stack_trace:
     dependency: transitive
     description:

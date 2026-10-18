@@ -22,6 +22,7 @@ import '../../areas/screens/areas_screen.dart';
 import '../../settings/screens/settings_screen.dart';
 import '../../settings/screens/sync_screen.dart';
 import '../../common/widgets/shell_scaffold.dart';
+import '../../search/screens/search_screen.dart';
 import 'auth_redirect.dart';
 import 'deep_link.dart';
 import 'router_refresh.dart';
@@ -60,6 +61,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/login',
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const LoginScreen(),
+      ),
+
+      GoRoute(
+        path: '/search',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) =>
+            SearchScreen(initialQuery: state.uri.queryParameters['q']),
       ),
 
       // Main app with shell (bottom navigation / rail), one stack per tab.

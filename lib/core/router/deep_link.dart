@@ -22,6 +22,13 @@ String? deepLinkLocation(Uri uri) {
         path: '/$host$rest',
         query: uri.query.isEmpty ? null : uri.query,
       ).toString();
+    case 'search':
+      return Uri(
+        path: '/search',
+        queryParameters: {
+          if (uri.queryParameters['q'] != null) 'q': uri.queryParameters['q']!,
+        },
+      ).toString();
     case 'task':
       return rest.isEmpty ? '/today' : '/tasks$rest';
     case 'project':

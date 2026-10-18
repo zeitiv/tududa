@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 
+import '../api/interceptors/redacting_log_interceptor.dart';
 import '../utils/constants.dart';
 
 /// Dio HTTP client wrapper with cookie-based session management.
@@ -19,6 +20,7 @@ class ApiService {
   late Dio _dio;
   late PersistCookieJar _cookieJar;
   bool _initialized = false;
+  String? _baseUrl;
 
   ApiService._();
 
@@ -36,6 +38,8 @@ class ApiService {
     final prefs = await SharedPreferences.getInstance();
     final baseUrl =
         serverUrl ?? prefs.getString(AppConstants.serverUrlKey) ?? '';
+
+    if (_initialized && baseUrl == _baseUrl) return;
 
     if (baseUrl.isEmpty) {
       _dio = Dio();
@@ -67,16 +71,7 @@ class ApiService {
 
     // Logging interceptor (debug only)
     if (kDebugMode) {
-      _dio.interceptors.add(
-        LogInterceptor(
-          requestHeader: true,
-          requestBody: true,
-          responseBody: true,
-          responseHeader: false,
-          error: true,
-          logPrint: (obj) => debugPrint(obj.toString()),
-        ),
-      );
+      _dio.interceptors.add(RedactingLogInterceptor());
     }
 
     // Error interceptor
@@ -92,6 +87,7 @@ class ApiService {
       ),
     );
 
+    _baseUrl = baseUrl;
     _initialized = true;
   }
 

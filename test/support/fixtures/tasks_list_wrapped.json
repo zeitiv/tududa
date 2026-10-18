@@ -1,0 +1,7 @@
+{
+  "tasks": [
+    { "id": 1, "uid": "task-a", "name": "A", "status": 0, "priority": 0 },
+    { "id": 2, "uid": "task-b", "name": "B", "status": 2, "priority": 1 }
+  ],
+  "pagination": { "total": 2, "limit": 50, "offset": 0, "hasMore": false }
+}

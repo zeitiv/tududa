@@ -1,0 +1,28 @@
+{
+  "id": 42,
+  "uid": "task-full",
+  "name": "Full task",
+  "original_name": "Full task",
+  "note": "Some **markdown** note",
+  "status": 1,
+  "priority": 2,
+  "due_date": "2025-03-14",
+  "due_time": "09:30",
+  "project_uid": "proj-1",
+  "recurrence_type": "weekly",
+  "recurrence_interval": 2,
+  "recurrence_end_date": "2025-12-31",
+  "recurrence_weekday": 1,
+  "recurrence_weekdays": [1, 3],
+  "recurrence_month_day": null,
+  "recurrence_week_of_month": null,
+  "completion_based": false,
+  "estimated_minutes": 45,
+  "today_move_count": 3,
+  "tags": [{ "name": "work" }, { "name": "urgent" }],
+  "subtasks": [
+    { "id": 43, "uid": "task-sub", "name": "Subtask", "status": 2, "priority": 0 }
+  ],
+  "created_at": "2025-03-01T08:00:00.000Z",
+  "updated_at": "2025-03-10T12:15:30.000Z"
+}

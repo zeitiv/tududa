@@ -172,21 +172,28 @@ class Task extends Equatable {
     if (deferUntil != null) map['defer_until'] = deferUntil!.toIso8601String();
     if (projectId != null) map['project_id'] = projectId;
     if (parentTaskId != null) map['parent_task_id'] = parentTaskId;
-    if (recurrenceInterval != null)
+    if (recurrenceInterval != null) {
       map['recurrence_interval'] = recurrenceInterval;
-    if (recurrenceEndDate != null)
+    }
+    if (recurrenceEndDate != null) {
       map['recurrence_end_date'] = recurrenceEndDate!.toIso8601String();
-    if (recurrenceWeekday != null)
+    }
+    if (recurrenceWeekday != null) {
       map['recurrence_weekday'] = recurrenceWeekday;
-    if (recurrenceWeekdays != null)
+    }
+    if (recurrenceWeekdays != null) {
       map['recurrence_weekdays'] = recurrenceWeekdays;
-    if (recurrenceMonthDay != null)
+    }
+    if (recurrenceMonthDay != null) {
       map['recurrence_month_day'] = recurrenceMonthDay;
-    if (recurrenceWeekOfMonth != null)
+    }
+    if (recurrenceWeekOfMonth != null) {
       map['recurrence_week_of_month'] = recurrenceWeekOfMonth;
+    }
     if (habitTargetCount != null) map['habit_target_count'] = habitTargetCount;
-    if (habitFrequencyPeriod != null)
+    if (habitFrequencyPeriod != null) {
       map['habit_frequency_period'] = habitFrequencyPeriod;
+    }
     return map;
   }
 

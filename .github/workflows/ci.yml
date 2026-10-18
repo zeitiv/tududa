@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flutter:
+    name: Analyze, test & debug build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version-file: pubspec.yaml
+          channel: 'stable'
+          cache: true
+
+      - name: Verify Flutter version matches pubspec.yaml
+        run: |
+          expected=$(grep -E '^\s+flutter:\s*[0-9]+\.[0-9]+\.[0-9]+' pubspec.yaml | head -n1 | awk '{print $2}')
+          if [ -z "$expected" ]; then
+            echo "::error::No pinned Flutter version found in pubspec.yaml"
+            exit 1
+          fi
+          actual=$(flutter --version | head -n1 | awk '{print $2}')
+          echo "expected=$expected actual=$actual"
+          if [ "$expected" != "$actual" ]; then
+            echo "::error::Flutter $actual does not match pubspec.yaml pin $expected"
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: flutter pub get --enforce-lockfile
+
+      # Milestone 2 adds code generation (build.yaml); until then this step is skipped.
+      - name: Run code generation
+        run: |
+          if grep -q build_runner pubspec.yaml && [ -f build.yaml ]; then
+            dart run build_runner build -d
+          else
+            echo "Skipping build_runner (no build.yaml)"
+          fi
+
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed $(git ls-files '*.dart')
+
+      - name: Analyze
+        run: flutter analyze --fatal-infos
+
+      - name: Test
+        run: flutter test --coverage
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: coverage-lcov
+          path: coverage/lcov.info
+
+      - name: Build debug APK
+        run: flutter build apk --debug

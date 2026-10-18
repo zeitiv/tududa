@@ -17,46 +17,30 @@ import '../../inbox/screens/inbox_screen.dart';
 import '../../areas/screens/areas_screen.dart';
 import '../../settings/screens/settings_screen.dart';
 import '../../common/widgets/shell_scaffold.dart';
+import 'auth_redirect.dart';
+import 'router_refresh.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+  final refresh = RouterRefresh();
+  // Listen (not watch) so auth changes re-run redirect without rebuilding
+  // the router and its navigator keys.
+  ref.listen(authProvider, (_, _) => refresh.refresh());
 
   final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
   final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
-  return GoRouter(
+  final router = GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: '/tasks',
+    refreshListenable: refresh,
     redirect: (context, state) {
-      final isAuth = authState.status == AuthStatus.authenticated;
-      final isLoading =
-          authState.status == AuthStatus.loading ||
-          authState.status == AuthStatus.initial;
-      final hasServer =
-          authState.serverUrl != null && authState.serverUrl!.isNotEmpty;
-
-      final currentPath = state.matchedLocation;
-      final isAuthRoute =
-          currentPath == '/login' || currentPath == '/server-config';
-
-      if (isLoading) return null;
-
-      if (!isAuth) {
-        if (!hasServer && currentPath != '/server-config') {
-          return '/server-config';
-        }
-        if (hasServer &&
-            currentPath != '/login' &&
-            currentPath != '/server-config') {
-          return '/login';
-        }
-        return null;
-      }
-
-      // Authenticated, redirect away from auth pages
-      if (isAuthRoute) return '/tasks';
-
-      return null;
+      final authState = ref.read(authProvider);
+      final serverUrl = authState.serverUrl;
+      return authRedirect(
+        status: authState.status,
+        hasServer: serverUrl != null && serverUrl.isNotEmpty,
+        location: state.uri,
+      );
     },
     routes: [
       // Auth routes (full screen, no shell)
@@ -179,4 +163,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+
+  ref.onDispose(() {
+    router.dispose();
+    refresh.dispose();
+  });
+  return router;
 });

@@ -181,8 +181,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty)
+                          if (v == null || v.trim().isEmpty) {
                             return strings.emailRequired;
+                          }
                           if (!v.contains('@')) return strings.invalidEmail;
                           return null;
                         },
@@ -217,8 +218,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty)
+                          if (v == null || v.isEmpty) {
                             return strings.passwordRequired;
+                          }
                           return null;
                         },
                         onFieldSubmitted: (_) => _login(),

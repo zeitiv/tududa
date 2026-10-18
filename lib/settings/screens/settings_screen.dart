@@ -109,8 +109,9 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ],
               onChanged: (val) {
-                if (val != null)
+                if (val != null) {
                   ref.read(settingsProvider.notifier).setThemeMode(val);
+                }
               },
             ),
           ),
@@ -126,8 +127,9 @@ class SettingsScreen extends ConsumerWidget {
                 DropdownMenuItem(value: 'en', child: Text('English')),
               ],
               onChanged: (val) {
-                if (val != null)
+                if (val != null) {
                   ref.read(settingsProvider.notifier).setLocale(val);
+                }
               },
             ),
           ),

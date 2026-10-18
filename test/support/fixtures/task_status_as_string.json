@@ -1,0 +1,10 @@
+{
+  "id": 7,
+  "uid": "task-str",
+  "name": "String status task",
+  "status": "in_progress",
+  "priority": "high",
+  "due_date": null,
+  "tags": [],
+  "subtasks": []
+}

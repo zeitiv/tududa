@@ -149,8 +149,9 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
                       hintText: strings.projectNameHint,
                     ),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty)
+                      if (v == null || v.trim().isEmpty) {
                         return strings.nameRequired;
+                      }
                       if (v.trim().split(RegExp(r'\s+')).length > 6) {
                         return strings.projectNameHint;
                       }

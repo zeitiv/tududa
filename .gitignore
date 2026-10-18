@@ -51,3 +51,8 @@ android/key.properties
 *keystore_base64*
 .env
 .env.*
+
+# Claude Code
+.claude/
+CLAUDE.md
+CLAUDE.local.md

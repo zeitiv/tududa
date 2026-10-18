@@ -41,14 +41,21 @@ This project is entirely **vibe coded** — built through human-AI pair programm
 
 ## ✨ Features
 
-- 📋 **Tasks** — Create, edit, delete, and complete tasks with priorities, due dates, and recurrence
+- 📋 **Tasks** — Create, edit, delete and complete tasks with priorities, due dates, recurrence (with a recurrence editor) and subtasks (reordering is not persisted yet)
+- ⚡ **Quick add** — Natural-language input in English, German and Chinese ("buy milk tomorrow 5pm every week"), also from the Android widget
+- 📅 **Today, Focus and Daily review**, plus smart lists (Upcoming, Overdue, Someday, Completed)
+- 👆 **Task tile** — Swipe actions, bulk selection, undo and inline edit
+- 🔎 **Global search** with an offline fallback, and a **command palette** (Ctrl/Cmd+K)
 - 📁 **Projects** — Group tasks into projects, with a Kanban view for project tasks and the global task list
 - 🗂️ **Areas & Tags** — Organize projects into areas and label items with tags
 - 📝 **Notes** — Markdown notes attached to projects
 - 📥 **Inbox** — Quick capture
 - 📴 **Offline-first** — Everything works without a connection; changes sync in the background (see [below](#-offline-first-behaviour))
-- 🌐 **English and Chinese** UI strings
-- 🎨 **Material Design 3** with light and dark themes
+- 🧭 **Five-tab shell** (Today, Inbox, Upcoming, Projects, More) with a navigation rail on wide screens, and `tududa://` deep links
+- 🧩 **Android home-screen widget** built with Glance and Material You (see [below](#-android-widget))
+- 🌐 **English, German and Chinese** UI, or follow the system language
+- 🎨 **Material Design 3** with light and dark themes, Material You dynamic color, bundled Inter font, and contrast, density and reduce-motion settings
+- ♿ **Accessibility** test suite
 - 🔐 **Session authentication** with your self-hosted Tududi server
 
 ---
@@ -62,7 +69,9 @@ This project is entirely **vibe coded** — built through human-AI pair programm
 | **Local store** | Drift (SQLite) with an outbox and a sync engine |
 | **Networking** | Dio + cookie jar, custom interceptors |
 | **Routing** | GoRouter |
-| **Android native** | Kotlin library `:tududi_core` (encrypted vault with Tink, API client) |
+| **Android native** | Kotlin library `:tududi_core` (encrypted vault with Tink, API client); `:app` widget in Glance, quick-add activity, Flutter bridges |
+| **Localization** | Flutter `gen-l10n` with ARB fragments merged by `tool/merge_arb.dart` |
+| **Testing** | `flutter_test`, accessibility and performance tests, alchemist goldens (CI only), Kotlin unit and instrumented tests |
 
 ---
 
@@ -88,11 +97,19 @@ flutter pub get
 dart run build_runner build -d
 
 flutter run                  # run on a device or emulator
-flutter test                 # Dart tests
+flutter test --concurrency=6 # Dart tests (goldens run in CI only, see below)
 flutter analyze --fatal-infos
 
-# Kotlin unit tests for the shared Android core
-cd android && ./gradlew :tududi_core:testDebugUnitTest
+# Localization (see "Localization and theming")
+dart run tool/merge_arb.dart --check   # fragments in lib/l10n/src match lib/l10n/arb
+flutter gen-l10n                       # regenerate lib/l10n/gen
+
+# Kotlin unit tests for the shared Android core and the app module
+cd android && ./gradlew :tududi_core:testDebugUnitTest :app:testDebugUnitTest
+
+# On-device tests (emulator or device attached)
+flutter test integration_test/widget_bridge_test.dart
+cd android && ./gradlew :app:connectedDebugAndroidTest
 ```
 
 On the login screen, enter your Tududi server URL (for example `http://your-server:3002`) and your credentials.
@@ -104,6 +121,24 @@ flutter build apk --release
 ```
 
 Without `android/key.properties` the release build is signed with the debug key (fine for local testing). Official release builds are signed in CI only.
+
+### Golden tests
+
+Screenshot tests live in `test/goldens` and carry the `golden` tag. Only CI goldens (alchemist, Ahem font) exist, so they are deterministic across machines; platform goldens are disabled. Everyday runs skip them locally if you prefer:
+
+```bash
+flutter test --exclude-tags golden             # skip goldens
+flutter test --tags golden test/goldens        # compare
+bash tool/ci/golden_update.sh                    # regenerate (--update-goldens), review and commit the images
+```
+
+CI runs the whole suite, goldens included.
+
+### Localization and theming
+
+- UI strings are authored as JSON fragments in `lib/l10n/src/*.json` and merged into `lib/l10n/arb` (English, German, Chinese). The `flutter gen-l10n` output is committed in `lib/l10n/gen`.
+- **Adding a string:** add the key to a fragment in `lib/l10n/src` (all three languages), run `dart run tool/merge_arb.dart`, then `flutter gen-l10n`, and commit the results. CI fails if `merge_arb.dart --check` or `git diff -- lib/l10n` after `flutter gen-l10n` finds differences.
+- The language is chosen in Settings (English, German, Chinese or System default). Appearance settings cover theme, dynamic color, contrast, density and reduce motion. Design tokens are in `lib/core/design`.
 
 ---
 
@@ -124,7 +159,12 @@ widgets -> Riverpod providers -> offline repositories -> Drift tables + outbox
 | Sync engine, handlers, outbox, field-level merge | `lib/core/sync` |
 | Session, credential store, silent re-login | `lib/auth/session` |
 | Features (`tasks`, `projects`, `areas`, `tags`, `notes`, `inbox`, `search`, `settings`, `auth`) | `lib/<feature>` with `data`, `domain`, `providers`, `screens` |
-| Shared Android core (vault, API client) | `android/tududi_core` |
+| Router, shell, deep links | `lib/core/router` |
+| Design tokens, theme, typography | `lib/core/design` |
+| Localization (fragments, ARB, generated) | `lib/l10n` |
+| Flutter side of the native bridges | `lib/core/platform` |
+| Shared Android core (vault, API client, board cache) | `android/tududi_core` |
+| Android widget, quick-add activity, bridges | `android/app` (channel contract: `android/CHANNELS.md`) |
 
 See [docs/architecture.md](docs/architecture.md) for a diagram and the write/merge path.
 
@@ -151,6 +191,17 @@ Developed against Tududi **v1.9.4**. Notable API characteristics:
 
 ---
 
+## 🧩 Android widget
+
+A home-screen widget (Glance, Material You colors) shows your tasks for today.
+
+- **How it works.** The widget is native and does not run Flutter to draw. It reads a board from the shared `:tududi_core` library, which talks to the server itself and keeps a small cache. It refreshes about every 30 minutes with a network, at midnight and on time changes, and after you add a task. Completing a task in the widget is sent to the server; once the server confirms, the app's **widget reconciler** applies it to the local database through the widget bridge.
+- **Quick-add modal.** The widget's "+" opens a transparent activity hosting the same Flutter quick-add sheet (natural-language parsing, recurrence). Tapping the widget elsewhere opens the app through `tududa://today`.
+- **Sign-in and vault.** On sign-in the app hands the credentials to the native side (`tududa/session` channel), which stores them in a Tink-encrypted vault. The widget and the app share it, and the widget uses it to sign in silently. If you upgrade from a version without the vault, sign in once again so the credentials get stored.
+- **Security model.** Credentials, cookies, the board cache and the change log live only in the encrypted vault; signing out wipes it. Credentials are not logged or put into `BuildConfig`. The contract between Flutter and native code is in [android/CHANNELS.md](android/CHANNELS.md).
+
+---
+
 ## 🔐 Security model
 
 - Credentials are kept only in the Android Keystore-backed encrypted vault. They are never in source code, `BuildConfig`, or logs.
@@ -165,10 +216,12 @@ Developed against Tududi **v1.9.4**. Notable API characteristics:
 
 Not built yet:
 
-- German localization
-- Dynamic color (Material You)
-- Search UI
-- Android home-screen widget (the shared core is in place)
+- iOS
+- Instrumented tests in CI (wired into the emulator job, not yet proven)
+- Persisting subtask order
+- A dedicated tags screen
+
+Known limitations: yearly recurrence is not supported by the server; goldens run in CI only.
 
 See [CHANGELOG.md](CHANGELOG.md) for what has landed.
 
@@ -176,7 +229,7 @@ See [CHANGELOG.md](CHANGELOG.md) for what has landed.
 
 ## 🤝 Contributing
 
-Contributions to this client are welcome: open an issue or a pull request. Please run `dart format`, `flutter analyze --fatal-infos` and `flutter test` first, and add a line to `CHANGELOG.md` under *Unreleased*.
+Contributions to this client are welcome: open an issue or a pull request. Please run `dart format`, `flutter analyze --fatal-infos` and `flutter test --concurrency=6` first (and `dart run tool/merge_arb.dart --check` plus `flutter gen-l10n` if you touched strings), and add a line to `CHANGELOG.md` under *Unreleased*.
 
 For the **Tududi backend**, follow the upstream rules: feature pull requests require a prior issue or discussion. See the [upstream contributing guide](https://github.com/chrisvel/tududi/blob/main/.github/CONTRIBUTING.md).
 

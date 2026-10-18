@@ -28,7 +28,11 @@ flowchart LR
 | Sync | `lib/core/sync` | `SyncEngine`, per-entity `SyncHandler`s, outbox DAO, retry policy, field-level merge |
 | API | `lib/core/api` | Dio client, DTO conversion, error mapping, interceptors |
 | Session | `lib/auth/session` | Server config, credential store, session controller, silent re-login |
-| Android core | `android/tududi_core` | Kotlin library shared with the Android widget: encrypted vault, API client |
+| Shell and routing | `lib/core/router` | Five-tab shell (Today, Inbox, Upcoming, Projects, More), auth redirects, `tududa://` deep links |
+| Design and l10n | `lib/core/design`, `lib/l10n` | Tokens, theme, dynamic color; ARB fragments (`src`) merged into `arb`, generated code in `gen` |
+| Native bridges | `lib/core/platform`, `android/app/.../bridge` | `tududa/session`, `tududa/widget` channels (contract: `android/CHANNELS.md`) |
+| Android core | `android/tududi_core` | Kotlin library shared with the Android widget: encrypted vault, API client, board cache |
+| Android app module | `android/app` | Glance widget, quick-add activity, workers, bridges |
 
 ## Write path
 
@@ -62,3 +66,11 @@ Details for contributors: [`lib/core/sync/README.md`](../lib/core/sync/README.md
 - A 401 triggers one silent re-login; if that fails the engine enters a signed-out phase and
   keeps all pending entries.
 - Debug logging goes through a redacting interceptor.
+
+## Android widget
+
+The widget reads a board through `:tududi_core`, which uses the shared vault to sign in and
+call the server without Flutter. Completions made in the widget are logged once the server
+confirms them; the app's widget reconciler reads that log through the `tududa/widget` bridge,
+applies the changes to Drift and acknowledges them. The widget's "+" opens `QuickAddActivity`,
+which hosts the Flutter quick-add sheet.

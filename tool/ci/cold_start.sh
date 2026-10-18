@@ -4,6 +4,7 @@
 # Force-stops the app before every run, starts MainActivity with `am start -W`
 # and prints each TotalTime plus the median (ms), also appended to
 # $GITHUB_STEP_SUMMARY when set. Exit 1 when no run reported a time.
+# shellcheck disable=SC2086  # $times/$sorted are intentionally word-split (one value per word)
 set -u
 
 PKG=com.tududi.tududi

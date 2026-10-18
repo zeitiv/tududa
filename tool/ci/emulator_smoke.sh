@@ -1,7 +1,7 @@
 #!/bin/sh
 # Runs inside android-emulator-runner (emulator already booted).
 # Usage: tool/ci/emulator_smoke.sh <debug-apk>
-# Env: RUN_INTEGRATION=true  also run `flutter test integration_test`
+# Also runs integration_test/widget_bridge_test.dart and :app:connectedDebugAndroidTest.
 set -u
 
 PKG=com.tududi.tududi
@@ -43,18 +43,10 @@ else
 fi
 
 echo "--- appwidget (informational) ---"
-adb shell dumpsys appwidget | grep -i "$PKG" || echo "no appwidget entries for $PKG (expected until the widget milestone)"
+adb shell dumpsys appwidget | grep -i "$PKG" || echo "no appwidget entries for $PKG (none placed on the home screen)"
 
-if [ "${RUN_INTEGRATION:-false}" = "true" ]; then
-  flutter test integration_test || fail=1
-else
-  echo "::notice::integration_test/ not present; skipping flutter integration tests"
-fi
+flutter test integration_test/widget_bridge_test.dart || fail=1
 
-if [ -d android/app/src/androidTest ]; then
-  (cd android && ./gradlew :app:connectedDebugAndroidTest) || fail=1
-else
-  echo "::notice::android/app/src/androidTest not present; skipping connectedDebugAndroidTest"
-fi
+(cd android && ./gradlew :app:connectedDebugAndroidTest) || fail=1
 
 exit "$fail"

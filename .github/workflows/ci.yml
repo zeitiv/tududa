@@ -59,12 +59,13 @@ jobs:
         run: dart run build_runner build -d
 
       - name: Check merged ARB files
-        if: hashFiles('tool/merge_arb.dart') != ''
         run: dart run tool/merge_arb.dart --check
 
-      - name: Skip ARB check
-        if: hashFiles('tool/merge_arb.dart') == ''
-        run: echo "::notice::tool/merge_arb.dart not present yet; skipping ARB check"
+      # lib/l10n/gen is committed; fail when it is stale relative to lib/l10n/arb.
+      - name: Check generated localizations are fresh
+        run: |
+          flutter gen-l10n
+          git diff --exit-code -- lib/l10n
 
       - name: Check formatting
         run: git ls-files -z '*.dart' | xargs -0 dart format --output=none --set-exit-if-changed
@@ -72,8 +73,9 @@ jobs:
       - name: Analyze
         run: flutter analyze --fatal-infos
 
+      # Includes the `golden` tag: CI-only, deterministic (Ahem font) alchemist goldens.
       - name: Test
-        run: flutter test --coverage
+        run: flutter test --concurrency=4 --coverage
 
       - name: Upload coverage
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -92,12 +94,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Skip (no :tududi_core yet)
-        if: hashFiles('android/tududi_core/**') == ''
-        run: echo "::notice::android/tududi_core not present yet; skipping Android unit tests"
-
       - name: Set up JDK 17
-        if: hashFiles('android/tududi_core/**') != ''
         uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
         with:
           distribution: 'temurin'
@@ -107,7 +104,6 @@ jobs:
       # The Android Gradle build includes the Flutter Gradle plugin, which needs the
       # Flutter SDK path from android/local.properties (written by `flutter pub get`).
       - name: Set up Flutter
-        if: hashFiles('android/tududi_core/**') != ''
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           flutter-version-file: pubspec.yaml
@@ -115,15 +111,12 @@ jobs:
           cache: true
 
       - name: Install Flutter dependencies
-        if: hashFiles('android/tududi_core/**') != ''
         run: flutter pub get --enforce-lockfile
 
       - name: Ensure Gradle wrapper
-        if: hashFiles('android/tududi_core/**') != ''
         run: sh tool/ci/ensure_gradlew.sh
 
       - name: Run Kotlin unit tests
-        if: hashFiles('android/tududi_core/**') != ''
         working-directory: android
         run: ./gradlew :tududi_core:testDebugUnitTest :app:testDebugUnitTest
 
@@ -280,11 +273,9 @@ jobs:
         run: flutter pub get --enforce-lockfile
 
       - name: Run code generation
-        if: hashFiles('integration_test/**') != ''
         run: dart run build_runner build -d
 
       - name: Ensure Gradle wrapper
-        if: hashFiles('android/app/src/androidTest/**') != ''
         run: sh tool/ci/ensure_gradlew.sh
 
       - name: Download debug APK
@@ -295,14 +286,15 @@ jobs:
 
       - name: Smoke test on emulator
         uses: reactivecircus/android-emulator-runner@e93c997dcab69054e999e3924af3d21c4a736e13 # v2.9.0
-        env:
-          RUN_INTEGRATION: ${{ hashFiles('integration_test/**') != '' }}
         with:
           api-level: 34
           arch: x86_64
           target: google_apis
           disable-animations: true
-          script: sh tool/ci/emulator_smoke.sh apk/app-debug.apk
+          # Each line runs as its own shell. The cold start report only summarises (never fails).
+          script: |
+            sh tool/ci/emulator_smoke.sh apk/app-debug.apk
+            sh tool/ci/cold_start.sh 5 || true
 
       - name: Upload logcat
         if: always()

@@ -41,14 +41,21 @@
 
 ## ✨ 功能特性
 
-- 📋 **任务** — 创建、编辑、删除和完成任务，支持优先级、截止日期和重复任务
+- 📋 **任务** — 创建、编辑、删除和完成任务，支持优先级、截止日期、重复任务（含重复规则编辑器）和子任务（排序暂未持久化）
+- ⚡ **快速添加** — 支持英文、德文和中文的自然语言输入（如“明天下午 5 点买牛奶，每周”），也可从 Android 小组件使用
+- 📅 **今天、专注与每日回顾**，以及智能列表（即将到来、已逾期、将来某天、已完成）
+- 👆 **任务条目** — 滑动操作、批量选择、撤销和行内编辑
+- 🔎 **全局搜索**（带离线回退）和**命令面板**（Ctrl/Cmd+K）
 - 📁 **项目** — 将任务分组到项目中；项目任务和全局任务列表均提供看板视图
 - 🗂️ **领域与标签** — 用领域（Area）组织项目，用标签标记内容
 - 📝 **笔记** — 支持 Markdown 格式的笔记，可关联到项目
 - 📥 **收件箱** — 快速记录
 - 📴 **离线优先** — 无网络也能使用，更改会在后台同步（见[下文](#-离线优先行为)）
-- 🌐 **中文和英文**界面文案
-- 🎨 **Material Design 3**，支持浅色和深色主题
+- 🧭 **五个标签页的主界面**（今天、收件箱、即将到来、项目、更多），宽屏上使用导航栏，并支持 `tududa://` 深链接
+- 🧩 **Android 桌面小组件**，基于 Glance 和 Material You（见[下文](#-android-小组件)）
+- 🌐 **英文、德文和中文**界面，也可跟随系统语言
+- 🎨 **Material Design 3**，支持浅色和深色主题、Material You 动态取色、内置 Inter 字体，以及对比度、密度和减少动画设置
+- ♿ **无障碍**测试套件
 - 🔐 **会话认证** — 对接自托管 Tududi 服务器
 
 ---
@@ -62,7 +69,9 @@
 | **本地存储** | Drift (SQLite)，配合发件箱（outbox）与同步引擎 |
 | **网络** | Dio + Cookie Jar，自定义拦截器 |
 | **路由** | GoRouter |
-| **Android 原生** | Kotlin 库 `:tududi_core`（基于 Tink 的加密保险库、API 客户端） |
+| **Android 原生** | Kotlin 库 `:tududi_core`（基于 Tink 的加密保险库、API 客户端）；`:app` 中的 Glance 小组件、快速添加 Activity 和 Flutter 桥接 |
+| **本地化** | Flutter `gen-l10n`，ARB 片段由 `tool/merge_arb.dart` 合并 |
+| **测试** | `flutter_test`、无障碍与性能测试、alchemist 截图测试（仅 CI）、Kotlin 单元测试与仪器测试 |
 
 ---
 
@@ -88,11 +97,19 @@ flutter pub get
 dart run build_runner build -d
 
 flutter run                  # 在设备或模拟器上运行
-flutter test                 # Dart 测试
+flutter test --concurrency=6 # Dart 测试（截图测试仅在 CI 运行，见下文）
 flutter analyze --fatal-infos
 
-# 共享 Android 核心库的 Kotlin 单元测试
-cd android && ./gradlew :tududi_core:testDebugUnitTest
+# 本地化（见“本地化与主题”）
+dart run tool/merge_arb.dart --check   # lib/l10n/src 中的片段与 lib/l10n/arb 一致
+flutter gen-l10n                       # 重新生成 lib/l10n/gen
+
+# 共享 Android 核心库与 app 模块的 Kotlin 单元测试
+cd android && ./gradlew :tududi_core:testDebugUnitTest :app:testDebugUnitTest
+
+# 真机/模拟器测试（需连接设备）
+flutter test integration_test/widget_bridge_test.dart
+cd android && ./gradlew :app:connectedDebugAndroidTest
 ```
 
 在登录界面输入 Tududi 服务器地址（例如 `http://your-server:3002`）及账号信息。
@@ -104,6 +121,24 @@ flutter build apk --release
 ```
 
 没有 `android/key.properties` 时，release 构建使用 debug 密钥签名（仅适合本地测试）。正式发布包只在 CI 中签名。
+
+### 截图（Golden）测试
+
+截图测试位于 `test/goldens`，带有 `golden` 标签。只有 CI 截图（alchemist，Ahem 字体），因此在不同机器上结果确定；平台截图已禁用。本地日常运行时可以跳过：
+
+```bash
+flutter test --exclude-tags golden             # 跳过截图测试
+flutter test --tags golden test/goldens        # 对比
+bash tool/ci/golden_update.sh                    # 重新生成（--update-goldens），检查后提交图片
+```
+
+CI 会运行完整测试集，包括截图测试。
+
+### 本地化与主题
+
+- 界面文案以 JSON 片段形式编写在 `lib/l10n/src/*.json`，并合并到 `lib/l10n/arb`（英文、德文、中文）。`flutter gen-l10n` 的输出已提交在 `lib/l10n/gen`。
+- **新增文案：** 在 `lib/l10n/src` 的某个片段中添加键（三种语言都要有），运行 `dart run tool/merge_arb.dart`，再运行 `flutter gen-l10n`，然后提交结果。如果 `merge_arb.dart --check` 或 `flutter gen-l10n` 之后的 `git diff -- lib/l10n` 发现差异，CI 会失败。
+- 语言在设置中选择（英文、德文、中文或跟随系统）。外观设置包括主题、动态取色、对比度、密度和减少动画。设计令牌位于 `lib/core/design`。
 
 ---
 
@@ -124,7 +159,12 @@ widgets -> Riverpod providers -> 离线 repository -> Drift 表 + outbox
 | 同步引擎、handler、outbox、字段级合并 | `lib/core/sync` |
 | 会话、凭据存储、静默重新登录 | `lib/auth/session` |
 | 功能模块（`tasks`、`projects`、`areas`、`tags`、`notes`、`inbox`、`search`、`settings`、`auth`） | `lib/<feature>`，含 `data`、`domain`、`providers`、`screens` |
-| 共享 Android 核心（保险库、API 客户端） | `android/tududi_core` |
+| 路由、主界面、深链接 | `lib/core/router` |
+| 设计令牌、主题、字体 | `lib/core/design` |
+| 本地化（片段、ARB、生成代码） | `lib/l10n` |
+| 原生桥接的 Flutter 端 | `lib/core/platform` |
+| 共享 Android 核心（保险库、API 客户端、看板缓存） | `android/tududi_core` |
+| Android 小组件、快速添加 Activity、桥接 | `android/app`（通道约定：`android/CHANNELS.md`） |
 
 数据流图与写入/合并流程见 [docs/architecture.md](docs/architecture.md)。
 
@@ -151,6 +191,17 @@ widgets -> Riverpod providers -> 离线 repository -> Drift 表 + outbox
 
 ---
 
+## 🧩 Android 小组件
+
+桌面小组件（Glance，Material You 配色）显示你今天的任务。
+
+- **工作方式。** 小组件是原生实现，绘制时不运行 Flutter。它从共享的 `:tududi_core` 库读取看板，该库自己与服务器通信并保留一份小缓存。有网络时约每 30 分钟刷新一次，另外在午夜、系统时间变化以及你添加任务之后刷新。在小组件中完成任务会发送到服务器；服务器确认后，应用中的**小组件对账器（reconciler）**通过小组件桥接把它应用到本地数据库。
+- **快速添加弹窗。** 小组件上的“+”会打开一个透明 Activity，承载同一个 Flutter 快速添加面板（自然语言解析、重复规则）。点击小组件的其他区域会通过 `tududa://today` 打开应用。
+- **登录与保险库。** 登录时，应用通过 `tududa/session` 通道把凭据交给原生端，原生端将其保存在 Tink 加密的保险库中。小组件与应用共用该保险库，小组件用它静默登录。如果你从没有保险库的旧版本升级，需要重新登录一次，凭据才会被存入保险库。
+- **安全模型。** 凭据、Cookie、看板缓存和变更日志只保存在加密保险库中；登出会清空保险库。凭据不会被写入日志或 `BuildConfig`。Flutter 与原生代码之间的约定见 [android/CHANNELS.md](android/CHANNELS.md)。
+
+---
+
 ## 🔐 安全模型
 
 - 凭据只保存在由 Android Keystore 支持的加密保险库中，绝不出现在源码、`BuildConfig` 或日志里。
@@ -165,10 +216,12 @@ widgets -> Riverpod providers -> 离线 repository -> Drift 表 + outbox
 
 尚未实现：
 
-- 德语本地化
-- 动态取色（Material You）
-- 搜索界面
-- Android 桌面小组件（共享核心库已就绪）
+- iOS
+- CI 中的仪器测试（已接入模拟器任务，尚未验证）
+- 子任务排序持久化
+- 独立的标签页面
+
+已知限制：服务器不支持按年重复；截图测试仅在 CI 运行。
 
 已完成的内容见 [CHANGELOG.md](CHANGELOG.md)。
 
@@ -176,7 +229,7 @@ widgets -> Riverpod providers -> 离线 repository -> Drift 表 + outbox
 
 ## 🤝 参与贡献
 
-欢迎为本客户端贡献代码：请提交 issue 或 Pull Request。提交前请运行 `dart format`、`flutter analyze --fatal-infos` 和 `flutter test`，并在 `CHANGELOG.md` 的 *Unreleased* 下补充一行。
+欢迎为本客户端贡献代码：请提交 issue 或 Pull Request。提交前请运行 `dart format`、`flutter analyze --fatal-infos` 和 `flutter test --concurrency=6`（修改过文案的话还要运行 `dart run tool/merge_arb.dart --check` 和 `flutter gen-l10n`），并在 `CHANGELOG.md` 的 *Unreleased* 下补充一行。
 
 对于 **Tududi 后端**，请遵守上游规则：新功能的 Pull Request 需要事先有 issue 或讨论。参见[上游贡献指南](https://github.com/chrisvel/tududi/blob/main/.github/CONTRIBUTING.md)。
 

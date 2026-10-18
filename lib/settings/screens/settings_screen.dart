@@ -113,13 +113,6 @@ class SettingsScreen extends ConsumerWidget {
           _SectionHeader(title: strings.settingsNavigation),
 
           ListTile(
-            leading: const Icon(Icons.layers_outlined),
-            title: Text(strings.settingsAreas),
-            subtitle: Text(strings.settingsAreasDesc),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.push('/more/areas'),
-          ),
-          ListTile(
             leading: const Icon(Icons.sync),
             title: Text(strings.syncTitle),
             subtitle: Text(

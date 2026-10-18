@@ -7,9 +7,12 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import '../../core/ids.dart';
 import '../../core/time/calendar_date.dart';
 import '../domain/task.dart';
+import '../domain/task_labels.dart';
 import '../providers/task_provider.dart';
 import '../widgets/api_error_message.dart';
-import '../../core/theme/app_theme.dart';
+import '../../core/design/token_lookup.dart';
+import '../../core/design/tokens.dart';
+import '../../l10n/l10n_ext.dart';
 
 /// Task detail screen showing full task info, subtasks, and actions.
 class TaskDetailScreen extends ConsumerWidget {
@@ -22,6 +25,8 @@ class TaskDetailScreen extends ConsumerWidget {
     final uid = TaskUid(taskId);
     final taskAsync = ref.watch(taskDetailProvider(uid));
     final theme = Theme.of(context);
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context).toString();
 
     return taskAsync.when(
       loading: () => Scaffold(
@@ -34,11 +39,11 @@ class TaskDetailScreen extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(apiErrorMessage(e), textAlign: TextAlign.center),
+              Text(apiErrorMessage(l10n, e), textAlign: TextAlign.center),
               const SizedBox(height: 12),
               FilledButton.tonal(
                 onPressed: () => ref.invalidate(taskDetailProvider(uid)),
-                child: const Text('Retry'),
+                child: Text(l10n.taskRetry),
               ),
             ],
           ),
@@ -46,36 +51,33 @@ class TaskDetailScreen extends ConsumerWidget {
       ),
       data: (task) {
         final today = CalendarDate.fromDateTime(DateTime.now());
-        final priorityColor = AppTheme.getPriorityColor(
-          task.priority.code,
-          theme.colorScheme,
-        );
+        final priorityColor = context.tokens.priorityFor(task.priority.code);
 
         return Scaffold(
           appBar: AppBar(
             actions: [
               IconButton(
                 icon: const Icon(Icons.edit_outlined),
+                tooltip: l10n.taskDetailEditTooltip,
                 onPressed: () => context.push('/tasks/$taskId/edit'),
               ),
               PopupMenuButton<String>(
+                tooltip: l10n.taskDetailMenuTooltip,
                 onSelected: (action) async {
                   if (action == 'delete') {
                     final confirm = await showDialog<bool>(
                       context: context,
                       builder: (ctx) => AlertDialog(
-                        title: const Text('Delete Task'),
-                        content: const Text(
-                          'Are you sure you want to delete this task?',
-                        ),
+                        title: Text(l10n.taskDetailDeleteTitle),
+                        content: Text(l10n.taskDetailDeleteMessage),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),
-                            child: const Text('Cancel'),
+                            child: Text(l10n.taskCancel),
                           ),
                           FilledButton(
                             onPressed: () => Navigator.pop(ctx, true),
-                            child: const Text('Delete'),
+                            child: Text(l10n.taskDelete),
                           ),
                         ],
                       ),
@@ -105,13 +107,16 @@ class TaskDetailScreen extends ConsumerWidget {
                     value: 'toggle',
                     child: Text(
                       task.isCompleted
-                          ? 'Mark as Incomplete'
-                          : 'Mark as Complete',
+                          ? l10n.taskDetailMarkIncomplete
+                          : l10n.taskDetailMarkComplete,
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'delete',
-                    child: Text('Delete', style: TextStyle(color: Colors.red)),
+                    child: Text(
+                      l10n.taskDelete,
+                      style: const TextStyle(color: Colors.red),
+                    ),
                   ),
                 ],
               ),
@@ -131,20 +136,20 @@ class TaskDetailScreen extends ConsumerWidget {
                       icon: task.isCompleted
                           ? Icons.check_circle
                           : Icons.radio_button_unchecked,
-                      label: _statusName(task.status),
+                      label: taskStatusLabel(l10n, task.status),
                       color: task.isCompleted
                           ? Colors.green
                           : theme.colorScheme.primary,
                     ),
                     _InfoChip(
                       icon: Icons.flag_rounded,
-                      label: _priorityName(task.priority),
+                      label: taskPriorityLabel(l10n, task.priority),
                       color: priorityColor,
                     ),
                     if (task.isRecurring)
                       _InfoChip(
                         icon: Icons.repeat_rounded,
-                        label: _recurrenceLabel(task),
+                        label: _recurrenceLabel(l10n, task),
                         color: theme.colorScheme.tertiary,
                       ),
                   ],
@@ -167,27 +172,27 @@ class TaskDetailScreen extends ConsumerWidget {
                 if (task.dueDate != null)
                   _MetaRow(
                     icon: Icons.calendar_today_outlined,
-                    label: 'Due',
-                    value: _dueLabel(task),
+                    label: l10n.taskDetailDue,
+                    value: _dueLabel(task, locale),
                     isOverdue: task.isOverdue(today),
                   ),
                 if (task.deferUntil != null)
                   _MetaRow(
                     icon: Icons.schedule_outlined,
-                    label: 'Defer until',
-                    value: DateFormat.yMMMd().format(task.deferUntil!),
+                    label: l10n.taskDetailDeferUntil,
+                    value: DateFormat.yMMMd(locale).format(task.deferUntil!),
                   ),
                 if (task.projectName != null)
                   _MetaRow(
                     icon: Icons.folder_outlined,
-                    label: 'Project',
+                    label: l10n.taskDetailProject,
                     value: task.projectName!,
                   ),
                 if (task.completedAt != null)
                   _MetaRow(
                     icon: Icons.check_circle_outline,
-                    label: 'Completed',
-                    value: DateFormat.yMMMd().format(task.completedAt!),
+                    label: l10n.taskDetailCompleted,
+                    value: DateFormat.yMMMd(locale).format(task.completedAt!),
                   ),
 
                 // Tags
@@ -231,7 +236,7 @@ class TaskDetailScreen extends ConsumerWidget {
                   const Divider(),
                   const SizedBox(height: 12),
                   Text(
-                    'Subtasks',
+                    l10n.taskDetailSubtasks,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -272,45 +277,36 @@ class TaskDetailScreen extends ConsumerWidget {
   }
 
   void _showError(BuildContext context, Object error) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(apiErrorMessage(error))));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(apiErrorMessage(context.l10n, error))),
+    );
   }
 
-  String _dueLabel(Task task) {
-    final date = DateFormat.yMMMd().format(task.dueDate!.toLocalDateTime());
+  String _dueLabel(Task task, String locale) {
+    final date = DateFormat.yMMMd(locale)
+        .format(task.dueDate!.toLocalDateTime());
     return task.dueTime == null ? date : '$date ${task.dueTime!.format()}';
   }
 
-  String _statusName(TaskStatus status) => switch (status) {
-    TaskStatus.notStarted => 'Not Started',
-    TaskStatus.inProgress => 'In Progress',
-    TaskStatus.done => 'Done',
-    TaskStatus.archived => 'Archived',
-    TaskStatus.waiting => 'Waiting',
-    TaskStatus.cancelled => 'Cancelled',
-    TaskStatus.planned => 'Planned',
-    TaskStatus.unknown => 'Unknown',
-  };
-
-  String _priorityName(Priority priority) => switch (priority) {
-    Priority.low => 'Low',
-    Priority.medium => 'Medium',
-    Priority.high => 'High',
-  };
-
-  String _recurrenceLabel(Task task) {
+  String _recurrenceLabel(AppLocalizations l10n, Task task) {
     final interval = task.recurrenceInterval ?? 1;
     switch (task.recurrenceType) {
       case 'daily':
-        return interval == 1 ? 'Daily' : 'Every $interval days';
+        return interval == 1
+            ? l10n.taskRecurDaily
+            : l10n.taskRecurEveryDays(interval);
       case 'weekly':
-        return interval == 1 ? 'Weekly' : 'Every $interval weeks';
+        return interval == 1
+            ? l10n.taskRecurWeekly
+            : l10n.taskRecurEveryWeeks(interval);
       case 'monthly':
-        return interval == 1 ? 'Monthly' : 'Every $interval months';
+        return interval == 1
+            ? l10n.taskRecurMonthly
+            : l10n.taskRecurEveryMonths(interval);
       case 'monthly_weekday':
-        return 'Monthly (weekday)';
+        return l10n.taskRecurMonthlyWeekday;
       case 'monthly_last_day':
-        return 'Monthly (last day)';
+        return l10n.taskRecurMonthlyLastDay;
       default:
         return task.recurrenceType;
     }
@@ -380,7 +376,7 @@ class _MetaRow extends StatelessWidget {
           Icon(icon, size: 18, color: color),
           const SizedBox(width: 8),
           Text(
-            '$label: ',
+            context.l10n.taskDetailMetaLabel(label),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

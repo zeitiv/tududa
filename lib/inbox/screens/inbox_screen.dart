@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../core/sync/sync_engine.dart';
 import '../../core/sync/sync_handler.dart' show SyncReason;
 import '../providers/inbox_provider.dart';
-import '../../l10n/strings.dart';
+import '../../l10n/l10n_ext.dart';
 
 /// Inbox screen - items from Telegram and other sources.
 class InboxScreen extends ConsumerStatefulWidget {
@@ -26,7 +26,7 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
     final strings = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(title: Text(strings.inbox)),
+      appBar: AppBar(title: Text(strings.navInbox)),
       body: list == null && async.isLoading
           ? const Center(child: CircularProgressIndicator())
           : items.isEmpty
@@ -145,15 +145,15 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
                         itemBuilder: (context) => [
                           PopupMenuItem(
                             value: 'process',
-                            child: Text(strings.markProcessed),
+                            child: Text(strings.inboxMarkProcessed),
                           ),
                           PopupMenuItem(
                             value: 'ignore',
-                            child: Text(strings.ignore),
+                            child: Text(strings.inboxIgnore),
                           ),
                           PopupMenuItem(
                             value: 'delete',
-                            child: Text(strings.delete),
+                            child: Text(strings.commonDelete),
                           ),
                         ],
                       ),

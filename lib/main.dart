@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
+import 'core/design/app_theme.dart';
 import 'auth/providers/auth_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,36 +47,13 @@ class _AppStartupState extends ConsumerState<_AppStartup> {
 
     // Show splash / loading while checking auth
     if (authState.status == AuthStatus.initial) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF4A90D9), Color(0xFF7B61FF)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Icon(
-                    Icons.check_circle_outline_rounded,
-                    size: 36,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                const CircularProgressIndicator(),
-              ],
-            ),
-          ),
-        ),
+      final scheme = ColorScheme.fromSeed(
+        seedColor: kSeedColor,
+        brightness: MediaQuery.platformBrightnessOf(context),
+      );
+      return ColoredBox(
+        color: scheme.surface,
+        child: Center(child: CircularProgressIndicator(color: scheme.primary)),
       );
     }
 

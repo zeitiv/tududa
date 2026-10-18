@@ -9,10 +9,11 @@ import '../../core/time/calendar_date.dart';
 import '../data/task_patch.dart';
 import '../domain/new_task.dart';
 import '../domain/task.dart';
+import '../domain/task_labels.dart';
 import '../providers/project_options_provider.dart';
 import '../providers/task_provider.dart';
 import '../widgets/api_error_message.dart';
-import '../../l10n/strings.dart';
+import '../../l10n/l10n_ext.dart';
 
 /// Task create/edit form screen.
 class TaskFormScreen extends ConsumerStatefulWidget {
@@ -61,8 +62,9 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
 
   void _showError(Object error) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(apiErrorMessage(error))));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(apiErrorMessage(context.l10n, error))),
+    );
   }
 
   Future<void> _loadTask() async {
@@ -215,10 +217,13 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
     final theme = Theme.of(context);
     final projects = ref.watch(projectOptionsProvider).value ?? const [];
     final strings = context.l10n;
+    final locale = Localizations.localeOf(context).toString();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEdit ? strings.editTask : strings.newTask),
+        title: Text(
+          _isEdit ? strings.taskFormTitleEdit : strings.taskFormTitleNew,
+        ),
         actions: [
           TextButton(
             onPressed: _isLoading ? null : _save,
@@ -228,7 +233,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                     height: 16,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : Text(strings.save),
+                : Text(strings.taskFormSave),
           ),
         ],
       ),
@@ -245,33 +250,38 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                     autofocus: !_isEdit,
                     textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
-                      labelText: strings.taskName,
-                      hintText: strings.taskNameHint,
+                      labelText: strings.taskFormNameLabel,
+                      hintText: strings.taskFormNameHint,
                     ),
                     validator: (v) => v == null || v.trim().isEmpty
-                        ? strings.nameRequired
+                        ? strings.taskFormNameRequired
                         : null,
                   ),
                   const SizedBox(height: 16),
 
                   // Priority
-                  Text(strings.priority, style: theme.textTheme.labelLarge),
+                  Text(
+                    strings.taskFormPriority,
+                    style: theme.textTheme.labelLarge,
+                  ),
                   const SizedBox(height: 8),
                   SegmentedButton<Priority>(
                     segments: [
                       ButtonSegment(
                         value: Priority.low,
-                        label: Text(strings.low),
+                        label: Text(taskPriorityLabel(strings, Priority.low)),
                         icon: const Icon(Icons.arrow_downward, size: 16),
                       ),
                       ButtonSegment(
                         value: Priority.medium,
-                        label: Text(strings.medium),
+                        label: Text(
+                          taskPriorityLabel(strings, Priority.medium),
+                        ),
                         icon: const Icon(Icons.remove, size: 16),
                       ),
                       ButtonSegment(
                         value: Priority.high,
-                        label: Text(strings.high),
+                        label: Text(taskPriorityLabel(strings, Priority.high)),
                         icon: const Icon(Icons.arrow_upward, size: 16),
                       ),
                     ],
@@ -282,7 +292,10 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                   const SizedBox(height: 20),
 
                   // Status
-                  Text(strings.status, style: theme.textTheme.labelLarge),
+                  Text(
+                    strings.taskFormStatus,
+                    style: theme.textTheme.labelLarge,
+                  ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<TaskStatus>(
                     key: ValueKey(_status),
@@ -313,14 +326,15 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.calendar_today_outlined),
-                    title: Text(strings.dueDate),
+                    title: Text(strings.taskFormDueDate),
                     subtitle: Text(
                       _dueDate != null
-                          ? DateFormat.yMMMd().format(_dueDate!)
-                          : strings.notSet,
+                          ? DateFormat.yMMMd(locale).format(_dueDate!)
+                          : strings.taskFormNotSet,
                     ),
                     trailing: _dueDate != null
                         ? IconButton(
+                            tooltip: strings.taskFormClearTooltip,
                             icon: const Icon(Icons.clear),
                             onPressed: () => setState(() => _dueDate = null),
                           )
@@ -332,14 +346,15 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.schedule_outlined),
-                    title: Text(strings.deferUntil),
+                    title: Text(strings.taskFormDeferUntil),
                     subtitle: Text(
                       _deferUntil != null
-                          ? DateFormat.yMMMd().format(_deferUntil!)
-                          : strings.notSet,
+                          ? DateFormat.yMMMd(locale).format(_deferUntil!)
+                          : strings.taskFormNotSet,
                     ),
                     trailing: _deferUntil != null
                         ? IconButton(
+                            tooltip: strings.taskFormClearTooltip,
                             icon: const Icon(Icons.clear),
                             onPressed: () => setState(() => _deferUntil = null),
                           )
@@ -353,7 +368,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.folder_outlined),
-                    title: Text(strings.project),
+                    title: Text(strings.taskFormProject),
                     subtitle: Text(
                       _projectUid != null
                           ? projects
@@ -361,8 +376,8 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                                     .firstOrNull
                                     ?.name ??
                                 _original?.projectName ??
-                                'Selected'
-                          : strings.none,
+                                strings.taskFormProjectSelected
+                          : strings.taskFormNone,
                     ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => _showProjectPicker(strings),
@@ -371,7 +386,10 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                   const Divider(height: 32),
 
                   // Recurrence
-                  Text(strings.recurrence, style: theme.textTheme.labelLarge),
+                  Text(
+                    strings.taskFormRecurrence,
+                    style: theme.textTheme.labelLarge,
+                  ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     initialValue: _recurrenceType,
@@ -381,27 +399,27 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                     items: [
                       DropdownMenuItem(
                         value: 'none',
-                        child: Text(strings.none),
+                        child: Text(strings.taskFormNone),
                       ),
                       DropdownMenuItem(
                         value: 'daily',
-                        child: Text(strings.daily),
+                        child: Text(strings.taskRecurDaily),
                       ),
                       DropdownMenuItem(
                         value: 'weekly',
-                        child: Text(strings.weekly),
+                        child: Text(strings.taskRecurWeekly),
                       ),
                       DropdownMenuItem(
                         value: 'monthly',
-                        child: Text(strings.monthly),
+                        child: Text(strings.taskRecurMonthly),
                       ),
                       DropdownMenuItem(
                         value: 'monthly_weekday',
-                        child: Text('${strings.monthly} (Weekday)'),
+                        child: Text(strings.taskRecurMonthlyWeekday),
                       ),
                       DropdownMenuItem(
                         value: 'monthly_last_day',
-                        child: Text('${strings.monthly} (Last Day)'),
+                        child: Text(strings.taskRecurMonthlyLastDay),
                       ),
                     ],
                     onChanged: (v) =>
@@ -412,7 +430,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Text(strings.isZh ? '每 ' : 'Every '),
+                        Text('${strings.taskFormEvery} '),
                         SizedBox(
                           width: 60,
                           child: TextFormField(
@@ -437,12 +455,8 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                     const SizedBox(height: 8),
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(strings.isZh ? '基于完成状态' : 'Completion-based'),
-                      subtitle: Text(
-                        strings.isZh
-                            ? '从上次完成时间开始循环'
-                            : 'Repeat from completion date',
-                      ),
+                      title: Text(strings.taskFormCompletionBased),
+                      subtitle: Text(strings.taskFormCompletionBasedHint),
                       value: _completionBased,
                       onChanged: (v) => setState(() => _completionBased = v),
                     ),
@@ -456,8 +470,8 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                     maxLines: 6,
                     textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
-                      labelText: strings.noteDetail,
-                      hintText: strings.noteHint,
+                      labelText: strings.taskFormNoteLabel,
+                      hintText: strings.taskFormNoteHint,
                       alignLabelWithHint: true,
                     ),
                   ),
@@ -468,33 +482,34 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
     );
   }
 
-  String _recurrenceUnitLabel(AppStrings strings) {
+  String _recurrenceUnitLabel(AppLocalizations strings) {
     switch (_recurrenceType) {
       case 'daily':
-        return strings.isZh ? '天' : (_recurrenceInterval == 1 ? 'day' : 'days');
+        return strings.taskFormUnitDays(_recurrenceInterval);
       case 'weekly':
-        return strings.isZh
-            ? '周'
-            : (_recurrenceInterval == 1 ? 'week' : 'weeks');
+        return strings.taskFormUnitWeeks(_recurrenceInterval);
       default:
-        return strings.isZh
-            ? '月'
-            : (_recurrenceInterval == 1 ? 'month' : 'months');
+        return strings.taskFormUnitMonths(_recurrenceInterval);
     }
   }
 
-  List<({TaskStatus value, String label})> _statusOptions(AppStrings strings) {
+  List<({TaskStatus value, String label})> _statusOptions(
+    AppLocalizations strings,
+  ) {
     return [
-      (value: TaskStatus.notStarted, label: strings.notStarted),
-      (value: TaskStatus.planned, label: strings.planned),
-      (value: TaskStatus.inProgress, label: strings.inProgress),
-      (value: TaskStatus.waiting, label: strings.waiting),
-      (value: TaskStatus.cancelled, label: strings.cancelled),
-      (value: TaskStatus.done, label: strings.done),
+      for (final s in const [
+        TaskStatus.notStarted,
+        TaskStatus.planned,
+        TaskStatus.inProgress,
+        TaskStatus.waiting,
+        TaskStatus.cancelled,
+        TaskStatus.done,
+      ])
+        (value: s, label: taskStatusLabel(strings, s)),
     ];
   }
 
-  void _showProjectPicker(AppStrings strings) {
+  void _showProjectPicker(AppLocalizations strings) {
     final projects = ref.read(projectOptionsProvider).value ?? const [];
     showModalBottomSheet(
       context: context,
@@ -503,7 +518,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
         children: [
           ListTile(
             leading: const Icon(Icons.clear),
-            title: Text(strings.none),
+            title: Text(strings.taskFormNone),
             onTap: () {
               setState(() => _projectUid = null);
               Navigator.pop(context);

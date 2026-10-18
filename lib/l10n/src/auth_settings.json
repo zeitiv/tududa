@@ -1,0 +1,565 @@
+{
+ "authEmail": {
+  "en": "Email",
+  "de": "E-Mail",
+  "zh": "邮箱"
+ },
+ "authPassword": {
+  "en": "Password",
+  "de": "Passwort",
+  "zh": "密码"
+ },
+ "authSignIn": {
+  "en": "Sign In",
+  "de": "Anmelden",
+  "zh": "登录"
+ },
+ "authChangeServer": {
+  "en": "Change Server",
+  "de": "Server wechseln",
+  "zh": "更换服务器"
+ },
+ "authEmailRequired": {
+  "en": "Email is required",
+  "de": "E-Mail ist erforderlich",
+  "zh": "邮箱不能为空"
+ },
+ "authInvalidEmail": {
+  "en": "Invalid email",
+  "de": "Ungültige E-Mail-Adresse",
+  "zh": "无效的邮箱"
+ },
+ "authPasswordRequired": {
+  "en": "Password is required",
+  "de": "Passwort ist erforderlich",
+  "zh": "密码不能为空"
+ },
+ "authShowPassword": {
+  "en": "Show password",
+  "de": "Passwort anzeigen",
+  "zh": "显示密码",
+  "description": "Tooltip of the password visibility toggle"
+ },
+ "authHidePassword": {
+  "en": "Hide password",
+  "de": "Passwort verbergen",
+  "zh": "隐藏密码",
+  "description": "Tooltip of the password visibility toggle"
+ },
+ "authWelcome": {
+  "en": "Welcome to Tududa",
+  "de": "Willkommen bei Tududa",
+  "zh": "欢迎使用 Tududa"
+ },
+ "authConnectPrompt": {
+  "en": "Connect to your self-hosted Tududa server",
+  "de": "Verbinde dich mit deinem selbst gehosteten Tududa-Server",
+  "zh": "连接到您自托管的 Tududa 服务器"
+ },
+ "authServerUrl": {
+  "en": "Server URL",
+  "de": "Server-URL",
+  "zh": "服务器地址"
+ },
+ "authServerUrlHelper": {
+  "en": "Enter your Tududa server address",
+  "de": "Gib die Adresse deines Tududa-Servers ein",
+  "zh": "请输入您的 Tududa 服务器地址"
+ },
+ "authServerUrlRequired": {
+  "en": "Please enter a server URL",
+  "de": "Bitte gib eine Server-URL ein",
+  "zh": "请输入服务器地址"
+ },
+ "authConnect": {
+  "en": "Connect",
+  "de": "Verbinden",
+  "zh": "连接"
+ },
+ "authConnecting": {
+  "en": "Connecting...",
+  "de": "Verbinde ...",
+  "zh": "连接中..."
+ },
+ "authInsecureTitle": {
+  "en": "Use insecure HTTP?",
+  "de": "Unsicheres HTTP verwenden?",
+  "zh": "使用不安全的 HTTP？"
+ },
+ "authInsecureBody": {
+  "en": "This address does not use HTTPS. Your password and tasks would be sent without encryption and could be read on the network. Only continue on a network you trust.",
+  "de": "Diese Adresse verwendet kein HTTPS. Dein Passwort und deine Aufgaben würden unverschlüsselt übertragen und könnten im Netzwerk mitgelesen werden. Fahre nur in einem vertrauenswürdigen Netzwerk fort.",
+  "zh": "此地址未使用 HTTPS。您的密码和任务将以明文传输，可能在网络上被读取。请仅在可信网络中继续。"
+ },
+ "authInsecureConfirm": {
+  "en": "Use insecure HTTP",
+  "de": "Unsicheres HTTP verwenden",
+  "zh": "使用不安全的 HTTP"
+ },
+ "authCancel": {
+  "en": "Cancel",
+  "de": "Abbrechen",
+  "zh": "取消"
+ },
+ "authErrorInvalidCredentials": {
+  "en": "Incorrect email or password.",
+  "de": "E-Mail oder Passwort ist falsch.",
+  "zh": "邮箱或密码不正确。"
+ },
+ "authErrorEmailNotVerified": {
+  "en": "Your email address is not verified yet. Check your inbox for the verification link.",
+  "de": "Deine E-Mail-Adresse ist noch nicht bestätigt. Prüfe deinen Posteingang auf den Bestätigungslink.",
+  "zh": "您的邮箱尚未验证。请查看收件箱中的验证链接。"
+ },
+ "authErrorPasswordLoginDisabled": {
+  "en": "Password sign-in is disabled for this account. It uses single sign-on (SSO), which this app does not support yet.",
+  "de": "Die Anmeldung per Passwort ist für dieses Konto deaktiviert. Es nutzt Single Sign-on (SSO), das diese App noch nicht unterstützt.",
+  "zh": "此账户已禁用密码登录。它使用单点登录 (SSO)，本应用暂不支持。"
+ },
+ "authErrorRateLimited": {
+  "en": "Too many attempts. Try again later.",
+  "de": "Zu viele Versuche. Versuche es später erneut.",
+  "zh": "尝试次数过多，请稍后再试。"
+ },
+ "authErrorRateLimitedMinutes": {
+  "en": "Too many attempts. Try again in {minutes, plural, =1{1 minute} other{{minutes} minutes}}.",
+  "de": "Zu viele Versuche. Versuche es in {minutes, plural, =1{1 Minute} other{{minutes} Minuten}} erneut.",
+  "zh": "尝试次数过多，请在 {minutes, plural, other{{minutes} 分钟}}后重试。",
+  "placeholders": {
+   "minutes": {
+    "type": "int"
+   }
+  }
+ },
+ "authErrorNetwork": {
+  "en": "Could not reach the server. Check your connection and the server address.",
+  "de": "Der Server ist nicht erreichbar. Prüfe deine Verbindung und die Serveradresse.",
+  "zh": "无法连接到服务器。请检查网络连接和服务器地址。"
+ },
+ "authErrorServer": {
+  "en": "The server had a problem ({code}). Try again later.",
+  "de": "Auf dem Server ist ein Problem aufgetreten ({code}). Versuche es später erneut.",
+  "zh": "服务器出现问题（{code}）。请稍后重试。",
+  "placeholders": {
+   "code": {
+    "type": "String"
+   }
+  }
+ },
+ "authErrorInsecure": {
+  "en": "Plain HTTP connections are not encrypted.",
+  "de": "Einfache HTTP-Verbindungen sind nicht verschlüsselt.",
+  "zh": "纯 HTTP 连接未加密。"
+ },
+ "authErrorEnterServerUrl": {
+  "en": "Enter a server address",
+  "de": "Gib eine Serveradresse ein",
+  "zh": "请输入服务器地址"
+ },
+ "authErrorInvalidServerUrl": {
+  "en": "That is not a valid address",
+  "de": "Das ist keine gültige Adresse",
+  "zh": "地址无效"
+ },
+ "authErrorGeneric": {
+  "en": "Something went wrong.",
+  "de": "Etwas ist schiefgelaufen.",
+  "zh": "出了点问题。"
+ },
+ "settingsMore": {
+  "en": "More",
+  "de": "Mehr",
+  "zh": "更多"
+ },
+ "settingsNavigation": {
+  "en": "Navigation",
+  "de": "Navigation",
+  "zh": "导航"
+ },
+ "settingsAreas": {
+  "en": "Areas",
+  "de": "Bereiche",
+  "zh": "区域管理"
+ },
+ "settingsAreasDesc": {
+  "en": "Organize projects into areas",
+  "de": "Projekte in Bereiche gliedern",
+  "zh": "将项目组织到不同区域"
+ },
+ "settingsPreferences": {
+  "en": "Preferences",
+  "de": "Einstellungen",
+  "zh": "首选项"
+ },
+ "settingsAppearance": {
+  "en": "Appearance",
+  "de": "Darstellung",
+  "zh": "外观"
+ },
+ "settingsThemeLight": {
+  "en": "Light",
+  "de": "Hell",
+  "zh": "浅色"
+ },
+ "settingsThemeDark": {
+  "en": "Dark",
+  "de": "Dunkel",
+  "zh": "深色"
+ },
+ "settingsThemeSystem": {
+  "en": "System",
+  "de": "System",
+  "zh": "跟随系统"
+ },
+ "settingsLanguage": {
+  "en": "Language",
+  "de": "Sprache",
+  "zh": "语言"
+ },
+ "settingsTimezone": {
+  "en": "Timezone",
+  "de": "Zeitzone",
+  "zh": "时区"
+ },
+ "settingsIntegrations": {
+  "en": "Integrations",
+  "de": "Integrationen",
+  "zh": "集成"
+ },
+ "settingsTelegramConnected": {
+  "en": "Connected",
+  "de": "Verbunden",
+  "zh": "已连接"
+ },
+ "settingsTelegramNotConfigured": {
+  "en": "Not configured",
+  "de": "Nicht eingerichtet",
+  "zh": "未配置"
+ },
+ "settingsServer": {
+  "en": "Server",
+  "de": "Server",
+  "zh": "服务器"
+ },
+ "settingsServerUrl": {
+  "en": "Server URL",
+  "de": "Server-URL",
+  "zh": "服务器地址"
+ },
+ "settingsServerNotConfigured": {
+  "en": "Not configured",
+  "de": "Nicht eingerichtet",
+  "zh": "未配置"
+ },
+ "settingsAbout": {
+  "en": "About Tududa",
+  "de": "Über Tududa",
+  "zh": "关于 Tududa"
+ },
+ "settingsAboutSubtitle": {
+  "en": "v1.0.1 • Open Source",
+  "de": "v1.0.1 • Open Source",
+  "zh": "v1.0.1 • 开源"
+ },
+ "settingsSignOut": {
+  "en": "Sign Out",
+  "de": "Abmelden",
+  "zh": "退出登录"
+ },
+ "settingsSignOutConfirm": {
+  "en": "Are you sure you want to sign out?",
+  "de": "Möchtest du dich wirklich abmelden?",
+  "zh": "确定要退出登录吗？"
+ },
+ "settingsSignOutUnsynced": {
+  "en": "{count, plural, =1{1 change has} other{{count} changes have}} not synced yet and will be lost.",
+  "de": "{count, plural, =1{Eine Änderung wurde} other{{count} Änderungen wurden}} noch nicht synchronisiert und {count, plural, =1{geht} other{gehen}} verloren.",
+  "zh": "{count, plural, other{{count} 项更改}}尚未同步，将会丢失。",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "settingsCancel": {
+  "en": "Cancel",
+  "de": "Abbrechen",
+  "zh": "取消"
+ },
+ "syncTitle": {
+  "en": "Sync",
+  "de": "Synchronisierung",
+  "zh": "同步"
+ },
+ "syncPhaseIdle": {
+  "en": "Up to date",
+  "de": "Aktuell",
+  "zh": "已是最新"
+ },
+ "syncPhaseSyncing": {
+  "en": "Syncing",
+  "de": "Synchronisiere",
+  "zh": "同步中"
+ },
+ "syncPhaseOffline": {
+  "en": "Offline",
+  "de": "Offline",
+  "zh": "离线"
+ },
+ "syncPhaseError": {
+  "en": "Sync problem",
+  "de": "Synchronisierungsproblem",
+  "zh": "同步出现问题"
+ },
+ "syncPhaseSignedOut": {
+  "en": "Signed out",
+  "de": "Abgemeldet",
+  "zh": "已退出登录"
+ },
+ "syncEntryFailed": {
+  "en": "Failed, will retry",
+  "de": "Fehlgeschlagen, neuer Versuch folgt",
+  "zh": "失败，将重试"
+ },
+ "syncEntryStuck": {
+  "en": "Stuck",
+  "de": "Hängt fest",
+  "zh": "已卡住"
+ },
+ "syncEntrySending": {
+  "en": "Sending",
+  "de": "Wird gesendet",
+  "zh": "发送中"
+ },
+ "syncEntryPending": {
+  "en": "Pending",
+  "de": "Ausstehend",
+  "zh": "等待中"
+ },
+ "syncEntryLine": {
+  "en": "{state} - {count, plural, =1{1 attempt} other{{count} attempts}}",
+  "de": "{state} - {count, plural, =1{1 Versuch} other{{count} Versuche}}",
+  "zh": "{state} - {count, plural, other{{count} 次尝试}}",
+  "placeholders": {
+   "state": {
+    "type": "String"
+   },
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "syncLastSynced": {
+  "en": "Last synced {when}",
+  "de": "Zuletzt synchronisiert: {when}",
+  "zh": "上次同步：{when}",
+  "placeholders": {
+   "when": {
+    "type": "String"
+   }
+  }
+ },
+ "syncTimeNever": {
+  "en": "never",
+  "de": "nie",
+  "zh": "从未"
+ },
+ "syncTimeJustNow": {
+  "en": "just now",
+  "de": "gerade eben",
+  "zh": "刚刚"
+ },
+ "syncTimeMinutesAgo": {
+  "en": "{count, plural, =1{1 minute} other{{count} minutes}} ago",
+  "de": "vor {count, plural, =1{1 Minute} other{{count} Minuten}}",
+  "zh": "{count, plural, other{{count} 分钟}}前",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "syncTimeHoursAgo": {
+  "en": "{count, plural, =1{1 hour} other{{count} hours}} ago",
+  "de": "vor {count, plural, =1{1 Stunde} other{{count} Stunden}}",
+  "zh": "{count, plural, other{{count} 小时}}前",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "syncTimeDaysAgo": {
+  "en": "{count, plural, =1{1 day} other{{count} days}} ago",
+  "de": "vor {count, plural, =1{1 Tag} other{{count} Tagen}}",
+  "zh": "{count, plural, other{{count} 天}}前",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "syncNow": {
+  "en": "Sync now",
+  "de": "Jetzt synchronisieren",
+  "zh": "立即同步"
+ },
+ "syncRetryAll": {
+  "en": "Retry all",
+  "de": "Alle wiederholen",
+  "zh": "全部重试"
+ },
+ "syncRetry": {
+  "en": "Retry",
+  "de": "Wiederholen",
+  "zh": "重试"
+ },
+ "syncQueuedChanges": {
+  "en": "Queued changes",
+  "de": "Wartende Änderungen",
+  "zh": "待同步的更改"
+ },
+ "syncLoadError": {
+  "en": "Could not load queued changes: {error}",
+  "de": "Wartende Änderungen konnten nicht geladen werden: {error}",
+  "zh": "无法加载待同步的更改：{error}",
+  "placeholders": {
+   "error": {
+    "type": "String"
+   }
+  }
+ },
+ "syncNothingQueued": {
+  "en": "Nothing queued. All changes are synced.",
+  "de": "Nichts in der Warteschlange. Alle Änderungen sind synchronisiert.",
+  "zh": "没有待处理项。所有更改均已同步。"
+ },
+ "syncRecentConflicts": {
+  "en": "Recent conflicts",
+  "de": "Letzte Konflikte",
+  "zh": "最近的冲突"
+ },
+ "syncDismiss": {
+  "en": "Dismiss",
+  "de": "Ausblenden",
+  "zh": "忽略"
+ },
+ "syncNoConflicts": {
+  "en": "No conflicts to review.",
+  "de": "Keine Konflikte zu prüfen.",
+  "zh": "没有需要查看的冲突。"
+ },
+ "syncDiscard": {
+  "en": "Discard",
+  "de": "Verwerfen",
+  "zh": "放弃"
+ },
+ "syncDiscardTitle": {
+  "en": "Discard this change?",
+  "de": "Diese Änderung verwerfen?",
+  "zh": "放弃此更改？"
+ },
+ "syncDiscardBody": {
+  "en": "The change will be undone on this device and never sent to the server.",
+  "de": "Die Änderung wird auf diesem Gerät rückgängig gemacht und nie an den Server gesendet.",
+  "zh": "此更改将在本设备上撤销，且不会发送到服务器。"
+ },
+ "syncCancel": {
+  "en": "Cancel",
+  "de": "Abbrechen",
+  "zh": "取消"
+ },
+ "syncNoticeWholeChange": {
+  "en": "change",
+  "de": "Änderung",
+  "zh": "更改",
+  "description": "Used in place of a field name when a whole change was rolled back"
+ },
+ "syncNoticeServerKept": {
+  "en": "server version kept",
+  "de": "Serverversion behalten",
+  "zh": "保留服务器版本"
+ },
+ "syncNoticeLocalKept": {
+  "en": "your version kept",
+  "de": "Deine Version behalten",
+  "zh": "保留您的版本"
+ },
+ "syncNoticeLine": {
+  "en": "{entity}: {what} - {kept}",
+  "de": "{entity}: {what} - {kept}",
+  "zh": "{entity}：{what} - {kept}",
+  "placeholders": {
+   "entity": {
+    "type": "String"
+   },
+   "what": {
+    "type": "String"
+   },
+   "kept": {
+    "type": "String"
+   }
+  }
+ },
+ "syncStatusSyncing": {
+  "en": "Syncing",
+  "de": "Synchronisiere",
+  "zh": "同步中",
+  "description": "Screen-reader sync status"
+ },
+ "syncStatusOfflineWaiting": {
+  "en": "Offline, {count, plural, =1{1 change} other{{count} changes}} waiting to sync",
+  "de": "Offline, {count, plural, =1{1 Änderung wartet} other{{count} Änderungen warten}} auf Synchronisierung",
+  "zh": "离线，{count, plural, other{{count} 项更改}}等待同步",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "syncStatusOfflineIdle": {
+  "en": "Offline, nothing waiting to sync",
+  "de": "Offline, nichts wartet auf Synchronisierung",
+  "zh": "离线，没有等待同步的内容"
+ },
+ "syncStatusSignedOutWaiting": {
+  "en": "Signed out, {count, plural, =1{1 change} other{{count} changes}} waiting to sync",
+  "de": "Abgemeldet, {count, plural, =1{1 Änderung wartet} other{{count} Änderungen warten}} auf Synchronisierung",
+  "zh": "已退出登录，{count, plural, other{{count} 项更改}}等待同步",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "syncStatusSignedOut": {
+  "en": "Signed out",
+  "de": "Abgemeldet",
+  "zh": "已退出登录"
+ },
+ "syncStatusProblem": {
+  "en": "Sync problem, {count, plural, =1{1 change} other{{count} changes}} failed",
+  "de": "Synchronisierungsproblem, {count, plural, =1{1 Änderung} other{{count} Änderungen}} fehlgeschlagen",
+  "zh": "同步出现问题，{count, plural, other{{count} 项更改}}失败",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "syncStatusWaiting": {
+  "en": "{count, plural, =1{1 change} other{{count} changes}} waiting to sync",
+  "de": "{count, plural, =1{1 Änderung wartet} other{{count} Änderungen warten}} auf Synchronisierung",
+  "zh": "{count, plural, other{{count} 项更改}}等待同步",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "syncStatusAllSynced": {
+  "en": "All changes synced",
+  "de": "Alle Änderungen synchronisiert",
+  "zh": "所有更改均已同步"
+ }
+}

@@ -8,6 +8,7 @@ import 'package:tududa/core/db/dirty_fields.dart';
 import 'package:tududa/core/ids.dart';
 import 'package:tududa/core/sync/sync_engine.dart';
 import 'package:tududa/core/time/calendar_date.dart';
+import 'package:tududa/l10n/gen/app_localizations_en.dart';
 import 'package:tududa/tasks/data/offline_task_repository.dart';
 import 'package:tududa/tasks/data/task_patch.dart';
 import 'package:tududa/tasks/domain/new_task.dart';
@@ -18,6 +19,8 @@ import 'package:tududa/tasks/widgets/api_error_message.dart';
 import 'offline_rig.dart';
 
 void main() {
+  final l10n = AppLocalizationsEn();
+
   late OfflineRig rig;
   late ProviderContainer c;
 
@@ -130,7 +133,7 @@ void main() {
       final sub = c.listen(p, (_, _) {});
       addTearDown(sub.close);
       await expectLater(c.read(p.future), throwsA(isA<NotFoundError>()));
-      expect(apiErrorMessage(c.read(p).error!), 'Task not found');
+      expect(apiErrorMessage(l10n, c.read(p).error!), 'Task not found');
     });
   });
 
@@ -259,14 +262,14 @@ void main() {
         DecodingError('x'),
       ];
       for (final e in errors) {
-        expect(apiErrorMessage(e), isNotEmpty);
-        expect(apiErrorMessage(e), isNot(contains('Instance of')));
+        expect(apiErrorMessage(l10n, e), isNotEmpty);
+        expect(apiErrorMessage(l10n, e), isNot(contains('Instance of')));
       }
       expect(
-        apiErrorMessage(const ValidationError('Task name is required')),
+        apiErrorMessage(l10n, const ValidationError('Task name is required')),
         'Task name is required',
       );
-      expect(apiErrorMessage(StateError('x')), 'Something went wrong');
+      expect(apiErrorMessage(l10n, StateError('x')), 'Something went wrong');
     });
   });
 }

@@ -1,0 +1,30 @@
+{
+  "coreToday": {"en": "Today", "de": "Heute", "zh": "今天", "description": "Relative day label for the current date"},
+  "coreTomorrow": {"en": "Tomorrow", "de": "Morgen", "zh": "明天", "description": "Relative day label for the next date"},
+  "coreYesterday": {"en": "Yesterday", "de": "Gestern", "zh": "昨天", "description": "Relative day label for the previous date"},
+  "coreInDays": {
+    "en": "{count, plural, =1{in 1 day} other{in {count} days}}",
+    "de": "{count, plural, =1{in 1 Tag} other{in {count} Tagen}}",
+    "zh": "{count, plural, other{{count}天后}}",
+    "description": "A date a few days in the future",
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "coreDaysAgo": {
+    "en": "{count, plural, =1{1 day ago} other{{count} days ago}}",
+    "de": "{count, plural, =1{vor 1 Tag} other{vor {count} Tagen}}",
+    "zh": "{count, plural, other{{count}天前}}",
+    "description": "A date a few days in the past",
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "taskStatusNotStarted": {"en": "Not started", "de": "Nicht begonnen", "zh": "未开始", "description": "Task status"},
+  "taskStatusInProgress": {"en": "In progress", "de": "In Arbeit", "zh": "进行中", "description": "Task status"},
+  "taskStatusDone": {"en": "Done", "de": "Erledigt", "zh": "已完成", "description": "Task status"},
+  "taskStatusArchived": {"en": "Archived", "de": "Archiviert", "zh": "已归档", "description": "Task status"},
+  "taskStatusWaiting": {"en": "Waiting", "de": "Wartend", "zh": "等待中", "description": "Task status"},
+  "taskStatusCancelled": {"en": "Cancelled", "de": "Abgebrochen", "zh": "已取消", "description": "Task status"},
+  "taskStatusPlanned": {"en": "Planned", "de": "Geplant", "zh": "已计划", "description": "Task status"},
+  "taskStatusUnknown": {"en": "Unknown", "de": "Unbekannt", "zh": "未知", "description": "Task status the app does not recognise"},
+  "taskPriorityLow": {"en": "Low", "de": "Niedrig", "zh": "低", "description": "Task priority"},
+  "taskPriorityMedium": {"en": "Medium", "de": "Mittel", "zh": "中", "description": "Task priority"},
+  "taskPriorityHigh": {"en": "High", "de": "Hoch", "zh": "高", "description": "Task priority"}
+}

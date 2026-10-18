@@ -1,0 +1,14 @@
+{
+  "settingsLanguageSystem": {"en": "System default", "de": "Systemstandard", "zh": "跟随系统", "description": "Language option that follows the device language"},
+  "settingsDynamicColor": {"en": "Dynamic color", "de": "Dynamische Farben", "zh": "动态取色", "description": "Switch title: use the wallpaper colors (Material You)"},
+  "settingsDynamicColorHint": {"en": "Use colors from your wallpaper when available", "de": "Farben aus dem Hintergrundbild verwenden, wenn verfügbar", "zh": "可用时使用壁纸配色"},
+  "settingsContrast": {"en": "Contrast", "de": "Kontrast", "zh": "对比度"},
+  "settingsContrastStandard": {"en": "Standard", "de": "Standard", "zh": "标准"},
+  "settingsContrastMedium": {"en": "Medium", "de": "Mittel", "zh": "中等"},
+  "settingsContrastHigh": {"en": "High", "de": "Hoch", "zh": "高"},
+  "settingsReduceMotion": {"en": "Reduce motion", "de": "Bewegung reduzieren", "zh": "减少动效"},
+  "settingsReduceMotionHint": {"en": "Turn off transitions and animations", "de": "Übergänge und Animationen ausschalten", "zh": "关闭过渡和动画"},
+  "settingsDensity": {"en": "Density", "de": "Dichte", "zh": "密度"},
+  "settingsDensityComfortable": {"en": "Comfortable", "de": "Komfortabel", "zh": "舒适"},
+  "settingsDensityCompact": {"en": "Compact", "de": "Kompakt", "zh": "紧凑"}
+}

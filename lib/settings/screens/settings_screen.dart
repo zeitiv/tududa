@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../auth/providers/auth_provider.dart';
 import '../providers/settings_provider.dart';
-import '../../l10n/strings.dart';
+import '../../l10n/l10n_ext.dart';
 
 /// Settings / More screen.
 class SettingsScreen extends ConsumerWidget {
@@ -22,9 +22,10 @@ class SettingsScreen extends ConsumerWidget {
     final user = authState.user;
     final strings = context.l10n;
     final settings = ref.watch(settingsProvider);
+    final notifier = ref.read(settingsProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(title: Text(strings.more)),
+      appBar: AppBar(title: Text(strings.settingsMore)),
       body: ListView(
         children: [
           // User info card
@@ -81,99 +82,180 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
 
-          _SectionHeader(title: strings.navigation),
+          _SectionHeader(title: strings.settingsNavigation),
 
           ListTile(
             leading: const Icon(Icons.layers_outlined),
-            title: Text(strings.areas),
-            subtitle: Text(strings.areasDesc),
+            title: Text(strings.settingsAreas),
+            subtitle: Text(strings.settingsAreasDesc),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/more/areas'),
           ),
           ListTile(
             leading: const Icon(Icons.sync),
-            title: const Text('Sync'),
-            subtitle: Text(syncStatusLabel(ref.watch(syncStatusProvider))),
+            title: Text(strings.syncTitle),
+            subtitle: Text(
+              syncStatusLabel(strings, ref.watch(syncStatusProvider)),
+            ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/more/sync'),
           ),
 
-          _SectionHeader(title: strings.preferences),
+          _SectionHeader(title: strings.settingsPreferences),
 
           ListTile(
             leading: const Icon(Icons.palette_outlined),
-            title: Text(strings.appearance),
+            title: Text(strings.settingsAppearance),
             trailing: DropdownButton<AppThemeMode>(
               value: settings.themeMode,
               underline: const SizedBox(),
               items: [
                 DropdownMenuItem(
+                  value: AppThemeMode.system,
+                  child: Text(strings.settingsThemeSystem),
+                ),
+                DropdownMenuItem(
                   value: AppThemeMode.light,
-                  child: Text(strings.lightMode),
+                  child: Text(strings.settingsThemeLight),
                 ),
                 DropdownMenuItem(
                   value: AppThemeMode.dark,
-                  child: Text(strings.darkMode),
-                ),
-                DropdownMenuItem(
-                  value: AppThemeMode.system,
-                  child: Text(strings.systemMode),
+                  child: Text(strings.settingsThemeDark),
                 ),
               ],
               onChanged: (val) {
-                if (val != null) {
-                  ref.read(settingsProvider.notifier).setThemeMode(val);
-                }
+                if (val != null) notifier.setThemeMode(val);
+              },
+            ),
+          ),
+
+          SwitchListTile(
+            secondary: const Icon(Icons.auto_awesome_outlined),
+            title: Text(strings.settingsDynamicColor),
+            subtitle: Text(strings.settingsDynamicColorHint),
+            value: settings.dynamicColor,
+            onChanged: notifier.setDynamicColor,
+          ),
+
+          ListTile(
+            leading: const Icon(Icons.contrast_outlined),
+            title: Text(strings.settingsContrast),
+            trailing: DropdownButton<ContrastLevel>(
+              value: settings.contrast,
+              underline: const SizedBox(),
+              items: [
+                DropdownMenuItem(
+                  value: ContrastLevel.standard,
+                  child: Text(strings.settingsContrastStandard),
+                ),
+                DropdownMenuItem(
+                  value: ContrastLevel.medium,
+                  child: Text(strings.settingsContrastMedium),
+                ),
+                DropdownMenuItem(
+                  value: ContrastLevel.high,
+                  child: Text(strings.settingsContrastHigh),
+                ),
+              ],
+              onChanged: (val) {
+                if (val != null) notifier.setContrast(val);
+              },
+            ),
+          ),
+
+          SwitchListTile(
+            secondary: const Icon(Icons.motion_photos_off_outlined),
+            title: Text(strings.settingsReduceMotion),
+            subtitle: Text(strings.settingsReduceMotionHint),
+            value: settings.reduceMotion,
+            onChanged: notifier.setReduceMotion,
+          ),
+
+          ListTile(
+            leading: const Icon(Icons.density_medium_outlined),
+            title: Text(strings.settingsDensity),
+            trailing: DropdownButton<DensityLevel>(
+              value: settings.density,
+              underline: const SizedBox(),
+              items: [
+                DropdownMenuItem(
+                  value: DensityLevel.comfortable,
+                  child: Text(strings.settingsDensityComfortable),
+                ),
+                DropdownMenuItem(
+                  value: DensityLevel.compact,
+                  child: Text(strings.settingsDensityCompact),
+                ),
+              ],
+              onChanged: (val) {
+                if (val != null) notifier.setDensity(val);
               },
             ),
           ),
 
           ListTile(
             leading: const Icon(Icons.language_outlined),
-            title: Text(strings.language),
-            trailing: DropdownButton<String>(
-              value: settings.locale,
+            title: Text(strings.settingsLanguage),
+            trailing: DropdownButton<AppLanguage>(
+              value: settings.language,
               underline: const SizedBox(),
-              items: const [
-                DropdownMenuItem(value: 'zh', child: Text('中文')),
-                DropdownMenuItem(value: 'en', child: Text('English')),
+              items: [
+                DropdownMenuItem(
+                  value: AppLanguage.system,
+                  child: Text(strings.settingsLanguageSystem),
+                ),
+                // Endonyms: each language is shown in its own language.
+                const DropdownMenuItem(
+                  value: AppLanguage.en,
+                  child: Text('English'),
+                ),
+                const DropdownMenuItem(
+                  value: AppLanguage.de,
+                  child: Text('Deutsch'),
+                ),
+                const DropdownMenuItem(
+                  value: AppLanguage.zh,
+                  child: Text('中文'),
+                ),
               ],
               onChanged: (val) {
-                if (val != null) {
-                  ref.read(settingsProvider.notifier).setLocale(val);
-                }
+                if (val != null) notifier.setLanguage(val);
               },
             ),
           ),
 
           ListTile(
             leading: const Icon(Icons.schedule_outlined),
-            title: Text(strings.timezone),
+            title: Text(strings.settingsTimezone),
             subtitle: Text(user?.timezone ?? 'UTC'),
           ),
 
-          _SectionHeader(title: strings.integrations),
+          _SectionHeader(title: strings.settingsIntegrations),
 
           ListTile(
             leading: const Icon(Icons.send_outlined),
             title: const Text('Telegram'),
             subtitle: Text(
-              user?.telegramChatId != null ? 'Connected' : 'Not configured',
+              user?.telegramChatId != null
+                  ? strings.settingsTelegramConnected
+                  : strings.settingsTelegramNotConfigured,
             ),
           ),
 
-          _SectionHeader(title: strings.server),
+          _SectionHeader(title: strings.settingsServer),
 
           ListTile(
             leading: const Icon(Icons.dns_outlined),
-            title: Text(strings.serverUrl),
-            subtitle: Text(authState.serverUrl ?? 'Not configured'),
+            title: Text(strings.settingsServerUrl),
+            subtitle: Text(
+              authState.serverUrl ?? strings.settingsServerNotConfigured,
+            ),
           ),
 
           ListTile(
             leading: const Icon(Icons.info_outline),
-            title: Text(strings.about),
-            subtitle: const Text('v1.0.1 • Open Source'),
+            title: Text(strings.settingsAbout),
+            subtitle: Text(strings.settingsAboutSubtitle),
             onTap: () {
               showAboutDialog(
                 context: context,
@@ -190,7 +272,7 @@ class SettingsScreen extends ConsumerWidget {
           ListTile(
             leading: Icon(Icons.logout_rounded, color: theme.colorScheme.error),
             title: Text(
-              strings.signOut,
+              strings.settingsSignOut,
               style: TextStyle(color: theme.colorScheme.error),
             ),
             onTap: () async {
@@ -205,20 +287,20 @@ class SettingsScreen extends ConsumerWidget {
               final confirm = await showDialog<bool>(
                 context: context,
                 builder: (ctx) => AlertDialog(
-                  title: Text(strings.signOut),
+                  title: Text(strings.settingsSignOut),
                   content: Text(
                     unsynced == 0
-                        ? strings.signOutConfirm
-                        : '${strings.signOutConfirm}\n\n$unsynced change(s) have not synced yet and will be lost.',
+                        ? strings.settingsSignOutConfirm
+                        : '${strings.settingsSignOutConfirm}\n\n${strings.settingsSignOutUnsynced(unsynced)}',
                   ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(ctx, false),
-                      child: Text(strings.cancel),
+                      child: Text(strings.settingsCancel),
                     ),
                     FilledButton(
                       onPressed: () => Navigator.pop(ctx, true),
-                      child: Text(strings.signOut),
+                      child: Text(strings.settingsSignOut),
                     ),
                   ],
                 ),

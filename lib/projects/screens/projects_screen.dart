@@ -4,9 +4,11 @@ import 'package:go_router/go_router.dart';
 
 import '../providers/project_provider.dart';
 import '../models/project_model.dart';
-import '../../core/theme/app_theme.dart';
-import '../../common/widgets/glass_container.dart';
-import '../../l10n/strings.dart';
+import '../../core/design/token_lookup.dart';
+import '../../core/design/tokens.dart';
+import '../../common/widgets/surface_card.dart';
+import '../../l10n/l10n_ext.dart';
+import '../widgets/project_status_label.dart';
 
 /// Projects list screen with card layout.
 class ProjectsScreen extends ConsumerStatefulWidget {
@@ -25,7 +27,7 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
     final strings = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(title: Text(strings.projects)),
+      appBar: AppBar(title: Text(strings.projectsTitle)),
       body: projectState.isLoading && !projectState.hasValue
           ? const Center(child: CircularProgressIndicator())
           : projectState.hasError && !projectState.hasValue
@@ -33,12 +35,12 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Error: ${projectState.error}'),
+                  Text(strings.projectLoadError('${projectState.error}')),
                   const SizedBox(height: 8),
                   FilledButton.tonal(
                     onPressed: () =>
                         ref.read(projectListProvider.notifier).refresh(),
-                    child: Text(strings.retry),
+                    child: Text(strings.projectRetry),
                   ),
                 ],
               ),
@@ -55,7 +57,7 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    strings.noProjectsYet,
+                    strings.projectsEmpty,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
@@ -81,7 +83,7 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/projects/new'),
         icon: const Icon(Icons.add_rounded),
-        label: Text(strings.newProject),
+        label: Text(strings.projectNew),
       ),
     );
   }
@@ -95,12 +97,9 @@ class _ProjectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final statusColor = AppTheme.getProjectStatusColor(
-      project.status,
-      theme.colorScheme,
-    );
+    final statusColor = context.tokens.projectStatusFor(project.status);
 
-    return GlassContainer(
+    return SurfaceCard(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
         onTap: onTap,
@@ -143,9 +142,8 @@ class _ProjectCard extends StatelessWidget {
                       child: Icon(
                         Icons.flag_rounded,
                         size: 16,
-                        color: AppTheme.getStringPriorityColor(
+                        color: context.tokens.priorityForName(
                           project.priorityName,
-                          theme.colorScheme,
                         ),
                       ),
                     ),
@@ -176,7 +174,7 @@ class _ProjectCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
-                      project.statusDisplay,
+                      projectStatusLabel(context.l10n, project.status),
                       style: TextStyle(
                         color: statusColor,
                         fontSize: 11,
@@ -197,7 +195,10 @@ class _ProjectCard extends StatelessWidget {
                   const Spacer(),
                   if (project.taskCount != null)
                     Text(
-                      '${project.completedTaskCount ?? 0}/${project.taskCount} tasks',
+                      context.l10n.projectTaskProgress(
+                        project.completedTaskCount ?? 0,
+                        project.taskCount!,
+                      ),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),

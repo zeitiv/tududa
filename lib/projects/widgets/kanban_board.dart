@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../data/project_tasks_source.dart';
-import '../../core/theme/app_theme.dart';
-import '../../common/widgets/glass_container.dart';
+import '../../core/design/token_lookup.dart';
+import '../../core/design/tokens.dart';
+import '../../common/widgets/surface_card.dart';
 
 import 'package:intl/intl.dart';
 
-import '../../l10n/strings.dart';
+import '../../l10n/l10n_ext.dart';
 
 class KanbanBoard extends StatefulWidget {
   final List<ProjectTaskRef> tasks;
@@ -28,24 +29,24 @@ class _KanbanBoardState extends State<KanbanBoard> {
   // Mirror Tududi's task lifecycle so tasks do not disappear by status.
   final List<int> _columns = [0, 6, 1, 4, 5, 2, 3];
 
-  String _getStatusName(int status, AppStrings strings) {
+  String _getStatusName(int status, AppLocalizations strings) {
     switch (status) {
       case 0:
-        return strings.toDo;
+        return strings.kanbanStatusToDo;
       case 3:
-        return strings.archived;
+        return strings.kanbanStatusArchived;
       case 6:
-        return strings.planned;
+        return strings.kanbanStatusPlanned;
       case 1:
-        return strings.inProgress;
+        return strings.kanbanStatusInProgress;
       case 2:
-        return strings.done;
+        return strings.kanbanStatusDone;
       case 4:
-        return strings.waiting;
+        return strings.kanbanStatusWaiting;
       case 5:
-        return strings.cancelled;
+        return strings.kanbanStatusCancelled;
       default:
-        return strings.other;
+        return strings.kanbanStatusOther;
     }
   }
 
@@ -56,7 +57,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
     if (widget.tasks.isEmpty) {
       return Center(
         child: Text(
-          strings.noTasksYet,
+          strings.kanbanNoTasks,
           style: Theme.of(context).textTheme.bodyLarge
               ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
@@ -93,7 +94,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
   ) {
     final theme = Theme.of(context);
 
-    return GlassContainer(
+    return SurfaceCard(
       width: 280, // Fixed width for columns
       margin: const EdgeInsets.symmetric(horizontal: 8),
       borderRadius: BorderRadius.circular(24),
@@ -205,12 +206,9 @@ class _KanbanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final priorityColor = AppTheme.getPriorityColor(
-      task.priority,
-      theme.colorScheme,
-    );
+    final priorityColor = context.tokens.priorityFor(task.priority);
 
-    return GlassContainer(
+    return SurfaceCard(
       margin: const EdgeInsets.only(bottom: 12),
       borderRadius: BorderRadius.circular(20),
       child: InkWell(

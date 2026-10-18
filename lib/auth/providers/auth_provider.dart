@@ -6,7 +6,8 @@ import '../session/auth_messages.dart';
 import '../session/server_config.dart';
 import '../session/session_controller.dart';
 
-/// Authentication state
+/// Authentication state. [AuthState.error] is untranslated diagnostic text;
+/// screens show [authErrorMessage] for the caught error instead.
 enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
 
 class AuthState {
@@ -109,7 +110,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       state = AuthState(
         status: AuthStatus.error,
         serverUrl: state.serverUrl,
-        error: describeAuthError(e),
+        error: authErrorDebugText(e),
       );
       return false;
     }
@@ -124,7 +125,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       state = AuthState(
         status: AuthStatus.unauthenticated,
         serverUrl: state.serverUrl,
-        error: describeAuthError(e),
+        error: authErrorDebugText(e),
       );
       return false;
     }

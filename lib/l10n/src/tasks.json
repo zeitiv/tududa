@@ -1,0 +1,442 @@
+{
+ "taskListTitle": {
+  "en": "Tasks",
+  "de": "Aufgaben",
+  "zh": "任务",
+  "description": "Title of the tasks screen"
+ },
+ "taskViewList": {
+  "en": "List",
+  "de": "Liste",
+  "zh": "列表",
+  "description": "Tooltip: switch to list view"
+ },
+ "taskViewBoard": {
+  "en": "Board",
+  "de": "Board",
+  "zh": "看板",
+  "description": "Tooltip: switch to board view"
+ },
+ "taskSortTooltip": {
+  "en": "Sort",
+  "de": "Sortieren",
+  "zh": "排序"
+ },
+ "taskSortPriority": {
+  "en": "Priority",
+  "de": "Priorität",
+  "zh": "优先级"
+ },
+ "taskSortDueDate": {
+  "en": "Due Date",
+  "de": "Fälligkeitsdatum",
+  "zh": "截止日期"
+ },
+ "taskSortName": {
+  "en": "Name",
+  "de": "Name",
+  "zh": "名称"
+ },
+ "taskSortCreated": {
+  "en": "Date Created",
+  "de": "Erstellungsdatum",
+  "zh": "创建日期"
+ },
+ "taskFilterToday": {
+  "en": "Today",
+  "de": "Heute",
+  "zh": "今天"
+ },
+ "taskFilterUpcoming": {
+  "en": "Upcoming",
+  "de": "Anstehend",
+  "zh": "即将到来"
+ },
+ "taskFilterSomeday": {
+  "en": "Someday",
+  "de": "Irgendwann",
+  "zh": "某天"
+ },
+ "taskFilterCompleted": {
+  "en": "Completed",
+  "de": "Erledigt",
+  "zh": "已完成"
+ },
+ "taskFilterAll": {
+  "en": "All",
+  "de": "Alle",
+  "zh": "全部"
+ },
+ "taskNewButton": {
+  "en": "New Task",
+  "de": "Neue Aufgabe",
+  "zh": "新建任务",
+  "description": "Label of the create-task button"
+ },
+ "taskEmptyAll": {
+  "en": "No tasks found.\nTap + to create one.",
+  "de": "Keine Aufgaben gefunden.\nTippe auf +, um eine zu erstellen.",
+  "zh": "暂无任务\n点击 + 新建"
+ },
+ "taskEmptyToday": {
+  "en": "No tasks for today.\nEnjoy your free time! 🎉",
+  "de": "Heute keine Aufgaben.\nGenieße deine freie Zeit! 🎉",
+  "zh": "今天没有任务啦。\n好好享受空闲时光！🎉"
+ },
+ "taskEmptyCompleted": {
+  "en": "No completed tasks yet.",
+  "de": "Noch keine erledigten Aufgaben.",
+  "zh": "还没有已完成的任务。"
+ },
+ "taskRetry": {
+  "en": "Retry",
+  "de": "Erneut versuchen",
+  "zh": "重试"
+ },
+ "taskCancel": {
+  "en": "Cancel",
+  "de": "Abbrechen",
+  "zh": "取消"
+ },
+ "taskDelete": {
+  "en": "Delete",
+  "de": "Löschen",
+  "zh": "删除"
+ },
+ "taskFormTitleNew": {
+  "en": "New Task",
+  "de": "Neue Aufgabe",
+  "zh": "新建任务"
+ },
+ "taskFormTitleEdit": {
+  "en": "Edit Task",
+  "de": "Aufgabe bearbeiten",
+  "zh": "编辑任务"
+ },
+ "taskFormSave": {
+  "en": "Save",
+  "de": "Speichern",
+  "zh": "保存"
+ },
+ "taskFormNameLabel": {
+  "en": "Task Name",
+  "de": "Aufgabenname",
+  "zh": "任务名称"
+ },
+ "taskFormNameHint": {
+  "en": "What needs to be done?",
+  "de": "Was ist zu tun?",
+  "zh": "有哪些需要做的事？"
+ },
+ "taskFormNameRequired": {
+  "en": "Name is required",
+  "de": "Name ist erforderlich",
+  "zh": "名称不能为空"
+ },
+ "taskFormPriority": {
+  "en": "Priority",
+  "de": "Priorität",
+  "zh": "优先级"
+ },
+ "taskFormStatus": {
+  "en": "Status",
+  "de": "Status",
+  "zh": "状态"
+ },
+ "taskFormDueDate": {
+  "en": "Due Date",
+  "de": "Fälligkeitsdatum",
+  "zh": "截止日期"
+ },
+ "taskFormDeferUntil": {
+  "en": "Defer Until",
+  "de": "Zurückstellen bis",
+  "zh": "推迟至"
+ },
+ "taskFormNotSet": {
+  "en": "Not set",
+  "de": "Nicht festgelegt",
+  "zh": "未设置"
+ },
+ "taskFormClearTooltip": {
+  "en": "Clear",
+  "de": "Zurücksetzen",
+  "zh": "清除"
+ },
+ "taskFormProject": {
+  "en": "Project",
+  "de": "Projekt",
+  "zh": "项目"
+ },
+ "taskFormNone": {
+  "en": "None",
+  "de": "Keine",
+  "zh": "无"
+ },
+ "taskFormProjectSelected": {
+  "en": "Selected",
+  "de": "Ausgewählt",
+  "zh": "已选择",
+  "description": "Fallback when the chosen project's name is unknown"
+ },
+ "taskFormRecurrence": {
+  "en": "Recurrence",
+  "de": "Wiederholung",
+  "zh": "重复"
+ },
+ "taskRecurDaily": {
+  "en": "Daily",
+  "de": "Täglich",
+  "zh": "每天"
+ },
+ "taskRecurWeekly": {
+  "en": "Weekly",
+  "de": "Wöchentlich",
+  "zh": "每周"
+ },
+ "taskRecurMonthly": {
+  "en": "Monthly",
+  "de": "Monatlich",
+  "zh": "每月"
+ },
+ "taskRecurMonthlyWeekday": {
+  "en": "Monthly (weekday)",
+  "de": "Monatlich (Wochentag)",
+  "zh": "每月（按星期）"
+ },
+ "taskRecurMonthlyLastDay": {
+  "en": "Monthly (last day)",
+  "de": "Monatlich (letzter Tag)",
+  "zh": "每月（最后一天）"
+ },
+ "taskFormEvery": {
+  "en": "Every",
+  "de": "Alle",
+  "zh": "每",
+  "description": "Prefix before the recurrence interval number"
+ },
+ "taskFormUnitDays": {
+  "en": "{count, plural, one{day} other{days}}",
+  "de": "{count, plural, one{Tag} other{Tage}}",
+  "zh": "{count, plural, other{天}}",
+  "description": "Unit after the recurrence interval",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "taskFormUnitWeeks": {
+  "en": "{count, plural, one{week} other{weeks}}",
+  "de": "{count, plural, one{Woche} other{Wochen}}",
+  "zh": "{count, plural, other{周}}",
+  "description": "Unit after the recurrence interval",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "taskFormUnitMonths": {
+  "en": "{count, plural, one{month} other{months}}",
+  "de": "{count, plural, one{Monat} other{Monate}}",
+  "zh": "{count, plural, other{个月}}",
+  "description": "Unit after the recurrence interval",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "taskFormCompletionBased": {
+  "en": "Completion-based",
+  "de": "Nach Erledigung",
+  "zh": "基于完成状态"
+ },
+ "taskFormCompletionBasedHint": {
+  "en": "Repeat from completion date",
+  "de": "Ab dem Erledigungsdatum wiederholen",
+  "zh": "从上次完成时间开始循环"
+ },
+ "taskFormNoteLabel": {
+  "en": "Notes",
+  "de": "Notizen",
+  "zh": "备注"
+ },
+ "taskFormNoteHint": {
+  "en": "Add details (Markdown supported)",
+  "de": "Details hinzufügen (Markdown unterstützt)",
+  "zh": "添加详情 (支持 Markdown)"
+ },
+ "taskDetailEditTooltip": {
+  "en": "Edit",
+  "de": "Bearbeiten",
+  "zh": "编辑"
+ },
+ "taskDetailMenuTooltip": {
+  "en": "More actions",
+  "de": "Weitere Aktionen",
+  "zh": "更多操作"
+ },
+ "taskDetailDeleteTitle": {
+  "en": "Delete Task",
+  "de": "Aufgabe löschen",
+  "zh": "删除任务"
+ },
+ "taskDetailDeleteMessage": {
+  "en": "Are you sure you want to delete this task?",
+  "de": "Möchtest du diese Aufgabe wirklich löschen?",
+  "zh": "确定要删除此任务吗？"
+ },
+ "taskDetailMarkComplete": {
+  "en": "Mark as Complete",
+  "de": "Als erledigt markieren",
+  "zh": "标记为已完成"
+ },
+ "taskDetailMarkIncomplete": {
+  "en": "Mark as Incomplete",
+  "de": "Als unerledigt markieren",
+  "zh": "标记为未完成"
+ },
+ "taskDetailDue": {
+  "en": "Due",
+  "de": "Fällig",
+  "zh": "截止"
+ },
+ "taskDetailDeferUntil": {
+  "en": "Defer until",
+  "de": "Zurückgestellt bis",
+  "zh": "推迟至"
+ },
+ "taskDetailProject": {
+  "en": "Project",
+  "de": "Projekt",
+  "zh": "项目"
+ },
+ "taskDetailCompleted": {
+  "en": "Completed",
+  "de": "Erledigt",
+  "zh": "已完成"
+ },
+ "taskDetailSubtasks": {
+  "en": "Subtasks",
+  "de": "Unteraufgaben",
+  "zh": "子任务"
+ },
+ "taskDetailMetaLabel": {
+  "en": "{label}: ",
+  "de": "{label}: ",
+  "zh": "{label}：",
+  "description": "Label of a meta row, followed by its value",
+  "placeholders": {
+   "label": {
+    "type": "String"
+   }
+  }
+ },
+ "taskRecurEveryDays": {
+  "en": "Every {count} days",
+  "de": "Alle {count} Tage",
+  "zh": "每 {count} 天",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "taskRecurEveryWeeks": {
+  "en": "Every {count} weeks",
+  "de": "Alle {count} Wochen",
+  "zh": "每 {count} 周",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "taskRecurEveryMonths": {
+  "en": "Every {count} months",
+  "de": "Alle {count} Monate",
+  "zh": "每 {count} 个月",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "taskErrorGeneric": {
+  "en": "Something went wrong",
+  "de": "Etwas ist schiefgelaufen",
+  "zh": "出错了"
+ },
+ "taskErrorNetwork": {
+  "en": "No connection to the server",
+  "de": "Keine Verbindung zum Server",
+  "zh": "无法连接到服务器"
+ },
+ "taskErrorTimeout": {
+  "en": "The server took too long to respond",
+  "de": "Der Server hat zu lange nicht geantwortet",
+  "zh": "服务器响应超时"
+ },
+ "taskErrorCancelled": {
+  "en": "Cancelled",
+  "de": "Abgebrochen",
+  "zh": "已取消"
+ },
+ "taskErrorUnauthorized": {
+  "en": "Session expired. Please sign in again.",
+  "de": "Sitzung abgelaufen. Bitte melde dich erneut an.",
+  "zh": "登录已过期，请重新登录。"
+ },
+ "taskErrorInvalidCredentials": {
+  "en": "Invalid email or password",
+  "de": "Ungültige E-Mail oder ungültiges Passwort",
+  "zh": "邮箱或密码无效"
+ },
+ "taskErrorEmailNotVerified": {
+  "en": "Email address not verified",
+  "de": "E-Mail-Adresse nicht bestätigt",
+  "zh": "邮箱地址未验证"
+ },
+ "taskErrorPasswordLoginDisabled": {
+  "en": "Password login is disabled",
+  "de": "Die Anmeldung per Passwort ist deaktiviert",
+  "zh": "密码登录已禁用"
+ },
+ "taskErrorCsrf": {
+  "en": "Security check failed. Please try again.",
+  "de": "Sicherheitsprüfung fehlgeschlagen. Bitte versuche es erneut.",
+  "zh": "安全校验失败，请重试。"
+ },
+ "taskErrorForbidden": {
+  "en": "You are not allowed to do that",
+  "de": "Dazu hast du keine Berechtigung",
+  "zh": "你没有执行此操作的权限"
+ },
+ "taskErrorNotFound": {
+  "en": "Task not found",
+  "de": "Aufgabe nicht gefunden",
+  "zh": "未找到任务"
+ },
+ "taskErrorRateLimited": {
+  "en": "Too many requests. Try again in a moment.",
+  "de": "Zu viele Anfragen. Versuche es gleich noch einmal.",
+  "zh": "请求过于频繁，请稍后再试。"
+ },
+ "taskErrorServer": {
+  "en": "Server error ({statusCode})",
+  "de": "Serverfehler ({statusCode})",
+  "zh": "服务器错误（{statusCode}）",
+  "placeholders": {
+   "statusCode": {
+    "type": "int"
+   }
+  }
+ },
+ "taskErrorDecoding": {
+  "en": "Unexpected response from the server",
+  "de": "Unerwartete Antwort vom Server",
+  "zh": "服务器返回了意外的响应"
+ }
+}

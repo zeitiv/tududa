@@ -5,6 +5,7 @@ import '../../core/db/app_database.dart';
 import '../../core/sync/merge.dart';
 import '../../core/sync/sync_actions.dart';
 import '../../core/sync/sync_status.dart';
+import '../../l10n/l10n_ext.dart';
 
 /// Live outbox contents.
 final outboxEntriesProvider = StreamProvider.autoDispose<List<OutboxEntry>>(
@@ -12,32 +13,28 @@ final outboxEntriesProvider = StreamProvider.autoDispose<List<OutboxEntry>>(
 );
 
 /// "5 minutes ago" style text; 'never' when [t] is null.
-String relativeSyncTime(DateTime? t, {DateTime? now}) {
-  if (t == null) return 'never';
+String relativeSyncTime(AppLocalizations l, DateTime? t, {DateTime? now}) {
+  if (t == null) return l.syncTimeNever;
   final d = (now ?? DateTime.now()).difference(t);
-  if (d.inSeconds < 60) return 'just now';
-  if (d.inMinutes < 60) {
-    return '${d.inMinutes} ${d.inMinutes == 1 ? 'minute' : 'minutes'} ago';
-  }
-  if (d.inHours < 24) {
-    return '${d.inHours} ${d.inHours == 1 ? 'hour' : 'hours'} ago';
-  }
-  return '${d.inDays} ${d.inDays == 1 ? 'day' : 'days'} ago';
+  if (d.inSeconds < 60) return l.syncTimeJustNow;
+  if (d.inMinutes < 60) return l.syncTimeMinutesAgo(d.inMinutes);
+  if (d.inHours < 24) return l.syncTimeHoursAgo(d.inHours);
+  return l.syncTimeDaysAgo(d.inDays);
 }
 
-String _phaseLabel(SyncPhase p) => switch (p) {
-  SyncPhase.idle => 'Up to date',
-  SyncPhase.syncing => 'Syncing',
-  SyncPhase.offline => 'Offline',
-  SyncPhase.error => 'Sync problem',
-  SyncPhase.signedOut => 'Signed out',
+String _phaseLabel(AppLocalizations l, SyncPhase p) => switch (p) {
+  SyncPhase.idle => l.syncPhaseIdle,
+  SyncPhase.syncing => l.syncPhaseSyncing,
+  SyncPhase.offline => l.syncPhaseOffline,
+  SyncPhase.error => l.syncPhaseError,
+  SyncPhase.signedOut => l.syncPhaseSignedOut,
 };
 
-String _entryState(String state) => switch (state) {
-  'failed' => 'Failed, will retry',
-  'stuck' => 'Stuck',
-  'inflight' => 'Sending',
-  _ => 'Pending',
+String _entryState(AppLocalizations l, String state) => switch (state) {
+  'failed' => l.syncEntryFailed,
+  'stuck' => l.syncEntryStuck,
+  'inflight' => l.syncEntrySending,
+  _ => l.syncEntryPending,
 };
 
 String _title(String s) =>
@@ -50,19 +47,20 @@ class SyncScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l = context.l10n;
     final status = ref.watch(syncStatusProvider);
     final entries = ref.watch(outboxEntriesProvider);
     final actions = ref.read(syncActionsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sync')),
+      appBar: AppBar(title: Text(l.syncTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text(_phaseLabel(status.phase), style: theme.textTheme.titleLarge),
+          Text(_phaseLabel(l, status.phase), style: theme.textTheme.titleLarge),
           const SizedBox(height: 4),
           Text(
-            'Last synced ${relativeSyncTime(status.lastSyncAt)}',
+            l.syncLastSynced(relativeSyncTime(l, status.lastSyncAt)),
             style: theme.textTheme.bodyMedium,
           ),
           if (status.lastError != null) ...[
@@ -84,16 +82,16 @@ class SyncScreen extends ConsumerWidget {
                     ? null
                     : actions.syncNow,
                 icon: const Icon(Icons.sync),
-                label: const Text('Sync now'),
+                label: Text(l.syncNow),
               ),
               OutlinedButton(
                 onPressed: actions.retryAll,
-                child: const Text('Retry all'),
+                child: Text(l.syncRetryAll),
               ),
             ],
           ),
           const SizedBox(height: 24),
-          Text('Queued changes', style: theme.textTheme.titleMedium),
+          Text(l.syncQueuedChanges, style: theme.textTheme.titleMedium),
           const SizedBox(height: 8),
           entries.when(
             loading: () => const Center(
@@ -103,11 +101,11 @@ class SyncScreen extends ConsumerWidget {
               ),
             ),
             error: (e, _) => Text(
-              'Could not load queued changes: $e',
+              l.syncLoadError('$e'),
               style: TextStyle(color: theme.colorScheme.error),
             ),
             data: (list) => list.isEmpty
-                ? const Text('Nothing queued. All changes are synced.')
+                ? Text(l.syncNothingQueued)
                 : Column(
                     children: [
                       for (final e in list)
@@ -120,20 +118,20 @@ class SyncScreen extends ConsumerWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Recent conflicts',
+                  l.syncRecentConflicts,
                   style: theme.textTheme.titleMedium,
                 ),
               ),
               if (status.notices.isNotEmpty)
                 TextButton(
                   onPressed: actions.dismissNotices,
-                  child: const Text('Dismiss'),
+                  child: Text(l.syncDismiss),
                 ),
             ],
           ),
           const SizedBox(height: 8),
           if (status.notices.isEmpty)
-            const Text('No conflicts to review.')
+            Text(l.syncNoConflicts)
           else
             for (final n in status.notices.reversed) _NoticeTile(notice: n),
         ],
@@ -150,6 +148,7 @@ class _EntryTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l = context.l10n;
     final actions = ref.read(syncActionsProvider);
     final bad = entry.state == 'failed' || entry.state == 'stuck';
 
@@ -165,8 +164,7 @@ class _EntryTile extends ConsumerWidget {
               style: theme.textTheme.titleSmall,
             ),
             Text(
-              '${_entryState(entry.state)} - '
-              '${entry.attempts} ${entry.attempts == 1 ? 'attempt' : 'attempts'}',
+              l.syncEntryLine(_entryState(l, entry.state), entry.attempts),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: bad ? theme.colorScheme.error : null,
               ),
@@ -178,11 +176,11 @@ class _EntryTile extends ConsumerWidget {
               children: [
                 TextButton(
                   onPressed: () => actions.retry(entry.id),
-                  child: const Text('Retry'),
+                  child: Text(l.syncRetry),
                 ),
                 TextButton(
                   onPressed: () => _confirmDiscard(context, actions),
-                  child: const Text('Discard'),
+                  child: Text(l.syncDiscard),
                 ),
               ],
             ),
@@ -196,22 +194,20 @@ class _EntryTile extends ConsumerWidget {
     BuildContext context,
     SyncActions actions,
   ) async {
+    final l = context.l10n;
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Discard this change?'),
-        content: const Text(
-          'The change will be undone on this device and never sent to the '
-          'server.',
-        ),
+        title: Text(l.syncDiscardTitle),
+        content: Text(l.syncDiscardBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(l.syncCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Discard'),
+            child: Text(l.syncDiscard),
           ),
         ],
       ),
@@ -227,14 +223,15 @@ class _NoticeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final what = notice.field == '*' ? 'change' : notice.field;
+    final l = context.l10n;
+    final what = notice.field == '*' ? l.syncNoticeWholeChange : notice.field;
     final kept = notice.winner == ConflictWinner.server
-        ? 'server version kept'
-        : 'your version kept';
+        ? l.syncNoticeServerKept
+        : l.syncNoticeLocalKept;
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: const Icon(Icons.merge_type),
-      title: Text('${_title(notice.entity)}: $what - $kept'),
+      title: Text(l.syncNoticeLine(_title(notice.entity), what, kept)),
       subtitle: notice.message == null ? null : Text(notice.message!),
     );
   }

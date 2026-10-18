@@ -7,8 +7,8 @@ import '../providers/auth_provider.dart';
 import '../session/auth_messages.dart';
 import '../session/session_controller.dart';
 
-import '../../l10n/strings.dart';
-import '../../common/widgets/glass_container.dart';
+import '../../l10n/l10n_ext.dart';
+import '../../common/widgets/surface_card.dart';
 
 /// Login screen with email/password.
 class LoginScreen extends ConsumerStatefulWidget {
@@ -63,7 +63,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(describeAuthError(e)),
+          content: Text(authErrorMessage(context.l10n, e)),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
@@ -85,7 +85,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           child: Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-              child: GlassContainer(
+              child: SurfaceCard(
                 padding: const EdgeInsets.all(32),
                 child: Form(
                   key: _formKey,
@@ -136,13 +136,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       if (authState.serverUrl != null)
                         GestureDetector(
                           onTap: () => context.go('/server-config'),
-                          child: GlassContainer(
+                          child: SurfaceCard(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 8,
                             ),
                             borderRadius: BorderRadius.circular(20),
-                            blur: 4.0,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -177,7 +176,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         textInputAction: TextInputAction.next,
                         autocorrect: false,
                         decoration: InputDecoration(
-                          labelText: strings.email,
+                          labelText: strings.authEmail,
                           prefixIcon: const Icon(Icons.email_outlined),
                           filled: true,
                           fillColor: theme.colorScheme.surface.withValues(
@@ -190,9 +189,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         ),
                         validator: (v) {
                           if (v == null || v.trim().isEmpty) {
-                            return strings.emailRequired;
+                            return strings.authEmailRequired;
                           }
-                          if (!v.contains('@')) return strings.invalidEmail;
+                          if (!v.contains('@')) return strings.authInvalidEmail;
                           return null;
                         },
                       ),
@@ -204,7 +203,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         obscureText: _obscurePassword,
                         textInputAction: TextInputAction.done,
                         decoration: InputDecoration(
-                          labelText: strings.password,
+                          labelText: strings.authPassword,
                           prefixIcon: const Icon(Icons.lock_outlined),
                           filled: true,
                           fillColor: theme.colorScheme.surface.withValues(
@@ -215,6 +214,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             borderSide: BorderSide.none,
                           ),
                           suffixIcon: IconButton(
+                            tooltip: _obscurePassword
+                                ? strings.authShowPassword
+                                : strings.authHidePassword,
                             icon: Icon(
                               _obscurePassword
                                   ? Icons.visibility_outlined
@@ -227,7 +229,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         ),
                         validator: (v) {
                           if (v == null || v.isEmpty) {
-                            return strings.passwordRequired;
+                            return strings.authPasswordRequired;
                           }
                           return null;
                         },
@@ -257,7 +259,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   ),
                                 )
                               : Text(
-                                  strings.signIn,
+                                  strings.authSignIn,
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
@@ -273,7 +275,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           ref.read(authProvider.notifier).clearServerConfig();
                           context.go('/server-config');
                         },
-                        child: Text(strings.changeServer),
+                        child: Text(strings.authChangeServer),
                       ),
                     ],
                   ),

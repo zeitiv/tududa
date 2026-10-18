@@ -1,36 +1,40 @@
 import '../../core/api/api_error.dart';
+import '../../l10n/l10n_ext.dart';
 import 'server_config.dart';
 
-/// User-facing text for sign-in and server-setup failures. Strings stay
-/// inline until localisation (milestone 4).
-String describeAuthError(Object error) {
+/// User-facing, localised text for sign-in and server-setup failures.
+/// [error] is an [ApiError], a [ServerConfigError] or anything else.
+String authErrorMessage(AppLocalizations l, Object error) {
   switch (error) {
     case InvalidCredentialsError():
-      return 'Incorrect email or password.';
+      return l.authErrorInvalidCredentials;
     case EmailNotVerifiedError():
-      return 'Your email address is not verified yet. Check your inbox for '
-          'the verification link.';
+      return l.authErrorEmailNotVerified;
     case PasswordLoginDisabledError():
-      return 'Password sign-in is disabled for this account. It uses '
-          'single sign-on (SSO), which this app does not support yet.';
+      return l.authErrorPasswordLoginDisabled;
     case RateLimitedError(:final retryAfter):
-      if (retryAfter == null) return 'Too many attempts. Try again later.';
+      if (retryAfter == null) return l.authErrorRateLimited;
       final minutes = (retryAfter.inSeconds / 60).ceil().clamp(1, 1 << 30);
-      return 'Too many attempts. Try again in $minutes '
-          '${minutes == 1 ? 'minute' : 'minutes'}.';
+      return l.authErrorRateLimitedMinutes(minutes);
     case NetworkError() || TimeoutError():
-      return 'Could not reach the server. Check your connection and the '
-          'server address.';
+      return l.authErrorNetwork;
     case ServerError(:final statusCode):
-      return 'The server had a problem (${statusCode ?? '?'}). Try again '
-          'later.';
-    case InvalidServerUrlError(:final message):
-      return message;
+      return l.authErrorServer(statusCode?.toString() ?? '?');
+    case InvalidServerUrlError(:final isEmpty):
+      return isEmpty ? l.authErrorEnterServerUrl : l.authErrorInvalidServerUrl;
     case InsecureServerError():
-      return 'Plain HTTP connections are not encrypted.';
+      return l.authErrorInsecure;
     case ApiError(:final message):
+      // Server-provided text; not translatable.
       return message;
     default:
-      return 'Something went wrong.';
+      return l.authErrorGeneric;
   }
 }
+
+/// Untranslated description for diagnostics (e.g. `AuthState.error`), where
+/// no `BuildContext` is available.
+String authErrorDebugText(Object error) => switch (error) {
+  ApiError(:final message) || ServerConfigError(:final message) => message,
+  _ => error.toString(),
+};

@@ -8,6 +8,7 @@ import 'package:tududa/core/api/patch.dart' show Patch;
 import 'package:tududa/core/db/app_database.dart';
 import 'package:tududa/core/ids.dart';
 import 'package:tududa/core/sync/sync_engine.dart';
+import 'package:tududa/l10n/gen/app_localizations.dart';
 import 'package:tududa/notes/data/note_patch.dart';
 import 'package:tududa/notes/domain/note.dart';
 import 'package:tududa/notes/providers/note_provider.dart';
@@ -77,7 +78,12 @@ void main() {
           noteRepositoryProvider.overrideWithValue(env.notes),
           dioProvider.overrideWithValue(env.stack.dio),
         ],
-        child: MaterialApp.router(routerConfig: router),
+        child: MaterialApp.router(
+          locale: const Locale('en'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+        ),
       ),
     );
     return (router, env);

@@ -5,7 +5,7 @@ import '../../core/api/api_error.dart';
 import '../session/auth_messages.dart';
 import '../session/server_config.dart';
 import '../session/session_controller.dart';
-import '../../l10n/strings.dart';
+import '../../l10n/l10n_ext.dart';
 
 /// Server configuration screen - first-time setup.
 class ServerConfigScreen extends ConsumerStatefulWidget {
@@ -62,17 +62,17 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen>
       if (!mounted) return;
       if (await _confirmInsecure()) await _configure(allowInsecure: true);
     } on ServerConfigError catch (e) {
-      _showError(describeAuthError(e));
+      _showError(e);
     } on ApiError catch (e) {
-      _showError(describeAuthError(e));
+      _showError(e);
     }
   }
 
-  void _showError(String message) {
+  void _showError(Object error) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(authErrorMessage(context.l10n, error)),
         backgroundColor: Theme.of(context).colorScheme.error,
       ),
     );
@@ -82,20 +82,16 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen>
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Use insecure HTTP?'),
-        content: const Text(
-          'This address does not use HTTPS. Your password and tasks would be '
-          'sent without encryption and could be read on the network. Only '
-          'continue on a network you trust.',
-        ),
+        title: Text(context.l10n.authInsecureTitle),
+        content: Text(context.l10n.authInsecureBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.authCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Use insecure HTTP'),
+            child: Text(context.l10n.authInsecureConfirm),
           ),
         ],
       ),
@@ -153,14 +149,14 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen>
                     const SizedBox(height: 32),
 
                     Text(
-                      'Welcome to Tududa',
+                      strings.authWelcome,
                       style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Connect to your self-hosted Tududa server',
+                      strings.authConnectPrompt,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -175,14 +171,14 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen>
                       textInputAction: TextInputAction.done,
                       autocorrect: false,
                       decoration: InputDecoration(
-                        labelText: strings.serverUrl,
+                        labelText: strings.authServerUrl,
                         hintText: 'https://tududi.example.com',
                         prefixIcon: const Icon(Icons.dns_outlined),
-                        helperText: 'Enter your Tududa server address',
+                        helperText: strings.authServerUrlHelper,
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please enter a server URL';
+                          return strings.authServerUrlRequired;
                         }
                         return null;
                       },
@@ -207,7 +203,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen>
                               )
                             : const Icon(Icons.arrow_forward_rounded),
                         label: Text(
-                          _busy ? 'Connecting...' : 'Connect',
+                          _busy ? strings.authConnecting : strings.authConnect,
                           style: const TextStyle(fontSize: 16),
                         ),
                       ),

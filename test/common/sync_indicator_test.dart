@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tududa/common/widgets/offline_banner.dart';
 import 'package:tududa/common/widgets/sync_indicator.dart';
 import 'package:tududa/core/sync/sync_status.dart';
+import 'package:tududa/l10n/gen/app_localizations.dart';
 
 import 'sync_ui_harness.dart';
 
@@ -27,7 +28,12 @@ Future<void> pumpIndicator(WidgetTester tester, SyncStatus s) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: [syncStatusProvider.overrideWith(() => FakeSyncStatus(s))],
-      child: MaterialApp.router(routerConfig: router),
+      child: MaterialApp.router(
+        locale: const Locale('en'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        routerConfig: router,
+      ),
     ),
   );
 }
@@ -154,6 +160,9 @@ void main() {
           ),
         ],
         child: MaterialApp(
+          locale: const Locale('en'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) => MediaQuery(
             data: MediaQuery.of(context)
                 .copyWith(textScaler: const TextScaler.linear(2)),

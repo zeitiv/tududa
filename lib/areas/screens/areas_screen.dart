@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/api/api_error.dart';
+import '../../l10n/l10n_ext.dart';
 import '../../core/api/patch.dart' as pt;
 import '../data/area_api.dart';
 import '../providers/area_provider.dart';
@@ -29,7 +30,7 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('New Area'),
+        title: Text(ctx.l10n.areaNew),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -37,17 +38,17 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
               controller: nameController,
               autofocus: true,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                hintText: 'e.g. Work, Personal, Health',
+              decoration: InputDecoration(
+                labelText: ctx.l10n.areaName,
+                hintText: ctx.l10n.areaNameHint,
               ),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: descController,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                labelText: 'Description (optional)',
+              decoration: InputDecoration(
+                labelText: ctx.l10n.areaDescriptionOptional,
               ),
             ),
           ],
@@ -55,7 +56,7 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(ctx.l10n.areaCancel),
           ),
           FilledButton(
             onPressed: () async {
@@ -77,7 +78,7 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
                 if (ctx.mounted) Navigator.pop(ctx);
               }
             },
-            child: const Text('Create'),
+            child: Text(ctx.l10n.areaCreate),
           ),
         ],
       ),
@@ -91,26 +92,26 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Edit Area'),
+        title: Text(ctx.l10n.areaEdit),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameController,
               autofocus: true,
-              decoration: const InputDecoration(labelText: 'Name'),
+              decoration: InputDecoration(labelText: ctx.l10n.areaName),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: descController,
-              decoration: const InputDecoration(labelText: 'Description'),
+              decoration: InputDecoration(labelText: ctx.l10n.areaDescription),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(ctx.l10n.areaCancel),
           ),
           FilledButton(
             onPressed: () async {
@@ -133,7 +134,7 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
                 if (ctx.mounted) Navigator.pop(ctx);
               }
             },
-            child: const Text('Save'),
+            child: Text(ctx.l10n.areaSave),
           ),
         ],
       ),
@@ -147,11 +148,13 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
     final areas = areaState.value ?? const <Area>[];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Areas')),
+      appBar: AppBar(title: Text(context.l10n.areasTitle)),
       body: areaState.isLoading && !areaState.hasValue
           ? const Center(child: CircularProgressIndicator())
           : areaState.hasError && !areaState.hasValue
-          ? Center(child: Text('Error: ${areaState.error}'))
+          ? Center(
+              child: Text(context.l10n.areaLoadError('${areaState.error}')),
+            )
           : areas.isEmpty
           ? Center(
               child: Column(
@@ -164,14 +167,14 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No areas yet',
+                    context.l10n.areasEmpty,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Areas help organize your projects',
+                    context.l10n.areasEmptyHint,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -211,18 +214,16 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
                           final confirm = await showDialog<bool>(
                             context: context,
                             builder: (ctx) => AlertDialog(
-                              title: const Text('Delete Area'),
-                              content: const Text(
-                                'Projects in this area will be unlinked.',
-                              ),
+                              title: Text(ctx.l10n.areaDeleteTitle),
+                              content: Text(ctx.l10n.areaDeleteMessage),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(ctx, false),
-                                  child: const Text('Cancel'),
+                                  child: Text(ctx.l10n.areaCancel),
                                 ),
                                 FilledButton(
                                   onPressed: () => Navigator.pop(ctx, true),
-                                  child: const Text('Delete'),
+                                  child: Text(ctx.l10n.areaDeleteAction),
                                 ),
                               ],
                             ),
@@ -239,10 +240,13 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
                         }
                       },
                       itemBuilder: (context) => [
-                        const PopupMenuItem(value: 'edit', child: Text('Edit')),
-                        const PopupMenuItem(
+                        PopupMenuItem(
+                          value: 'edit',
+                          child: Text(context.l10n.areaEditAction),
+                        ),
+                        PopupMenuItem(
                           value: 'delete',
-                          child: Text('Delete'),
+                          child: Text(context.l10n.areaDeleteAction),
                         ),
                       ],
                     ),
@@ -253,6 +257,7 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showCreateDialog,
+        tooltip: context.l10n.areaAddTooltip,
         child: const Icon(Icons.add_rounded),
       ),
     );

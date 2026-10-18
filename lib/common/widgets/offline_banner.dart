@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/sync/sync_actions.dart';
 import '../../core/sync/sync_status.dart';
+import '../../l10n/l10n_ext.dart';
 import 'sync_indicator.dart';
 
 /// Thin banner shown while offline, signed out or when changes are stuck.
@@ -26,7 +27,7 @@ class OfflineBanner extends ConsumerWidget {
 
     Widget child = const SizedBox.shrink();
     if (visible) {
-      final label = syncStatusLabel(s);
+      final label = syncStatusLabel(context.l10n, s);
       final actions = ref.read(syncActionsProvider);
       child = Semantics(
         liveRegion: true,
@@ -65,7 +66,9 @@ class OfflineBanner extends ConsumerWidget {
                 TextButton(
                   onPressed: () =>
                       offline ? actions.syncNow() : actions.retryAll(),
-                  child: Text(offline ? 'Sync now' : 'Retry'),
+                  child: Text(
+                    offline ? context.l10n.syncNow : context.l10n.syncRetry,
+                  ),
                 ),
               ],
             ),

@@ -18,7 +18,10 @@ sealed class ServerConfigError implements Exception {
 
 /// The text is empty or cannot be turned into an http(s) URL.
 final class InvalidServerUrlError extends ServerConfigError {
-  const InvalidServerUrlError(super.message);
+  const InvalidServerUrlError(super.message, {this.isEmpty = false});
+
+  /// The input was blank (as opposed to malformed); picks the shown text.
+  final bool isEmpty;
 }
 
 /// Plain `http://` was used without `allowInsecure: true`. The UI shows a
@@ -37,7 +40,7 @@ final _scheme = RegExp(r'^[a-zA-Z][a-zA-Z0-9+.-]*://');
 String normalizeServerUrl(String input) {
   var text = input.trim();
   if (text.isEmpty) {
-    throw const InvalidServerUrlError('Enter a server address');
+    throw const InvalidServerUrlError('Enter a server address', isEmpty: true);
   }
   if (!_scheme.hasMatch(text)) text = 'https://$text';
 

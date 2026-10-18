@@ -3,15 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../providers/project_provider.dart';
-import '../../common/widgets/glass_container.dart';
+import '../../common/widgets/surface_card.dart';
 import '../../core/api/api_error.dart';
 import '../../core/ids.dart';
 import '../../core/sync/sync_engine.dart';
 import '../../core/sync/sync_handler.dart';
 import '../data/project_tasks_source.dart';
-import '../../core/theme/app_theme.dart';
+import '../../core/design/token_lookup.dart';
+import '../../core/design/tokens.dart';
 import '../widgets/kanban_board.dart';
-import '../../l10n/strings.dart';
+import '../../l10n/l10n_ext.dart';
+import '../widgets/project_status_label.dart';
 
 /// Project detail screen with tasks and notes.
 class ProjectDetailScreen extends ConsumerStatefulWidget {
@@ -42,23 +44,25 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
       error: (e, _) => Scaffold(
         appBar: AppBar(),
         body: Center(
-          child: Text(e is NotFoundError ? strings.noProjectsYet : 'Error: $e'),
+          child: Text(
+            e is NotFoundError
+                ? strings.projectNotFound
+                : strings.projectLoadError('$e'),
+          ),
         ),
       ),
       data: (project) {
         final tasksAsync = ref.watch(projectTasksProvider(_uid));
         final tasks = tasksAsync.value ?? const <ProjectTaskRef>[];
 
-        final statusColor = AppTheme.getProjectStatusColor(
-          project.status,
-          theme.colorScheme,
-        );
+        final statusColor = context.tokens.projectStatusFor(project.status);
 
         return Scaffold(
           appBar: AppBar(
             title: Text(project.name),
             actions: [
               IconButton(
+                tooltip: strings.projectEdit,
                 icon: const Icon(Icons.edit_outlined),
                 onPressed: () => context.push('/projects/${_uid.value}/edit'),
               ),
@@ -68,18 +72,16 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                     final confirm = await showDialog<bool>(
                       context: context,
                       builder: (ctx) => AlertDialog(
-                        title: Text(strings.isZh ? '删除项目' : 'Delete Project'),
-                        content: Text(
-                          strings.isZh ? '这将删除该项目及其所有任务。' : 'This will delete the project and all its tasks.',
-                        ),
+                        title: Text(strings.projectDeleteTitle),
+                        content: Text(strings.projectDeleteMessage),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),
-                            child: Text(strings.cancel),
+                            child: Text(strings.projectCancel),
                           ),
                           FilledButton(
                             onPressed: () => Navigator.pop(ctx, true),
-                            child: Text(strings.isZh ? '删除' : 'Delete'),
+                            child: Text(strings.projectDelete),
                           ),
                         ],
                       ),
@@ -100,9 +102,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                   }
                 },
                 itemBuilder: (context) => [
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'delete',
-                    child: Text('Delete', style: TextStyle(color: Colors.red)),
+                    child: Text(
+                      strings.projectDelete,
+                      style: const TextStyle(color: Colors.red),
+                    ),
                   ),
                 ],
               ),
@@ -115,7 +120,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
               padding: const EdgeInsets.all(16),
               children: [
                 // Project header card
-                GlassContainer(
+                SurfaceCard(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,7 +137,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              project.statusDisplay,
+                              projectStatusLabel(strings, project.status),
                               style: TextStyle(
                                 color: statusColor,
                                 fontWeight: FontWeight.w600,
@@ -144,9 +149,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                           if (project.priorityName != null)
                             Icon(
                               Icons.flag_rounded,
-                              color: AppTheme.getStringPriorityColor(
+                              color: context.tokens.priorityForName(
                                 project.priorityName,
-                                theme.colorScheme,
                               ),
                               size: 20,
                             ),
@@ -173,7 +177,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'Area: ${project.areaName}',
+                              strings.projectAreaLabel(project.areaName!),
                               style: theme.textTheme.bodySmall,
                             ),
                           ],
@@ -188,7 +192,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                 Row(
                   children: [
                     Text(
-                      strings.projectTasks,
+                      strings.projectTasksHeading,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -198,7 +202,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                       onPressed: () =>
                           context.push('/tasks/new?projectId=${project.id}'),
                       icon: const Icon(Icons.add_rounded, size: 18),
-                      label: Text(strings.addTask),
+                      label: Text(strings.projectAddTask),
                     ),
                   ],
                 ),
@@ -210,12 +214,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                       ButtonSegment(
                         value: true,
                         icon: const Icon(Icons.view_kanban_rounded),
-                        label: Text(strings.board),
+                        label: Text(strings.projectViewBoard),
                       ),
                       ButtonSegment(
                         value: false,
                         icon: const Icon(Icons.view_list_rounded),
-                        label: Text(strings.list),
+                        label: Text(strings.projectViewList),
                       ),
                     ],
                     selected: {_isKanbanView},
@@ -235,14 +239,18 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                     ),
                   )
                 else if (tasksAsync.hasError && !tasksAsync.hasValue)
-                  Center(child: Text('Error: ${tasksAsync.error}'))
+                  Center(
+                    child: Text(
+                      strings.projectLoadError('${tasksAsync.error}'),
+                    ),
+                  )
                 else if (tasks.isEmpty)
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(32),
                       child: Center(
                         child: Text(
-                          strings.noTasksYet,
+                          strings.kanbanNoTasks,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),

@@ -1,22 +1,24 @@
 import '../../core/api/api_error.dart';
+import '../../l10n/gen/app_localizations.dart';
 
-/// A short, user-facing line for [error]. Not localized yet.
-String apiErrorMessage(Object error) {
-  if (error is! ApiError) return 'Something went wrong';
+/// A short, user-facing, localized line for [error].
+String apiErrorMessage(AppLocalizations l, Object error) {
+  if (error is! ApiError) return l.taskErrorGeneric;
   return switch (error) {
-    NetworkError() => 'No connection to the server',
-    TimeoutError() => 'The server took too long to respond',
-    CancelledError() => 'Cancelled',
-    UnauthorizedError() => 'Session expired. Please sign in again.',
-    InvalidCredentialsError() => 'Invalid email or password',
-    EmailNotVerifiedError() => 'Email address not verified',
-    PasswordLoginDisabledError() => 'Password login is disabled',
-    CsrfError() => 'Security check failed. Please try again.',
-    ForbiddenError() => 'You are not allowed to do that',
-    NotFoundError() => 'Task not found',
+    NetworkError() => l.taskErrorNetwork,
+    TimeoutError() => l.taskErrorTimeout,
+    CancelledError() => l.taskErrorCancelled,
+    UnauthorizedError() => l.taskErrorUnauthorized,
+    InvalidCredentialsError() => l.taskErrorInvalidCredentials,
+    EmailNotVerifiedError() => l.taskErrorEmailNotVerified,
+    PasswordLoginDisabledError() => l.taskErrorPasswordLoginDisabled,
+    CsrfError() => l.taskErrorCsrf,
+    ForbiddenError() => l.taskErrorForbidden,
+    NotFoundError() => l.taskErrorNotFound,
     ValidationError(:final message) => message,
-    RateLimitedError() => 'Too many requests. Try again in a moment.',
-    ServerError(:final statusCode) => 'Server error ($statusCode)',
-    DecodingError() => 'Unexpected response from the server',
+    RateLimitedError() => l.taskErrorRateLimited,
+    ServerError(:final statusCode?) => l.taskErrorServer(statusCode),
+    ServerError() => l.taskErrorGeneric,
+    DecodingError() => l.taskErrorDecoding,
   };
 }

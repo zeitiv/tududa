@@ -3,5 +3,648 @@
   "appName": "Tududa",
   "@appName": {
     "description": "App name"
+  },
+  "areaAddTooltip": "New Area",
+  "@areaAddTooltip": {
+    "description": "Tooltip of the add-area FAB"
+  },
+  "areaCancel": "Cancel",
+  "areaCreate": "Create",
+  "areaDeleteAction": "Delete",
+  "areaDeleteMessage": "Projects in this area will be unlinked.",
+  "areaDeleteTitle": "Delete Area",
+  "areaDescription": "Description",
+  "areaDescriptionOptional": "Description (optional)",
+  "areaEdit": "Edit Area",
+  "areaEditAction": "Edit",
+  "areaLoadError": "Error: {error}",
+  "@areaLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "areaName": "Name",
+  "areaNameHint": "e.g. Work, Personal, Health",
+  "areaNew": "New Area",
+  "areaSave": "Save",
+  "areasEmpty": "No areas yet",
+  "areasEmptyHint": "Areas help organize your projects",
+  "areasTitle": "Areas",
+  "authCancel": "Cancel",
+  "authChangeServer": "Change Server",
+  "authConnect": "Connect",
+  "authConnectPrompt": "Connect to your self-hosted Tududa server",
+  "authConnecting": "Connecting...",
+  "authEmail": "Email",
+  "authEmailRequired": "Email is required",
+  "authErrorEmailNotVerified": "Your email address is not verified yet. Check your inbox for the verification link.",
+  "authErrorEnterServerUrl": "Enter a server address",
+  "authErrorGeneric": "Something went wrong.",
+  "authErrorInsecure": "Plain HTTP connections are not encrypted.",
+  "authErrorInvalidCredentials": "Incorrect email or password.",
+  "authErrorInvalidServerUrl": "That is not a valid address",
+  "authErrorNetwork": "Could not reach the server. Check your connection and the server address.",
+  "authErrorPasswordLoginDisabled": "Password sign-in is disabled for this account. It uses single sign-on (SSO), which this app does not support yet.",
+  "authErrorRateLimited": "Too many attempts. Try again later.",
+  "authErrorRateLimitedMinutes": "Too many attempts. Try again in {minutes, plural, =1{1 minute} other{{minutes} minutes}}.",
+  "@authErrorRateLimitedMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "authErrorServer": "The server had a problem ({code}). Try again later.",
+  "@authErrorServer": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "authHidePassword": "Hide password",
+  "@authHidePassword": {
+    "description": "Tooltip of the password visibility toggle"
+  },
+  "authInsecureBody": "This address does not use HTTPS. Your password and tasks would be sent without encryption and could be read on the network. Only continue on a network you trust.",
+  "authInsecureConfirm": "Use insecure HTTP",
+  "authInsecureTitle": "Use insecure HTTP?",
+  "authInvalidEmail": "Invalid email",
+  "authPassword": "Password",
+  "authPasswordRequired": "Password is required",
+  "authServerUrl": "Server URL",
+  "authServerUrlHelper": "Enter your Tududa server address",
+  "authServerUrlRequired": "Please enter a server URL",
+  "authShowPassword": "Show password",
+  "@authShowPassword": {
+    "description": "Tooltip of the password visibility toggle"
+  },
+  "authSignIn": "Sign In",
+  "authWelcome": "Welcome to Tududa",
+  "commonAdd": "Add",
+  "commonCancel": "Cancel",
+  "commonClose": "Close",
+  "commonConfirm": "Confirm",
+  "commonDelete": "Delete",
+  "commonEdit": "Edit",
+  "commonError": "Something went wrong",
+  "commonLoading": "Loading…",
+  "commonNone": "None",
+  "commonRetry": "Retry",
+  "commonSave": "Save",
+  "commonSearch": "Search",
+  "coreDaysAgo": "{count, plural, =1{1 day ago} other{{count} days ago}}",
+  "@coreDaysAgo": {
+    "description": "A date a few days in the past",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "coreInDays": "{count, plural, =1{in 1 day} other{in {count} days}}",
+  "@coreInDays": {
+    "description": "A date a few days in the future",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "coreToday": "Today",
+  "@coreToday": {
+    "description": "Relative day label for the current date"
+  },
+  "coreTomorrow": "Tomorrow",
+  "@coreTomorrow": {
+    "description": "Relative day label for the next date"
+  },
+  "coreYesterday": "Yesterday",
+  "@coreYesterday": {
+    "description": "Relative day label for the previous date"
+  },
+  "inboxEmpty": "Inbox is empty",
+  "inboxIgnore": "Ignore",
+  "inboxMarkProcessed": "Mark as Processed",
+  "inboxTelegramHint": "Items from Telegram will appear here",
+  "kanbanNoTasks": "No tasks found.\nTap + to create one.",
+  "kanbanStatusArchived": "Archived",
+  "@kanbanStatusArchived": {
+    "description": "Kanban column title"
+  },
+  "kanbanStatusCancelled": "Cancelled",
+  "@kanbanStatusCancelled": {
+    "description": "Kanban column title"
+  },
+  "kanbanStatusDone": "Done",
+  "@kanbanStatusDone": {
+    "description": "Kanban column title"
+  },
+  "kanbanStatusInProgress": "In Progress",
+  "@kanbanStatusInProgress": {
+    "description": "Kanban column title"
+  },
+  "kanbanStatusOther": "Other",
+  "@kanbanStatusOther": {
+    "description": "Kanban column title"
+  },
+  "kanbanStatusPlanned": "Planned",
+  "@kanbanStatusPlanned": {
+    "description": "Kanban column title"
+  },
+  "kanbanStatusToDo": "To Do",
+  "@kanbanStatusToDo": {
+    "description": "Kanban column title"
+  },
+  "kanbanStatusWaiting": "Waiting",
+  "@kanbanStatusWaiting": {
+    "description": "Kanban column title"
+  },
+  "navInbox": "Inbox",
+  "@navInbox": {
+    "description": "Bottom navigation label and inbox screen title"
+  },
+  "navMore": "More",
+  "@navMore": {
+    "description": "Bottom navigation label"
+  },
+  "navNotes": "Notes",
+  "@navNotes": {
+    "description": "Bottom navigation label and notes screen title"
+  },
+  "navProjects": "Projects",
+  "@navProjects": {
+    "description": "Bottom navigation label"
+  },
+  "navTasks": "Tasks",
+  "@navTasks": {
+    "description": "Bottom navigation label"
+  },
+  "noteColor": "Color",
+  "noteContentHint": "Jot down your thoughts (Markdown supported)",
+  "noteDeleteConfirm": "Are you sure?",
+  "noteDeleteTitle": "Delete Note",
+  "noteEdit": "Edit Note",
+  "noteEmpty": "No notes yet.\nTap + to create one.",
+  "noteNew": "New Note",
+  "noteProject": "Project",
+  "noteSaveFailed": "Failed to save note",
+  "noteTitleHint": "Note Title",
+  "projectAddTask": "Add Task",
+  "projectArea": "Area",
+  "projectAreaLabel": "Area: {name}",
+  "@projectAreaLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "projectCancel": "Cancel",
+  "projectDelete": "Delete",
+  "projectDeleteMessage": "This will delete the project and all its tasks.",
+  "projectDeleteTitle": "Delete Project",
+  "projectDescription": "Description",
+  "projectEdit": "Edit Project",
+  "projectLoadError": "Error: {error}",
+  "@projectLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "projectName": "Project Name",
+  "projectNameHint": "Max 6 words",
+  "projectNameRequired": "Name is required",
+  "projectNew": "New Project",
+  "projectNoArea": "No Area",
+  "projectNotFound": "Project not found",
+  "projectPinSidebar": "Pin to Sidebar",
+  "projectPinSidebarHint": "Quick access from navigation",
+  "projectPriority": "Priority",
+  "projectPriorityHigh": "High",
+  "projectPriorityLow": "Low",
+  "projectPriorityMedium": "Medium",
+  "projectPriorityNone": "None",
+  "projectRetry": "Retry",
+  "projectSave": "Save",
+  "projectSaveFailed": "Failed to save project: {error}",
+  "@projectSaveFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "projectStatus": "Status",
+  "projectStatusCancelled": "Cancelled",
+  "projectStatusDone": "Done",
+  "projectStatusInProgress": "In Progress",
+  "projectStatusNotStarted": "Not Started",
+  "projectStatusPlanned": "Planned",
+  "projectStatusWaiting": "Waiting",
+  "projectTaskProgress": "{done}/{total} tasks",
+  "@projectTaskProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "projectTasksHeading": "Project Tasks",
+  "projectViewBoard": "Board",
+  "projectViewList": "List",
+  "projectsEmpty": "No projects yet.\nTap + to create one.",
+  "projectsTitle": "Projects",
+  "@projectsTitle": {
+    "description": "Projects list app bar title"
+  },
+  "settingsAbout": "About Tududa",
+  "settingsAboutSubtitle": "v1.0.1 • Open Source",
+  "settingsAppearance": "Appearance",
+  "settingsAreas": "Areas",
+  "settingsAreasDesc": "Organize projects into areas",
+  "settingsCancel": "Cancel",
+  "settingsContrast": "Contrast",
+  "settingsContrastHigh": "High",
+  "settingsContrastMedium": "Medium",
+  "settingsContrastStandard": "Standard",
+  "settingsDensity": "Density",
+  "settingsDensityComfortable": "Comfortable",
+  "settingsDensityCompact": "Compact",
+  "settingsDynamicColor": "Dynamic color",
+  "@settingsDynamicColor": {
+    "description": "Switch title: use the wallpaper colors (Material You)"
+  },
+  "settingsDynamicColorHint": "Use colors from your wallpaper when available",
+  "settingsIntegrations": "Integrations",
+  "settingsLanguage": "Language",
+  "settingsLanguageSystem": "System default",
+  "@settingsLanguageSystem": {
+    "description": "Language option that follows the device language"
+  },
+  "settingsMore": "More",
+  "settingsNavigation": "Navigation",
+  "settingsPreferences": "Preferences",
+  "settingsReduceMotion": "Reduce motion",
+  "settingsReduceMotionHint": "Turn off transitions and animations",
+  "settingsServer": "Server",
+  "settingsServerNotConfigured": "Not configured",
+  "settingsServerUrl": "Server URL",
+  "settingsSignOut": "Sign Out",
+  "settingsSignOutConfirm": "Are you sure you want to sign out?",
+  "settingsSignOutUnsynced": "{count, plural, =1{1 change has} other{{count} changes have}} not synced yet and will be lost.",
+  "@settingsSignOutUnsynced": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsTelegramConnected": "Connected",
+  "settingsTelegramNotConfigured": "Not configured",
+  "settingsThemeDark": "Dark",
+  "settingsThemeLight": "Light",
+  "settingsThemeSystem": "System",
+  "settingsTimezone": "Timezone",
+  "syncCancel": "Cancel",
+  "syncDiscard": "Discard",
+  "syncDiscardBody": "The change will be undone on this device and never sent to the server.",
+  "syncDiscardTitle": "Discard this change?",
+  "syncDismiss": "Dismiss",
+  "syncEntryFailed": "Failed, will retry",
+  "syncEntryLine": "{state} - {count, plural, =1{1 attempt} other{{count} attempts}}",
+  "@syncEntryLine": {
+    "placeholders": {
+      "state": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncEntryPending": "Pending",
+  "syncEntrySending": "Sending",
+  "syncEntryStuck": "Stuck",
+  "syncLastSynced": "Last synced {when}",
+  "@syncLastSynced": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "syncLoadError": "Could not load queued changes: {error}",
+  "@syncLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "syncNoConflicts": "No conflicts to review.",
+  "syncNothingQueued": "Nothing queued. All changes are synced.",
+  "syncNoticeLine": "{entity}: {what} - {kept}",
+  "@syncNoticeLine": {
+    "placeholders": {
+      "entity": {
+        "type": "String"
+      },
+      "what": {
+        "type": "String"
+      },
+      "kept": {
+        "type": "String"
+      }
+    }
+  },
+  "syncNoticeLocalKept": "your version kept",
+  "syncNoticeServerKept": "server version kept",
+  "syncNoticeWholeChange": "change",
+  "@syncNoticeWholeChange": {
+    "description": "Used in place of a field name when a whole change was rolled back"
+  },
+  "syncNow": "Sync now",
+  "syncPhaseError": "Sync problem",
+  "syncPhaseIdle": "Up to date",
+  "syncPhaseOffline": "Offline",
+  "syncPhaseSignedOut": "Signed out",
+  "syncPhaseSyncing": "Syncing",
+  "syncQueuedChanges": "Queued changes",
+  "syncRecentConflicts": "Recent conflicts",
+  "syncRetry": "Retry",
+  "syncRetryAll": "Retry all",
+  "syncStatusAllSynced": "All changes synced",
+  "syncStatusOfflineIdle": "Offline, nothing waiting to sync",
+  "syncStatusOfflineWaiting": "Offline, {count, plural, =1{1 change} other{{count} changes}} waiting to sync",
+  "@syncStatusOfflineWaiting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncStatusProblem": "Sync problem, {count, plural, =1{1 change} other{{count} changes}} failed",
+  "@syncStatusProblem": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncStatusSignedOut": "Signed out",
+  "syncStatusSignedOutWaiting": "Signed out, {count, plural, =1{1 change} other{{count} changes}} waiting to sync",
+  "@syncStatusSignedOutWaiting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncStatusSyncing": "Syncing",
+  "@syncStatusSyncing": {
+    "description": "Screen-reader sync status"
+  },
+  "syncStatusWaiting": "{count, plural, =1{1 change} other{{count} changes}} waiting to sync",
+  "@syncStatusWaiting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncTimeDaysAgo": "{count, plural, =1{1 day} other{{count} days}} ago",
+  "@syncTimeDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncTimeHoursAgo": "{count, plural, =1{1 hour} other{{count} hours}} ago",
+  "@syncTimeHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncTimeJustNow": "just now",
+  "syncTimeMinutesAgo": "{count, plural, =1{1 minute} other{{count} minutes}} ago",
+  "@syncTimeMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncTimeNever": "never",
+  "syncTitle": "Sync",
+  "taskCancel": "Cancel",
+  "taskDelete": "Delete",
+  "taskDetailCompleted": "Completed",
+  "taskDetailDeferUntil": "Defer until",
+  "taskDetailDeleteMessage": "Are you sure you want to delete this task?",
+  "taskDetailDeleteTitle": "Delete Task",
+  "taskDetailDue": "Due",
+  "taskDetailEditTooltip": "Edit",
+  "taskDetailMarkComplete": "Mark as Complete",
+  "taskDetailMarkIncomplete": "Mark as Incomplete",
+  "taskDetailMenuTooltip": "More actions",
+  "taskDetailMetaLabel": "{label}: ",
+  "@taskDetailMetaLabel": {
+    "description": "Label of a meta row, followed by its value",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "taskDetailProject": "Project",
+  "taskDetailSubtasks": "Subtasks",
+  "taskEmptyAll": "No tasks found.\nTap + to create one.",
+  "taskEmptyCompleted": "No completed tasks yet.",
+  "taskEmptyToday": "No tasks for today.\nEnjoy your free time! 🎉",
+  "taskErrorCancelled": "Cancelled",
+  "taskErrorCsrf": "Security check failed. Please try again.",
+  "taskErrorDecoding": "Unexpected response from the server",
+  "taskErrorEmailNotVerified": "Email address not verified",
+  "taskErrorForbidden": "You are not allowed to do that",
+  "taskErrorGeneric": "Something went wrong",
+  "taskErrorInvalidCredentials": "Invalid email or password",
+  "taskErrorNetwork": "No connection to the server",
+  "taskErrorNotFound": "Task not found",
+  "taskErrorPasswordLoginDisabled": "Password login is disabled",
+  "taskErrorRateLimited": "Too many requests. Try again in a moment.",
+  "taskErrorServer": "Server error ({statusCode})",
+  "@taskErrorServer": {
+    "placeholders": {
+      "statusCode": {
+        "type": "int"
+      }
+    }
+  },
+  "taskErrorTimeout": "The server took too long to respond",
+  "taskErrorUnauthorized": "Session expired. Please sign in again.",
+  "taskFilterAll": "All",
+  "taskFilterCompleted": "Completed",
+  "taskFilterSomeday": "Someday",
+  "taskFilterToday": "Today",
+  "taskFilterUpcoming": "Upcoming",
+  "taskFormClearTooltip": "Clear",
+  "taskFormCompletionBased": "Completion-based",
+  "taskFormCompletionBasedHint": "Repeat from completion date",
+  "taskFormDeferUntil": "Defer Until",
+  "taskFormDueDate": "Due Date",
+  "taskFormEvery": "Every",
+  "@taskFormEvery": {
+    "description": "Prefix before the recurrence interval number"
+  },
+  "taskFormNameHint": "What needs to be done?",
+  "taskFormNameLabel": "Task Name",
+  "taskFormNameRequired": "Name is required",
+  "taskFormNone": "None",
+  "taskFormNotSet": "Not set",
+  "taskFormNoteHint": "Add details (Markdown supported)",
+  "taskFormNoteLabel": "Notes",
+  "taskFormPriority": "Priority",
+  "taskFormProject": "Project",
+  "taskFormProjectSelected": "Selected",
+  "@taskFormProjectSelected": {
+    "description": "Fallback when the chosen project's name is unknown"
+  },
+  "taskFormRecurrence": "Recurrence",
+  "taskFormSave": "Save",
+  "taskFormStatus": "Status",
+  "taskFormTitleEdit": "Edit Task",
+  "taskFormTitleNew": "New Task",
+  "taskFormUnitDays": "{count, plural, one{day} other{days}}",
+  "@taskFormUnitDays": {
+    "description": "Unit after the recurrence interval",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "taskFormUnitMonths": "{count, plural, one{month} other{months}}",
+  "@taskFormUnitMonths": {
+    "description": "Unit after the recurrence interval",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "taskFormUnitWeeks": "{count, plural, one{week} other{weeks}}",
+  "@taskFormUnitWeeks": {
+    "description": "Unit after the recurrence interval",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "taskListTitle": "Tasks",
+  "@taskListTitle": {
+    "description": "Title of the tasks screen"
+  },
+  "taskNewButton": "New Task",
+  "@taskNewButton": {
+    "description": "Label of the create-task button"
+  },
+  "taskPriorityHigh": "High",
+  "@taskPriorityHigh": {
+    "description": "Task priority"
+  },
+  "taskPriorityLow": "Low",
+  "@taskPriorityLow": {
+    "description": "Task priority"
+  },
+  "taskPriorityMedium": "Medium",
+  "@taskPriorityMedium": {
+    "description": "Task priority"
+  },
+  "taskRecurDaily": "Daily",
+  "taskRecurEveryDays": "Every {count} days",
+  "@taskRecurEveryDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "taskRecurEveryMonths": "Every {count} months",
+  "@taskRecurEveryMonths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "taskRecurEveryWeeks": "Every {count} weeks",
+  "@taskRecurEveryWeeks": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "taskRecurMonthly": "Monthly",
+  "taskRecurMonthlyLastDay": "Monthly (last day)",
+  "taskRecurMonthlyWeekday": "Monthly (weekday)",
+  "taskRecurWeekly": "Weekly",
+  "taskRetry": "Retry",
+  "taskSortCreated": "Date Created",
+  "taskSortDueDate": "Due Date",
+  "taskSortName": "Name",
+  "taskSortPriority": "Priority",
+  "taskSortTooltip": "Sort",
+  "taskStatusArchived": "Archived",
+  "@taskStatusArchived": {
+    "description": "Task status"
+  },
+  "taskStatusCancelled": "Cancelled",
+  "@taskStatusCancelled": {
+    "description": "Task status"
+  },
+  "taskStatusDone": "Done",
+  "@taskStatusDone": {
+    "description": "Task status"
+  },
+  "taskStatusInProgress": "In progress",
+  "@taskStatusInProgress": {
+    "description": "Task status"
+  },
+  "taskStatusNotStarted": "Not started",
+  "@taskStatusNotStarted": {
+    "description": "Task status"
+  },
+  "taskStatusPlanned": "Planned",
+  "@taskStatusPlanned": {
+    "description": "Task status"
+  },
+  "taskStatusUnknown": "Unknown",
+  "@taskStatusUnknown": {
+    "description": "Task status the app does not recognise"
+  },
+  "taskStatusWaiting": "Waiting",
+  "@taskStatusWaiting": {
+    "description": "Task status"
+  },
+  "taskViewBoard": "Board",
+  "@taskViewBoard": {
+    "description": "Tooltip: switch to board view"
+  },
+  "taskViewList": "List",
+  "@taskViewList": {
+    "description": "Tooltip: switch to list view"
   }
 }

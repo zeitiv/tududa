@@ -9,7 +9,7 @@ import '../data/note_patch.dart';
 import '../domain/note.dart';
 import '../providers/note_provider.dart';
 import '../../projects/providers/project_provider.dart';
-import '../../l10n/strings.dart';
+import '../../l10n/l10n_ext.dart';
 
 /// Note editor screen (create/edit) with Markdown support.
 class NoteEditorScreen extends ConsumerStatefulWidget {
@@ -129,7 +129,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
         context.pop();
       } else {
         ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Failed to save note')));
+            .showSnackBar(SnackBar(content: Text(context.l10n.noteSaveFailed)));
       }
     }
   }
@@ -139,16 +139,16 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Note'),
-        content: const Text('Are you sure?'),
+        title: Text(ctx.l10n.noteDeleteTitle),
+        content: Text(ctx.l10n.noteDeleteConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(ctx.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete'),
+            child: Text(ctx.l10n.commonDelete),
           ),
         ],
       ),
@@ -179,10 +179,11 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEdit ? strings.editNote : strings.newNote),
+        title: Text(_isEdit ? strings.noteEdit : strings.noteNew),
         actions: [
           if (_isEdit)
             IconButton(
+              tooltip: strings.commonDelete,
               icon: Icon(Icons.delete_outline, color: theme.colorScheme.error),
               onPressed: _delete,
             ),
@@ -194,7 +195,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
                     height: 16,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : Text(strings.save),
+                : Text(strings.commonSave),
           ),
         ],
       ),
@@ -210,7 +211,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
                   textCapitalization: TextCapitalization.sentences,
                   style: theme.textTheme.titleLarge,
                   decoration: InputDecoration(
-                    hintText: strings.noteTitle,
+                    hintText: strings.noteTitleHint,
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
@@ -233,7 +234,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
                   minLines: 12,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
-                    hintText: strings.contentHint,
+                    hintText: strings.noteContentHint,
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
@@ -251,7 +252,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
                 const Divider(height: 32),
 
                 // Color picker
-                Text(strings.color, style: theme.textTheme.labelLarge),
+                Text(strings.noteColor, style: theme.textTheme.labelLarge),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 10,
@@ -298,11 +299,14 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
                 DropdownButtonFormField<String?>(
                   initialValue: _projectUid,
                   decoration: InputDecoration(
-                    labelText: strings.project,
+                    labelText: strings.noteProject,
                     prefixIcon: const Icon(Icons.folder_outlined),
                   ),
                   items: [
-                    DropdownMenuItem(value: null, child: Text(strings.none)),
+                    DropdownMenuItem(
+                      value: null,
+                      child: Text(strings.commonNone),
+                    ),
                     ...projects.map(
                       (p) => DropdownMenuItem(
                         value: p.uid.value,

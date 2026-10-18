@@ -5,8 +5,8 @@ import 'package:intl/intl.dart';
 
 import '../providers/note_provider.dart';
 import '../domain/note.dart';
-import '../../common/widgets/glass_container.dart';
-import '../../l10n/strings.dart';
+import '../../common/widgets/surface_card.dart';
+import '../../l10n/l10n_ext.dart';
 
 /// Notes list screen with card/grid layout.
 class NotesScreen extends ConsumerWidget {
@@ -20,7 +20,7 @@ class NotesScreen extends ConsumerWidget {
     final strings = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(title: Text(strings.notes)),
+      appBar: AppBar(title: Text(strings.navNotes)),
       body: noteState.isLoading && !noteState.hasValue
           ? const Center(child: CircularProgressIndicator())
           : notes.isEmpty
@@ -35,7 +35,7 @@ class NotesScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    strings.noNotesYet,
+                    strings.noteEmpty,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
@@ -72,7 +72,7 @@ class NotesScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/notes/new'),
         icon: const Icon(Icons.add_rounded),
-        label: Text(strings.newNote),
+        label: Text(strings.noteNew),
       ),
     );
   }
@@ -96,9 +96,13 @@ class _NoteCard extends StatelessWidget {
     final theme = Theme.of(context);
     final noteColor = _parseColor(note.color);
 
-    return GlassContainer(
-      color: noteColor ?? theme.colorScheme.surface,
-      opacity: noteColor != null ? 0.3 : 0.15,
+    return SurfaceCard(
+      color: noteColor == null
+          ? null
+          : Color.alphaBlend(
+              noteColor.withValues(alpha: 0.3),
+              theme.colorScheme.surface,
+            ),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),

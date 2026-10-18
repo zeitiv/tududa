@@ -9,10 +9,11 @@ import '../../projects/data/project_tasks_source.dart';
 import '../domain/task.dart';
 import '../providers/task_provider.dart';
 import '../widgets/api_error_message.dart';
-import '../../core/theme/app_theme.dart';
-import '../../common/widgets/glass_container.dart';
+import '../../core/design/token_lookup.dart';
+import '../../core/design/tokens.dart';
+import '../../common/widgets/surface_card.dart';
 import '../../projects/widgets/kanban_board.dart';
-import '../../l10n/strings.dart';
+import '../../l10n/l10n_ext.dart';
 
 /// Main tasks screen with filter tabs (Today/Upcoming/Someday/Completed).
 class TasksScreen extends ConsumerStatefulWidget {
@@ -27,8 +28,9 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
   void _showError(Object error) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(apiErrorMessage(error))));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(apiErrorMessage(context.l10n, error))),
+    );
   }
 
   // The board takes the projects feature's lightweight task view.
@@ -65,7 +67,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(strings.tasks),
+        title: Text(strings.taskListTitle),
         actions: [
           // Kanban/List toggle
           IconButton(
@@ -74,28 +76,33 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                   ? Icons.view_list_rounded
                   : Icons.view_kanban_rounded,
             ),
-            tooltip: _isKanbanView ? strings.list : strings.board,
+            tooltip: _isKanbanView
+                ? strings.taskViewList
+                : strings.taskViewBoard,
             onPressed: () => setState(() => _isKanbanView = !_isKanbanView),
           ),
           PopupMenuButton<TaskSort>(
             icon: const Icon(Icons.sort_rounded),
-            tooltip: 'Sort',
+            tooltip: strings.taskSortTooltip,
             onSelected: (sort) {
               ref.read(taskSortProvider.notifier).setSort(sort);
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: TaskSort.priority,
-                child: Text('Priority'),
+                child: Text(strings.taskSortPriority),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: TaskSort.dueDate,
-                child: Text('Due Date'),
+                child: Text(strings.taskSortDueDate),
               ),
-              const PopupMenuItem(value: TaskSort.name, child: Text('Name')),
-              const PopupMenuItem(
+              PopupMenuItem(
+                value: TaskSort.name,
+                child: Text(strings.taskSortName),
+              ),
+              PopupMenuItem(
                 value: TaskSort.createdAt,
-                child: Text('Date Created'),
+                child: Text(strings.taskSortCreated),
               ),
             ],
           ),
@@ -140,7 +147,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                 ? const Center(child: CircularProgressIndicator())
                 : !async.hasValue && async.hasError
                 ? _ErrorView(
-                    error: apiErrorMessage(async.error!),
+                    error: apiErrorMessage(strings, async.error!),
                     onRetry: () =>
                         ref.read(taskListProvider(current).notifier).refresh(),
                   )
@@ -192,23 +199,23 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/tasks/new'),
         icon: const Icon(Icons.add_rounded),
-        label: Text(strings.newTask),
+        label: Text(strings.taskNewButton),
       ),
     );
   }
 
-  String _filterLabel(TaskFilter filter, AppStrings strings) {
+  String _filterLabel(TaskFilter filter, AppLocalizations strings) {
     switch (filter) {
       case TaskFilter.today:
-        return strings.today;
+        return strings.taskFilterToday;
       case TaskFilter.upcoming:
-        return strings.upcoming;
+        return strings.taskFilterUpcoming;
       case TaskFilter.someday:
-        return strings.someday;
+        return strings.taskFilterSomeday;
       case TaskFilter.completed:
-        return strings.completed;
+        return strings.taskFilterCompleted;
       case TaskFilter.all:
-        return strings.isZh ? '全部' : 'All';
+        return strings.taskFilterAll;
     }
   }
 
@@ -242,14 +249,11 @@ class _TaskListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final priorityColor = AppTheme.getPriorityColor(
-      task.priority.code,
-      theme.colorScheme,
-    );
+    final priorityColor = context.tokens.priorityFor(task.priority.code);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: GlassContainer(
+      child: SurfaceCard(
         borderRadius: BorderRadius.circular(20),
         child: ListTile(
           contentPadding: const EdgeInsets.symmetric(
@@ -346,7 +350,8 @@ class _TaskListItem extends StatelessWidget {
             ),
             const SizedBox(width: 3),
             Text(
-              DateFormat.MMMd().format(task.dueDate!.toLocalDateTime()),
+              DateFormat.MMMd(Localizations.localeOf(context).toString())
+                  .format(task.dueDate!.toLocalDateTime()),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: isOverdue ? theme.colorScheme.error : null,
                 fontWeight: isOverdue ? FontWeight.w600 : null,
@@ -384,12 +389,8 @@ class _TaskListItem extends StatelessWidget {
   }
 
   Widget? _buildTrailing(BuildContext context) {
-    final theme = Theme.of(context);
     if (task.priority != Priority.low) {
-      final color = AppTheme.getPriorityColor(
-        task.priority.code,
-        theme.colorScheme,
-      );
+      final color = context.tokens.priorityFor(task.priority.code);
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         decoration: BoxDecoration(
@@ -422,15 +423,15 @@ class _EmptyView extends StatelessWidget {
     IconData icon;
     switch (filter) {
       case TaskFilter.today:
-        message = strings.noTasksToday;
+        message = strings.taskEmptyToday;
         icon = Icons.celebration_outlined;
         break;
       case TaskFilter.completed:
-        message = strings.noCompletedTasks;
+        message = strings.taskEmptyCompleted;
         icon = Icons.check_circle_outline;
         break;
       default:
-        message = strings.noTasksYet;
+        message = strings.taskEmptyAll;
         icon = Icons.task_outlined;
     }
     return Center(
@@ -473,7 +474,7 @@ class _ErrorView extends StatelessWidget {
           const SizedBox(height: 16),
           FilledButton.tonal(
             onPressed: onRetry,
-            child: Text(context.l10n.retry),
+            child: Text(context.l10n.taskRetry),
           ),
         ],
       ),

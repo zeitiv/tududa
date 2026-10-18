@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../l10n/strings.dart';
-import '../../common/widgets/glass_container.dart';
+import '../../l10n/l10n_ext.dart';
+import '../../common/widgets/surface_card.dart';
 import 'offline_banner.dart';
 
 /// Shell scaffold with bottom navigation bar.
@@ -34,7 +34,7 @@ class ShellScaffold extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const OfflineBanner(),
-          GlassContainer(
+          SurfaceCard(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             child: NavigationBar(
               selectedIndex: index,
@@ -61,27 +61,27 @@ class ShellScaffold extends StatelessWidget {
                 NavigationDestination(
                   icon: const Icon(Icons.today_outlined),
                   selectedIcon: const Icon(Icons.today),
-                  label: strings.tasks,
+                  label: strings.navTasks,
                 ),
                 NavigationDestination(
                   icon: const Icon(Icons.folder_outlined),
                   selectedIcon: const Icon(Icons.folder),
-                  label: strings.projects,
+                  label: strings.navProjects,
                 ),
                 NavigationDestination(
                   icon: const Icon(Icons.note_outlined),
                   selectedIcon: const Icon(Icons.note),
-                  label: strings.notes,
+                  label: strings.navNotes,
                 ),
                 NavigationDestination(
                   icon: const Icon(Icons.inbox_outlined),
                   selectedIcon: const Icon(Icons.inbox),
-                  label: strings.inbox,
+                  label: strings.navInbox,
                 ),
                 NavigationDestination(
                   icon: const Icon(Icons.more_horiz_outlined),
                   selectedIcon: const Icon(Icons.more_horiz),
-                  label: strings.more,
+                  label: strings.navMore,
                 ),
               ],
             ),

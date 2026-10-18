@@ -11,7 +11,7 @@ import '../models/project_model.dart';
 import '../providers/project_provider.dart';
 import '../../areas/models/area_model.dart';
 import '../../areas/providers/area_provider.dart';
-import '../../l10n/strings.dart';
+import '../../l10n/l10n_ext.dart';
 
 /// Project create/edit form.
 class ProjectFormScreen extends ConsumerStatefulWidget {
@@ -116,7 +116,7 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
         context.pop();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save project: $error')),
+          SnackBar(content: Text(context.l10n.projectSaveFailed(error))),
         );
       }
     }
@@ -137,7 +137,7 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEdit ? strings.editProject : strings.newProject),
+        title: Text(_isEdit ? strings.projectEdit : strings.projectNew),
         actions: [
           TextButton(
             onPressed: _isLoading ? null : _save,
@@ -147,7 +147,7 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
                     height: 16,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : Text(strings.save),
+                : Text(strings.projectSave),
           ),
         ],
       ),
@@ -168,7 +168,7 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
                     ),
                     validator: (v) {
                       if (v == null || v.trim().isEmpty) {
-                        return strings.nameRequired;
+                        return strings.projectNameRequired;
                       }
                       if (v.trim().split(RegExp(r'\s+')).length > 6) {
                         return strings.projectNameHint;
@@ -183,14 +183,17 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
                     maxLines: 3,
                     textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
-                      labelText: strings.desc,
+                      labelText: strings.projectDescription,
                       alignLabelWithHint: true,
                     ),
                   ),
                   const SizedBox(height: 20),
 
                   // Status
-                  Text(strings.status, style: theme.textTheme.labelLarge),
+                  Text(
+                    strings.projectStatus,
+                    style: theme.textTheme.labelLarge,
+                  ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     initialValue: _status,
@@ -200,27 +203,27 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
                     items: [
                       DropdownMenuItem(
                         value: 'not_started',
-                        child: Text(strings.notStarted),
+                        child: Text(strings.projectStatusNotStarted),
                       ),
                       DropdownMenuItem(
                         value: 'planned',
-                        child: Text(strings.planned),
+                        child: Text(strings.projectStatusPlanned),
                       ),
                       DropdownMenuItem(
                         value: 'in_progress',
-                        child: Text(strings.inProgress),
+                        child: Text(strings.projectStatusInProgress),
                       ),
                       DropdownMenuItem(
                         value: 'waiting',
-                        child: Text(strings.waiting),
+                        child: Text(strings.projectStatusWaiting),
                       ),
                       DropdownMenuItem(
                         value: 'done',
-                        child: Text(strings.done),
+                        child: Text(strings.projectStatusDone),
                       ),
                       DropdownMenuItem(
                         value: 'cancelled',
-                        child: Text(strings.cancelled),
+                        child: Text(strings.projectStatusCancelled),
                       ),
                     ],
                     onChanged: (v) =>
@@ -229,17 +232,29 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
                   const SizedBox(height: 16),
 
                   // Priority
-                  Text(strings.priority, style: theme.textTheme.labelLarge),
+                  Text(
+                    strings.projectPriority,
+                    style: theme.textTheme.labelLarge,
+                  ),
                   const SizedBox(height: 8),
                   SegmentedButton<String?>(
                     segments: [
-                      ButtonSegment(value: null, label: Text(strings.none)),
-                      ButtonSegment(value: 'low', label: Text(strings.low)),
+                      ButtonSegment(
+                        value: null,
+                        label: Text(strings.projectPriorityNone),
+                      ),
+                      ButtonSegment(
+                        value: 'low',
+                        label: Text(strings.projectPriorityLow),
+                      ),
                       ButtonSegment(
                         value: 'medium',
-                        label: Text(strings.medium),
+                        label: Text(strings.projectPriorityMedium),
                       ),
-                      ButtonSegment(value: 'high', label: Text(strings.high)),
+                      ButtonSegment(
+                        value: 'high',
+                        label: Text(strings.projectPriorityHigh),
+                      ),
                     ],
                     selected: {_priority},
                     onSelectionChanged: (v) =>
@@ -253,13 +268,13 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
                         ? _areaUid
                         : null,
                     decoration: InputDecoration(
-                      labelText: strings.area,
+                      labelText: strings.projectArea,
                       prefixIcon: const Icon(Icons.layers_outlined),
                     ),
                     items: [
                       DropdownMenuItem(
                         value: null,
-                        child: Text(strings.noArea),
+                        child: Text(strings.projectNoArea),
                       ),
                       ...areas.map(
                         (a) =>
@@ -272,8 +287,8 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
 
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: Text(strings.pinSidebar),
-                    subtitle: Text(strings.pinSidebarHint),
+                    title: Text(strings.projectPinSidebar),
+                    subtitle: Text(strings.projectPinSidebarHint),
                     value: _pinToSidebar,
                     onChanged: (v) => setState(() => _pinToSidebar = v),
                   ),

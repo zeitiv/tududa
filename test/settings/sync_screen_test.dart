@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tududa/core/db/app_database.dart';
 import 'package:tududa/core/sync/merge.dart';
 import 'package:tududa/core/sync/sync_status.dart';
+import 'package:tududa/l10n/gen/app_localizations.dart';
 import 'package:tududa/settings/screens/sync_screen.dart';
 
 import '../common/sync_ui_harness.dart';
@@ -23,7 +24,12 @@ Future<void> pumpScreen(
         outbox ??
             outboxEntriesProvider.overrideWith((ref) => Stream.value(entries)),
       ],
-      child: const MaterialApp(home: SyncScreen()),
+      child: const MaterialApp(
+        locale: Locale('en'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: SyncScreen(),
+      ),
     ),
   );
   await tester.pump();
@@ -223,6 +229,9 @@ void main() {
           outboxEntriesProvider.overrideWith((ref) => Stream.value(entries)),
         ],
         child: MaterialApp(
+          locale: const Locale('en'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) => MediaQuery(
             data: MediaQuery.of(context)
                 .copyWith(textScaler: const TextScaler.linear(2)),

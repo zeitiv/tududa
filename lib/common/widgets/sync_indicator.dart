@@ -3,30 +3,29 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/sync/sync_status.dart';
+import '../../l10n/l10n_ext.dart';
 
 /// Screen-reader description of [s], e.g. "Offline, 3 changes waiting to sync".
-String syncStatusLabel(SyncStatus s) {
+String syncStatusLabel(AppLocalizations l, SyncStatus s) {
   final waiting = s.pendingCount + s.failedCount + s.stuckCount;
-  final changes = '$waiting ${waiting == 1 ? 'change' : 'changes'}';
   switch (s.phase) {
     case SyncPhase.syncing:
-      return 'Syncing';
+      return l.syncStatusSyncing;
     case SyncPhase.offline:
       return waiting > 0
-          ? 'Offline, $changes waiting to sync'
-          : 'Offline, nothing waiting to sync';
+          ? l.syncStatusOfflineWaiting(waiting)
+          : l.syncStatusOfflineIdle;
     case SyncPhase.signedOut:
       return waiting > 0
-          ? 'Signed out, $changes waiting to sync'
-          : 'Signed out';
+          ? l.syncStatusSignedOutWaiting(waiting)
+          : l.syncStatusSignedOut;
     case SyncPhase.error:
     case SyncPhase.idle:
       final problems = s.failedCount + s.stuckCount;
       if (s.phase == SyncPhase.error || s.stuckCount > 0) {
-        final n = problems == 0 ? waiting : problems;
-        return 'Sync problem, $n ${n == 1 ? 'change' : 'changes'} failed';
+        return l.syncStatusProblem(problems == 0 ? waiting : problems);
       }
-      return waiting > 0 ? '$changes waiting to sync' : 'All changes synced';
+      return waiting > 0 ? l.syncStatusWaiting(waiting) : l.syncStatusAllSynced;
   }
 }
 
@@ -76,7 +75,7 @@ class SyncIndicator extends ConsumerWidget {
 
     return Semantics(
       button: true,
-      label: syncStatusLabel(s),
+      label: syncStatusLabel(context.l10n, s),
       excludeSemantics: true,
       onTap: () => context.push('/more/sync'),
       child: InkResponse(

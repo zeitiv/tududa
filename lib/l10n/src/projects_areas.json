@@ -1,0 +1,370 @@
+{
+ "projectsTitle": {
+  "en": "Projects",
+  "de": "Projekte",
+  "zh": "项目",
+  "description": "Projects list app bar title"
+ },
+ "projectNew": {
+  "en": "New Project",
+  "de": "Neues Projekt",
+  "zh": "新建项目"
+ },
+ "projectEdit": {
+  "en": "Edit Project",
+  "de": "Projekt bearbeiten",
+  "zh": "编辑项目"
+ },
+ "projectsEmpty": {
+  "en": "No projects yet.\nTap + to create one.",
+  "de": "Noch keine Projekte.\nTippe auf +, um eines zu erstellen.",
+  "zh": "暂无项目\n点击 + 新建"
+ },
+ "projectNotFound": {
+  "en": "Project not found",
+  "de": "Projekt nicht gefunden",
+  "zh": "未找到项目"
+ },
+ "projectRetry": {
+  "en": "Retry",
+  "de": "Erneut versuchen",
+  "zh": "重试"
+ },
+ "projectLoadError": {
+  "en": "Error: {error}",
+  "de": "Fehler: {error}",
+  "zh": "错误：{error}",
+  "placeholders": {
+   "error": {
+    "type": "String"
+   }
+  }
+ },
+ "projectCancel": {
+  "en": "Cancel",
+  "de": "Abbrechen",
+  "zh": "取消"
+ },
+ "projectSave": {
+  "en": "Save",
+  "de": "Speichern",
+  "zh": "保存"
+ },
+ "projectDelete": {
+  "en": "Delete",
+  "de": "Löschen",
+  "zh": "删除"
+ },
+ "projectDeleteTitle": {
+  "en": "Delete Project",
+  "de": "Projekt löschen",
+  "zh": "删除项目"
+ },
+ "projectDeleteMessage": {
+  "en": "This will delete the project and all its tasks.",
+  "de": "Das Projekt und alle zugehörigen Aufgaben werden gelöscht.",
+  "zh": "这将删除该项目及其所有任务。"
+ },
+ "projectAreaLabel": {
+  "en": "Area: {name}",
+  "de": "Bereich: {name}",
+  "zh": "区域：{name}",
+  "placeholders": {
+   "name": {
+    "type": "String"
+   }
+  }
+ },
+ "projectTasksHeading": {
+  "en": "Project Tasks",
+  "de": "Projektaufgaben",
+  "zh": "项目任务"
+ },
+ "projectAddTask": {
+  "en": "Add Task",
+  "de": "Aufgabe hinzufügen",
+  "zh": "添加任务"
+ },
+ "projectViewBoard": {
+  "en": "Board",
+  "de": "Board",
+  "zh": "看板"
+ },
+ "projectViewList": {
+  "en": "List",
+  "de": "Liste",
+  "zh": "列表"
+ },
+ "projectTaskProgress": {
+  "en": "{done}/{total} tasks",
+  "de": "{done}/{total} Aufgaben",
+  "zh": "{done}/{total} 个任务",
+  "placeholders": {
+   "done": {
+    "type": "int"
+   },
+   "total": {
+    "type": "int"
+   }
+  }
+ },
+ "projectSaveFailed": {
+  "en": "Failed to save project: {error}",
+  "de": "Projekt konnte nicht gespeichert werden: {error}",
+  "zh": "保存项目失败：{error}",
+  "placeholders": {
+   "error": {
+    "type": "String"
+   }
+  }
+ },
+ "projectName": {
+  "en": "Project Name",
+  "de": "Projektname",
+  "zh": "项目名称"
+ },
+ "projectNameHint": {
+  "en": "Max 6 words",
+  "de": "Höchstens 6 Wörter",
+  "zh": "最多6个词"
+ },
+ "projectNameRequired": {
+  "en": "Name is required",
+  "de": "Name ist erforderlich",
+  "zh": "名称不能为空"
+ },
+ "projectDescription": {
+  "en": "Description",
+  "de": "Beschreibung",
+  "zh": "描述"
+ },
+ "projectStatus": {
+  "en": "Status",
+  "de": "Status",
+  "zh": "状态"
+ },
+ "projectStatusNotStarted": {
+  "en": "Not Started",
+  "de": "Nicht begonnen",
+  "zh": "未开始"
+ },
+ "projectStatusPlanned": {
+  "en": "Planned",
+  "de": "Geplant",
+  "zh": "已计划"
+ },
+ "projectStatusInProgress": {
+  "en": "In Progress",
+  "de": "In Arbeit",
+  "zh": "进行中"
+ },
+ "projectStatusWaiting": {
+  "en": "Waiting",
+  "de": "Wartend",
+  "zh": "等待中"
+ },
+ "projectStatusDone": {
+  "en": "Done",
+  "de": "Erledigt",
+  "zh": "已完成"
+ },
+ "projectStatusCancelled": {
+  "en": "Cancelled",
+  "de": "Abgebrochen",
+  "zh": "已取消"
+ },
+ "projectPriority": {
+  "en": "Priority",
+  "de": "Priorität",
+  "zh": "优先级"
+ },
+ "projectPriorityNone": {
+  "en": "None",
+  "de": "Keine",
+  "zh": "无"
+ },
+ "projectPriorityLow": {
+  "en": "Low",
+  "de": "Niedrig",
+  "zh": "低"
+ },
+ "projectPriorityMedium": {
+  "en": "Medium",
+  "de": "Mittel",
+  "zh": "中"
+ },
+ "projectPriorityHigh": {
+  "en": "High",
+  "de": "Hoch",
+  "zh": "高"
+ },
+ "projectArea": {
+  "en": "Area",
+  "de": "Bereich",
+  "zh": "区域"
+ },
+ "projectNoArea": {
+  "en": "No Area",
+  "de": "Kein Bereich",
+  "zh": "无区域"
+ },
+ "projectPinSidebar": {
+  "en": "Pin to Sidebar",
+  "de": "An Seitenleiste anheften",
+  "zh": "固定到侧边栏"
+ },
+ "projectPinSidebarHint": {
+  "en": "Quick access from navigation",
+  "de": "Schneller Zugriff über die Navigation",
+  "zh": "方便从导航快速访问"
+ },
+ "kanbanNoTasks": {
+  "en": "No tasks found.\nTap + to create one.",
+  "de": "Keine Aufgaben gefunden.\nTippe auf +, um eine zu erstellen.",
+  "zh": "暂无任务\n点击 + 新建"
+ },
+ "kanbanStatusToDo": {
+  "en": "To Do",
+  "de": "Zu erledigen",
+  "zh": "待办",
+  "description": "Kanban column title"
+ },
+ "kanbanStatusPlanned": {
+  "en": "Planned",
+  "de": "Geplant",
+  "zh": "已计划",
+  "description": "Kanban column title"
+ },
+ "kanbanStatusInProgress": {
+  "en": "In Progress",
+  "de": "In Arbeit",
+  "zh": "进行中",
+  "description": "Kanban column title"
+ },
+ "kanbanStatusWaiting": {
+  "en": "Waiting",
+  "de": "Wartend",
+  "zh": "等待中",
+  "description": "Kanban column title"
+ },
+ "kanbanStatusDone": {
+  "en": "Done",
+  "de": "Erledigt",
+  "zh": "已完成",
+  "description": "Kanban column title"
+ },
+ "kanbanStatusCancelled": {
+  "en": "Cancelled",
+  "de": "Abgebrochen",
+  "zh": "已取消",
+  "description": "Kanban column title"
+ },
+ "kanbanStatusArchived": {
+  "en": "Archived",
+  "de": "Archiviert",
+  "zh": "已归档",
+  "description": "Kanban column title"
+ },
+ "kanbanStatusOther": {
+  "en": "Other",
+  "de": "Sonstige",
+  "zh": "其他",
+  "description": "Kanban column title"
+ },
+ "areasTitle": {
+  "en": "Areas",
+  "de": "Bereiche",
+  "zh": "区域管理"
+ },
+ "areaNew": {
+  "en": "New Area",
+  "de": "Neuer Bereich",
+  "zh": "新建区域"
+ },
+ "areaEdit": {
+  "en": "Edit Area",
+  "de": "Bereich bearbeiten",
+  "zh": "编辑区域"
+ },
+ "areaName": {
+  "en": "Name",
+  "de": "Name",
+  "zh": "名称"
+ },
+ "areaNameHint": {
+  "en": "e.g. Work, Personal, Health",
+  "de": "z. B. Arbeit, Privat, Gesundheit",
+  "zh": "例如：工作、个人、健康"
+ },
+ "areaDescription": {
+  "en": "Description",
+  "de": "Beschreibung",
+  "zh": "描述"
+ },
+ "areaDescriptionOptional": {
+  "en": "Description (optional)",
+  "de": "Beschreibung (optional)",
+  "zh": "描述（可选）"
+ },
+ "areaCancel": {
+  "en": "Cancel",
+  "de": "Abbrechen",
+  "zh": "取消"
+ },
+ "areaCreate": {
+  "en": "Create",
+  "de": "Erstellen",
+  "zh": "创建"
+ },
+ "areaSave": {
+  "en": "Save",
+  "de": "Speichern",
+  "zh": "保存"
+ },
+ "areaEditAction": {
+  "en": "Edit",
+  "de": "Bearbeiten",
+  "zh": "编辑"
+ },
+ "areaDeleteAction": {
+  "en": "Delete",
+  "de": "Löschen",
+  "zh": "删除"
+ },
+ "areaDeleteTitle": {
+  "en": "Delete Area",
+  "de": "Bereich löschen",
+  "zh": "删除区域"
+ },
+ "areaDeleteMessage": {
+  "en": "Projects in this area will be unlinked.",
+  "de": "Projekte in diesem Bereich werden entkoppelt.",
+  "zh": "该区域内的项目将被取消关联。"
+ },
+ "areasEmpty": {
+  "en": "No areas yet",
+  "de": "Noch keine Bereiche",
+  "zh": "暂无区域"
+ },
+ "areasEmptyHint": {
+  "en": "Areas help organize your projects",
+  "de": "Bereiche helfen dir, deine Projekte zu ordnen",
+  "zh": "区域可帮助你整理项目"
+ },
+ "areaLoadError": {
+  "en": "Error: {error}",
+  "de": "Fehler: {error}",
+  "zh": "错误：{error}",
+  "placeholders": {
+   "error": {
+    "type": "String"
+   }
+  }
+ },
+ "areaAddTooltip": {
+  "en": "New Area",
+  "de": "Neuer Bereich",
+  "zh": "新建区域",
+  "description": "Tooltip of the add-area FAB"
+ }
+}

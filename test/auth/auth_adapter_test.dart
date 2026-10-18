@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tududa/auth/providers/auth_provider.dart';
 import 'package:tududa/auth/session/auth_messages.dart';
+import 'package:tududa/l10n/gen/app_localizations_en.dart';
 import 'package:tududa/core/api/api_error.dart';
 import 'package:tududa/core/router/auth_redirect.dart';
 
@@ -42,10 +43,7 @@ void main() {
       isFalse,
     );
     await Future<void>.delayed(Duration.zero);
-    expect(
-      h.container.read(authProvider).error,
-      'Incorrect email or password.',
-    );
+    expect(h.container.read(authProvider).error, isNotEmpty);
 
     expect(
       await h.container.read(authProvider.notifier).login('a@b.test', 'pw'),
@@ -66,32 +64,36 @@ void main() {
     expect(redirect(), '/server-config');
   });
 
-  group('describeAuthError', () {
+  group('authErrorMessage', () {
+    final l = AppLocalizationsEn();
     test('rate limit shows minutes remaining', () {
       expect(
-        describeAuthError(const RateLimitedError('x', Duration(seconds: 900))),
+        authErrorMessage(
+          l,
+          const RateLimitedError('x', Duration(seconds: 900)),
+        ),
         contains('15 minutes'),
       );
       expect(
-        describeAuthError(const RateLimitedError('x', Duration(seconds: 30))),
+        authErrorMessage(l, const RateLimitedError('x', Duration(seconds: 30))),
         contains('1 minute.'),
       );
     });
 
     test('typed messages', () {
       expect(
-        describeAuthError(const InvalidCredentialsError()),
+        authErrorMessage(l, const InvalidCredentialsError()),
         contains('password'),
       );
       expect(
-        describeAuthError(const EmailNotVerifiedError()),
+        authErrorMessage(l, const EmailNotVerifiedError()),
         contains('verified'),
       );
       expect(
-        describeAuthError(const PasswordLoginDisabledError()),
+        authErrorMessage(l, const PasswordLoginDisabledError()),
         contains('SSO'),
       );
-      expect(describeAuthError(const NetworkError()), contains('reach'));
+      expect(authErrorMessage(l, const NetworkError()), contains('reach'));
     });
   });
 }

@@ -1,0 +1,58 @@
+version: 2
+
+updates:
+  # Dart/Flutter packages (root pubspec.yaml).
+  # Major bumps of the packages below are ignored on purpose: they are pinned deliberately
+  # because of Dart 3.13 toolchain constraints (code generation and analyzer compatibility
+  # between drift_dev, freezed and build_runner). Upgrade them by hand, together.
+  - package-ecosystem: pub
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: 'chore(deps)'
+    groups:
+      pub-minor-patch:
+        update-types:
+          - minor
+          - patch
+    ignore:
+      - dependency-name: flutter_riverpod
+        update-types: ['version-update:semver-major']
+      - dependency-name: go_router
+        update-types: ['version-update:semver-major']
+      - dependency-name: drift
+        update-types: ['version-update:semver-major']
+      - dependency-name: drift_dev
+        update-types: ['version-update:semver-major']
+      - dependency-name: freezed
+        update-types: ['version-update:semver-major']
+
+  # Android Gradle dependencies (android/gradle/libs.versions.toml and build scripts).
+  - package-ecosystem: gradle
+    directory: /android
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: 'chore(deps)'
+    groups:
+      gradle-minor-patch:
+        update-types:
+          - minor
+          - patch
+
+  # GitHub Actions (pinned by commit SHA; Dependabot keeps the "# vX" comments in sync).
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: 'chore(deps)'
+    groups:
+      actions-minor-patch:
+        update-types:
+          - minor
+          - patch

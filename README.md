@@ -10,8 +10,8 @@
 
 *A calm, open system for organizing life and work.*
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?logo=dart)](https://dart.dev)
+[![Flutter](https://img.shields.io/badge/Flutter-3.47.7-02569B?logo=flutter)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.13-0175C2?logo=dart)](https://dart.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Vibe Coded](https://img.shields.io/badge/Vibe-Coded_🎵-ff69b4)](#-vibe-coding)
 
@@ -27,7 +27,7 @@
 
 The original [Tududi](https://github.com/chrisvel/tududi) is created and maintained by **[Chris Veleris](https://github.com/chrisvel)** — a self-hosted task management system built with Node.js and React. All backend APIs and server-side logic belong to the original project, licensed under the [MIT License](https://github.com/chrisvel/tududi/blob/main/LICENSE).
 
-This Flutter client is an independent, community-driven effort to bring the Tududi experience to Android and iOS devices.
+This Flutter client is an independent, community-driven effort to bring the Tududi experience to mobile devices.
 
 ---
 
@@ -41,22 +41,15 @@ This project is entirely **vibe coded** — built through human-AI pair programm
 
 ## ✨ Features
 
-- 📋 **Task Management** — Create, edit, delete, and complete tasks with priorities, due dates, and recurrence
-- 📁 **Project Organization** — Group tasks into projects, track progress with completion percentages
-- 📊 **Kanban Board** — Visual kanban view for both project tasks and the global task list, with drag-status support
-- 🏷️ **Areas & Tags** — Hierarchical organization with areas containing projects
-- 📝 **Notes** — Markdown-formatted notes attached to projects
-- 🔄 **Recurring Tasks** — Daily, weekly, monthly patterns with flexible scheduling
-- 🌐 **i18n** — Full Chinese (中文) and English localization
-- 🎨 **Material Design 3** — Modern, clean UI with dark mode support and glassmorphism effects
-- 🔐 **Session Authentication** — Cookie-based auth with your self-hosted Tududi server
-- 📱 **Cross-Platform** — Android & iOS from a single codebase
-
----
-
-## 📸 Screenshots
-
-> *Coming soon*
+- 📋 **Tasks** — Create, edit, delete, and complete tasks with priorities, due dates, and recurrence
+- 📁 **Projects** — Group tasks into projects, with a Kanban view for project tasks and the global task list
+- 🗂️ **Areas & Tags** — Organize projects into areas and label items with tags
+- 📝 **Notes** — Markdown notes attached to projects
+- 📥 **Inbox** — Quick capture
+- 📴 **Offline-first** — Everything works without a connection; changes sync in the background (see [below](#-offline-first-behaviour))
+- 🌐 **English and Chinese** UI strings
+- 🎨 **Material Design 3** with light and dark themes
+- 🔐 **Session authentication** with your self-hosted Tududi server
 
 ---
 
@@ -64,116 +57,128 @@ This project is entirely **vibe coded** — built through human-AI pair programm
 
 | Category | Technology |
 |---|---|
-| **Framework** | Flutter 3.x / Dart 3.x |
-| **State Management** | Riverpod |
-| **Networking** | Dio + Cookie Manager |
+| **Framework** | Flutter 3.47.7 / Dart 3.13 |
+| **State management** | Riverpod |
+| **Local store** | Drift (SQLite) with an outbox and a sync engine |
+| **Networking** | Dio + cookie jar, custom interceptors |
 | **Routing** | GoRouter |
-| **Storage** | SharedPreferences, FlutterSecureStorage |
-| **UI** | Material Design 3, Google Fonts, Flutter Markdown |
-| **Architecture** | Feature-based modular structure |
+| **Android native** | Kotlin library `:tududi_core` (encrypted vault with Tink, API client) |
 
 ---
 
-## 📦 Project Structure
+## 🧰 Toolchain
 
-```
-lib/
-├── auth/              # Authentication (login, session management)
-│   ├── providers/
-│   ├── screens/
-│   └── services/
-├── common/            # Shared widgets (GlassContainer, etc.)
-│   └── widgets/
-├── core/              # App infrastructure
-│   ├── router/        # GoRouter configuration
-│   ├── services/      # ApiService (Dio client)
-│   └── theme/         # Material 3 theme
-├── home/              # Home / Dashboard
-│   └── screens/
-├── l10n/              # Localization strings (zh/en)
-├── notes/             # Notes module
-│   ├── models/
-│   ├── providers/
-│   └── screens/
-├── projects/          # Projects module
-│   ├── models/
-│   ├── providers/
-│   ├── screens/
-│   └── widgets/       # KanbanBoard
-├── tasks/             # Tasks module
-│   ├── models/
-│   ├── providers/
-│   └── screens/
-├── app.dart           # App widget
-└── main.dart          # Entry point
-```
+The toolchain is pinned so that local and CI builds match:
+
+- **Flutter 3.47.7**, pinned in `pubspec.yaml` (`environment.flutter`). CI reads it with `flutter-version-file` and fails if the installed SDK differs.
+- **JDK 17** for the Android build.
+- Dart packages are locked by the committed `pubspec.lock`; CI installs with `flutter pub get --enforce-lockfile`.
+- Some packages (`flutter_riverpod`, `go_router`, `drift`, `drift_dev`, `freezed`) are held back from major upgrades because of Dart 3.13 toolchain constraints.
 
 ---
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) 3.x+
-- A running [Tududi](https://github.com/chrisvel/tududi) server instance
-- Android Studio / Xcode (for platform builds)
-
-### Setup
+## 🚀 Build, run and test
 
 ```bash
-# Clone the repository
-git clone https://github.com/LawrenZzz/tududa.git
+git clone https://github.com/zeitiv/tududa.git
 cd tududa
 
-# Install dependencies
 flutter pub get
+# Generated code (Drift, freezed, json_serializable) is not committed:
+dart run build_runner build -d
 
-# Run in development mode
-flutter run
+flutter run                  # run on a device or emulator
+flutter test                 # Dart tests
+flutter analyze --fatal-infos
+
+# Kotlin unit tests for the shared Android core
+cd android && ./gradlew :tududi_core:testDebugUnitTest
 ```
 
-### Configure Server
+On the login screen, enter your Tududi server URL (for example `http://your-server:3002`) and your credentials.
 
-On the login screen, enter your Tududi server URL (e.g., `http://your-server:3002`) along with your credentials.
-
-### Build Release APK
+Build an APK:
 
 ```bash
-# Android
 flutter build apk --release
-
-# iOS
-flutter build ios --release
 ```
+
+Without `android/key.properties` the release build is signed with the debug key (fine for local testing). Official release builds are signed in CI only.
+
+---
+
+## 🏗️ Architecture
+
+Offline-first, layered. The UI never talks to the network directly.
+
+```
+widgets -> Riverpod providers -> offline repositories -> Drift tables + outbox
+                                                              ^
+                                    SyncEngine -> sync handlers -> Dio stack -> Tududi server
+```
+
+| Layer | Location |
+|---|---|
+| API client, DTOs, interceptors | `lib/core/api` |
+| Drift database, DAOs, dirty-field tracking, search index | `lib/core/db` |
+| Sync engine, handlers, outbox, field-level merge | `lib/core/sync` |
+| Session, credential store, silent re-login | `lib/auth/session` |
+| Features (`tasks`, `projects`, `areas`, `tags`, `notes`, `inbox`, `search`, `settings`, `auth`) | `lib/<feature>` with `data`, `domain`, `providers`, `screens` |
+| Shared Android core (vault, API client) | `android/tududi_core` |
+
+See [docs/architecture.md](docs/architecture.md) for a diagram and the write/merge path.
 
 ---
 
 ## 🔧 Server Compatibility
 
-This client is designed for the [Tududi](https://github.com/chrisvel/tududi) backend. Key API characteristics:
+Developed against Tududi **v1.9.4**. Notable API characteristics:
 
-| Operation | Method | Endpoint |
-|---|---|---|
-| List tasks | `GET` | `/api/tasks` |
-| Get task | `GET` | `/api/task/:uid` |
-| Create task | `POST` | `/api/task` |
-| Update task | `PATCH` | `/api/task/:uid` |
-| Delete task | `DELETE` | `/api/task/:uid` |
-| List projects | `GET` | `/api/projects` |
-| Update project | `PATCH` | `/api/project/:uid` |
+- Mutating requests (`POST`, `PATCH`, `DELETE`) need the CSRF header `x-csrf-token`. The client fetches the token from `GET /csrf-token` and refreshes it once if the server rejects it.
+- Sign-out is `GET /api/logout`.
+- Areas live under the plural `/api/areas`.
+- Updates use `PATCH` (not `PUT`), and resources are identified by `uid` strings.
+- Sessions are cookie-based; on a 401 the client signs in again silently with the stored credentials.
 
-> **Note:** The server uses `PATCH` (not `PUT`) for all update operations, and resources are typically identified by `uid` strings.
+---
+
+## 📴 Offline-first behaviour
+
+- All reads come from the local database; all writes go to the local database and to an outbox in one transaction.
+- A sync engine pulls changes, then pushes pending entries when the device is online (and on manual sync). Failed pushes retry with backoff; after repeated failures an entry is marked stuck until you retry.
+- Conflicts are merged per field: fields you changed locally keep your value unless the server changed the same field. Changes the server rejects are rolled back and you are notified. Deletes and completions are queued like any other change.
+- A sync status indicator shows pending, stuck and failed changes.
+
+---
+
+## 🔐 Security model
+
+- Credentials are kept only in the Android Keystore-backed encrypted vault. They are never in source code, `BuildConfig`, or logs.
+- Debug logs are redacted (credentials, cookies and CSRF tokens are masked).
+- Cleartext `http://` servers must be allowed explicitly when you configure the server.
+- Signing keys exist only as CI secrets; the release workflow writes them outside the workspace and deletes them after the build. Release APKs ship with a SHA-256 checksum.
+- CI runs secret scanning (gitleaks) and dependency scanning (OSV).
+
+---
+
+## 🗺️ Roadmap
+
+Not built yet:
+
+- German localization
+- Dynamic color (Material You)
+- Search UI
+- Android home-screen widget (the shared core is in place)
+
+See [CHANGELOG.md](CHANGELOG.md) for what has landed.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Feel free to open issues or submit pull requests.
+Contributions to this client are welcome: open an issue or a pull request. Please run `dart format`, `flutter analyze --fatal-infos` and `flutter test` first, and add a line to `CHANGELOG.md` under *Unreleased*.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes
-4. Push to your fork and open a Pull Request
+For the **Tududi backend**, follow the upstream rules: feature pull requests require a prior issue or discussion. See the [upstream contributing guide](https://github.com/chrisvel/tududi/blob/main/.github/CONTRIBUTING.md).
 
 ---
 

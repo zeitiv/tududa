@@ -18,24 +18,31 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  build:
-    name: Build Release APK
+  # Same gate as CI: nothing is signed or published unless analyze and tests pass.
+  verify:
+    name: Analyze & test
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Check out the code
       - name: Checkout code
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
-      # 2. Install Java 17
       - name: Set up JDK 17
         uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # 3. Install Flutter (version pinned in pubspec.yaml)
       - name: Set up Flutter
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
@@ -43,77 +50,239 @@ jobs:
           channel: 'stable'
           cache: true
 
-      # 4. Decode the signing keystore from GitHub Secrets
-      - name: Decode keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
-
-      # 5. Create key.properties
-      - name: Create key.properties
-        run: |
-          cat > android/key.properties << EOF
-          storePassword=${{ secrets.STORE_PASSWORD }}
-          keyPassword=${{ secrets.KEY_PASSWORD }}
-          keyAlias=${{ secrets.KEY_ALIAS }}
-          storeFile=upload-keystore.jks
-          EOF
-
-      # 6. Install dependencies
       - name: Install dependencies
-        run: flutter pub get
+        run: flutter pub get --enforce-lockfile
 
-      # 7. Analyze and test before building
+      - name: Run code generation
+        run: dart run build_runner build -d
+
       - name: Analyze
-        run: flutter analyze
+        run: flutter analyze --fatal-infos
 
       - name: Test
         run: flutter test
 
-      # 8. Build the release APK
-      - name: Build APK
-        run: flutter build apk --release
+  build:
+    name: Build signed release APK
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: release
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+      version: ${{ steps.meta.outputs.version }}
 
-      # 9. Upload the APK as a build artifact
-      - name: Upload APK artifact
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Resolve tag and version
+        id: meta
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_TAG: ${{ inputs.release_tag }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            tag=$INPUT_TAG
+          else
+            tag=$REF_NAME
+          fi
+          if [ -n "$tag" ]; then
+            if ! printf '%s' "$tag" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+([-+.][0-9A-Za-z.-]+)?$'; then
+              echo "::error::Tag '$tag' is not of the form vMAJOR.MINOR.PATCH[-suffix]"
+              exit 1
+            fi
+            version=${tag#v}
+          else
+            # Manual build without a tag: use the version from pubspec.yaml, no release is made.
+            version=$(sed -n 's/^version:[[:space:]]*\([0-9][0-9.]*\).*/\1/p' pubspec.yaml | head -n1)
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Building version $version (tag: ${tag:-none})"
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: gradle
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version-file: pubspec.yaml
+          channel: 'stable'
+          cache: true
+
+      # Keystore goes to RUNNER_TEMP (outside the workspace), key.properties points to it by absolute path.
+      - name: Prepare signing config
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        run: |
+          set -eu
+          umask 077
+          for v in KEYSTORE_BASE64 STORE_PASSWORD KEY_PASSWORD KEY_ALIAS; do
+            eval "val=\${$v:-}"
+            if [ -z "$val" ]; then
+              echo "::error::Release signing secret $v is not set in the 'release' environment"
+              exit 1
+            fi
+          done
+          # Java .properties treats backslash as an escape character.
+          esc() { printf '%s' "$1" | sed 's/\\/\\\\/g'; }
+          sp=$(esc "$STORE_PASSWORD")
+          kp=$(esc "$KEY_PASSWORD")
+          ka=$(esc "$KEY_ALIAS")
+          echo "::add-mask::$sp"
+          echo "::add-mask::$kp"
+          echo "::add-mask::$ka"
+          keystore="$RUNNER_TEMP/release-keystore.jks"
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$keystore"
+          {
+            printf 'storePassword=%s\n' "$sp"
+            printf 'keyPassword=%s\n' "$kp"
+            printf 'keyAlias=%s\n' "$ka"
+            printf 'storeFile=%s\n' "$keystore"
+          } > android/key.properties
+          echo "KEYSTORE_PATH=$keystore" >> "$GITHUB_ENV"
+
+      - name: Install dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Run code generation
+        run: dart run build_runner build -d
+
+      - name: Build release APK
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          flutter build apk --release \
+            --obfuscate --split-debug-info=build/symbols \
+            --build-name="$VERSION" --build-number="$BUILD_NUMBER"
+
+      # Always remove the signing material, even when the build failed.
+      - name: Remove signing material
+        if: always()
+        run: |
+          rm -f android/key.properties
+          if [ -n "${KEYSTORE_PATH:-}" ]; then
+            rm -f "$KEYSTORE_PATH"
+          fi
+          rm -f "$RUNNER_TEMP/release-keystore.jks"
+
+      - name: Verify APK signature
+        env:
+          EXPECTED_SHA256: ${{ vars.RELEASE_CERT_SHA256 }}
+        run: |
+          set -eu
+          apksigner=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n1)
+          apk=build/app/outputs/flutter-apk/app-release.apk
+          "$apksigner" verify --print-certs "$apk" | tee "$RUNNER_TEMP/certs.txt"
+          actual=$(sed -n 's/^Signer #1 certificate SHA-256 digest: *//p' "$RUNNER_TEMP/certs.txt" | tr -d ':' | tr 'A-F' 'a-f')
+          if [ -z "$actual" ]; then
+            echo "::error::Could not read the signer certificate digest"
+            exit 1
+          fi
+          if [ -z "${EXPECTED_SHA256:-}" ]; then
+            echo "::notice::vars.RELEASE_CERT_SHA256 is not set; skipping certificate pinning check (signer SHA-256: $actual)"
+            exit 0
+          fi
+          expected=$(printf '%s' "$EXPECTED_SHA256" | tr -d ': ' | tr 'A-F' 'a-f')
+          if [ "$actual" != "$expected" ]; then
+            echo "::error::Signer certificate SHA-256 $actual does not match vars.RELEASE_CERT_SHA256"
+            exit 1
+          fi
+          echo "Signer certificate matches vars.RELEASE_CERT_SHA256"
+
+      - name: Package APK and checksum
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          set -eu
+          mkdir -p dist
+          cp build/app/outputs/flutter-apk/app-release.apk "dist/tududa-v${VERSION}.apk"
+          (cd dist && sha256sum "tududa-v${VERSION}.apk" > "tududa-v${VERSION}.apk.sha256")
+          cat "dist/tududa-v${VERSION}.apk.sha256"
+
+      - name: Upload APK and checksum
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: tududa-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: tududa-release
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30
 
-  # Automatically create a GitHub Release on tag push
+      - name: Upload debug symbols
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tududa-debug-symbols
+          path: build/symbols/
+          if-no-files-found: error
+          retention-days: 90
+
   release:
     name: Create GitHub Release
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.create_release && inputs.release_tag != '')
-    env:
-      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
-
+    if: needs.build.outputs.tag != '' && (startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.create_release))
     permissions:
       contents: write
 
     steps:
-      - name: Download APK artifact
+      - name: Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Download APK and checksum
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          name: tududa-release-apk
+          name: tududa-release
+          path: dist
 
-      - name: Rename APK
-        run: mv app-release.apk tududa-${RELEASE_TAG}.apk
+      - name: Compose release notes
+        env:
+          TAG: ${{ needs.build.outputs.tag }}
+        run: |
+          {
+            echo "## Tududa ${TAG}"
+            echo ""
+            echo "Download the APK below and install it on an Android device (Android 8.0 / API 26 or newer)."
+            echo "You may need to allow installing apps from unknown sources."
+            echo "The SHA-256 checksum is attached as \`.sha256\`; verify with \`sha256sum -c\`."
+            echo ""
+            echo "中文说明见 [README_CN.md](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG}/README_CN.md)。"
+            echo ""
+          } > notes.md
+          if sh tool/ci/release_notes.sh "$TAG" CHANGELOG.md >> notes.md; then
+            echo "GENERATE_NOTES=" >> "$GITHUB_ENV"
+          else
+            echo "::notice::No CHANGELOG.md section for $TAG; falling back to generated release notes"
+            echo "GENERATE_NOTES=--generate-notes" >> "$GITHUB_ENV"
+          fi
 
-      - name: Create Release
-        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
-        with:
-          tag_name: ${{ env.RELEASE_TAG }}
-          target_commitish: ${{ github.sha }}
-          name: Tududa ${{ env.RELEASE_TAG }}
-          body: |
-            ## Tududa ${{ env.RELEASE_TAG }}
-
-            ### 📦 下载
-            下载下方的 APK 文件安装到 Android 设备。
-
-            ### ⚠️ 安装说明
-            需要在手机设置中允许「安装未知来源应用」。
-          files: tududa-${{ env.RELEASE_TAG }}.apk
-          draft: false
-          prerelease: false
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.build.outputs.tag }}
+          VERSION: ${{ needs.build.outputs.version }}
+        run: |
+          set -eu
+          files=("dist/tududa-v${VERSION}.apk" "dist/tududa-v${VERSION}.apk.sha256")
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${files[@]}" --clobber
+            gh release edit "$TAG" --title "Tududa $TAG" --notes-file notes.md
+          else
+            # shellcheck disable=SC2086
+            gh release create "$TAG" "${files[@]}" \
+              --title "Tududa $TAG" \
+              --notes-file notes.md ${GENERATE_NOTES} \
+              --target "$GITHUB_SHA"
+          fi

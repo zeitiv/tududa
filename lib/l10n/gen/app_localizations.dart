@@ -610,6 +610,18 @@ abstract class AppLocalizations {
   /// **'Tasks'**
   String get navTasks;
 
+  /// Bottom navigation: today's tasks
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get navToday;
+
+  /// Bottom navigation: upcoming tasks
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get navUpcoming;
+
   /// No description provided for @noteColor.
   ///
   /// In en, this message translates to:
@@ -1113,6 +1125,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Timezone'**
   String get settingsTimezone;
+
+  /// Tooltip of the global add button
+  ///
+  /// In en, this message translates to:
+  /// **'Quick add task'**
+  String get shellQuickAdd;
 
   /// No description provided for @syncCancel.
   ///

@@ -2,7 +2,7 @@ import '../../auth/providers/auth_provider.dart';
 
 const _loginPath = '/login';
 const _serverConfigPath = '/server-config';
-const _homePath = '/tasks';
+const _homePath = '/today';
 
 bool _isAuthPath(String path) =>
     path == _loginPath || path == _serverConfigPath;

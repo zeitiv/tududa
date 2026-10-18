@@ -182,6 +182,14 @@
   "@navTasks": {
     "description": "Bottom navigation label"
   },
+  "navToday": "Today",
+  "@navToday": {
+    "description": "Bottom navigation: today's tasks"
+  },
+  "navUpcoming": "Upcoming",
+  "@navUpcoming": {
+    "description": "Bottom navigation: upcoming tasks"
+  },
   "noteColor": "Color",
   "noteContentHint": "Jot down your thoughts (Markdown supported)",
   "noteDeleteConfirm": "Are you sure?",
@@ -313,6 +321,10 @@
   "settingsThemeLight": "Light",
   "settingsThemeSystem": "System",
   "settingsTimezone": "Timezone",
+  "shellQuickAdd": "Quick add task",
+  "@shellQuickAdd": {
+    "description": "Tooltip of the global add button"
+  },
   "syncCancel": "Cancel",
   "syncDiscard": "Discard",
   "syncDiscardBody": "The change will be undone on this device and never sent to the server.",

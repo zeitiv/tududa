@@ -292,6 +292,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get navTasks => '任务';
 
   @override
+  String get navToday => '今天';
+
+  @override
+  String get navUpcoming => '即将到来';
+
+  @override
   String get noteColor => '颜色';
 
   @override
@@ -557,6 +563,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsTimezone => '时区';
+
+  @override
+  String get shellQuickAdd => '快速添加任务';
 
   @override
   String get syncCancel => '取消';

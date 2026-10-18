@@ -6,6 +6,8 @@ import '../../auth/providers/auth_provider.dart';
 import '../../auth/screens/server_config_screen.dart';
 import '../../auth/screens/login_screen.dart';
 import '../../tasks/screens/tasks_screen.dart';
+import '../../tasks/screens/today_screen.dart';
+import '../../tasks/screens/task_list_screen.dart';
 import '../../tasks/screens/task_detail_screen.dart';
 import '../../tasks/screens/task_form_screen.dart';
 import '../../projects/screens/projects_screen.dart';
@@ -28,11 +30,10 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.listen(authProvider, (_, _) => refresh.refresh());
 
   final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
-  final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
   final router = GoRouter(
     navigatorKey: rootNavigatorKey,
-    initialLocation: '/tasks',
+    initialLocation: '/today',
     refreshListenable: refresh,
     redirect: (context, state) {
       final authState = ref.read(authProvider);
@@ -56,109 +57,153 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const LoginScreen(),
       ),
 
-      // Main app with shell (bottom navigation)
-      ShellRoute(
-        navigatorKey: shellNavigatorKey,
-        builder: (context, state, child) => ShellScaffold(child: child),
-        routes: [
-          GoRoute(
-            path: '/tasks',
-            builder: (context, state) => const TasksScreen(),
+      // Main app with shell (bottom navigation / rail), one stack per tab.
+      StatefulShellRoute.indexedStack(
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state, shell) => ShellScaffold(shell: shell),
+        branches: [
+          StatefulShellBranch(
             routes: [
               GoRoute(
-                path: 'new',
-                parentNavigatorKey: rootNavigatorKey,
-                builder: (context, state) {
-                  final projectId = state.uri.queryParameters['projectId'];
-                  // Project ids are uid strings; never parse them as ints.
-                  return TaskFormScreen(defaultProjectId: projectId);
-                },
+                path: '/today',
+                builder: (context, state) => const TodayScreen(),
               ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
               GoRoute(
-                path: ':id',
-                parentNavigatorKey: rootNavigatorKey,
-                builder: (context, state) {
-                  final id = state.pathParameters['id']!;
-                  return TaskDetailScreen(taskId: id);
-                },
+                path: '/inbox',
+                builder: (context, state) => const InboxScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/upcoming',
+                builder: (context, state) =>
+                    const TaskListScreen(view: TaskListView.upcoming),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/projects',
+                builder: (context, state) => const ProjectsScreen(),
                 routes: [
                   GoRoute(
-                    path: 'edit',
+                    path: 'new',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (context, state) => const ProjectFormScreen(),
+                  ),
+                  GoRoute(
+                    path: ':id',
                     parentNavigatorKey: rootNavigatorKey,
                     builder: (context, state) {
                       final id = state.pathParameters['id']!;
-                      return TaskFormScreen(taskId: id);
+                      return ProjectDetailScreen(projectId: id);
                     },
+                    routes: [
+                      GoRoute(
+                        path: 'edit',
+                        parentNavigatorKey: rootNavigatorKey,
+                        builder: (context, state) {
+                          final id = state.pathParameters['id']!;
+                          return ProjectFormScreen(projectId: id);
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
             ],
           ),
-          GoRoute(
-            path: '/projects',
-            builder: (context, state) => const ProjectsScreen(),
+          StatefulShellBranch(
             routes: [
               GoRoute(
-                path: 'new',
-                parentNavigatorKey: rootNavigatorKey,
-                builder: (context, state) => const ProjectFormScreen(),
-              ),
-              GoRoute(
-                path: ':id',
-                parentNavigatorKey: rootNavigatorKey,
-                builder: (context, state) {
-                  final id = state.pathParameters['id']!;
-                  return ProjectDetailScreen(projectId: id);
-                },
+                path: '/more',
+                builder: (context, state) => const SettingsScreen(),
                 routes: [
                   GoRoute(
-                    path: 'edit',
+                    path: 'areas',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (context, state) => const AreasScreen(),
+                  ),
+                  GoRoute(
+                    path: 'sync',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (context, state) => const SyncScreen(),
+                  ),
+                ],
+              ),
+              GoRoute(
+                path: '/overdue',
+                builder: (context, state) =>
+                    const TaskListScreen(view: TaskListView.overdue),
+              ),
+              GoRoute(
+                path: '/someday',
+                builder: (context, state) =>
+                    const TaskListScreen(view: TaskListView.someday),
+              ),
+              GoRoute(
+                path: '/completed',
+                builder: (context, state) =>
+                    const TaskListScreen(view: TaskListView.completed),
+              ),
+              GoRoute(
+                path: '/notes',
+                builder: (context, state) => const NotesScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'new',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (context, state) => const NoteEditorScreen(),
+                  ),
+                  GoRoute(
+                    path: ':id',
                     parentNavigatorKey: rootNavigatorKey,
                     builder: (context, state) {
                       final id = state.pathParameters['id']!;
-                      return ProjectFormScreen(projectId: id);
+                      return NoteEditorScreen(noteId: id);
                     },
                   ),
                 ],
               ),
-            ],
-          ),
-          GoRoute(
-            path: '/notes',
-            builder: (context, state) => const NotesScreen(),
-            routes: [
               GoRoute(
-                path: 'new',
-                parentNavigatorKey: rootNavigatorKey,
-                builder: (context, state) => const NoteEditorScreen(),
-              ),
-              GoRoute(
-                path: ':id',
-                parentNavigatorKey: rootNavigatorKey,
-                builder: (context, state) {
-                  final id = state.pathParameters['id']!;
-                  return NoteEditorScreen(noteId: id);
-                },
-              ),
-            ],
-          ),
-          GoRoute(
-            path: '/inbox',
-            builder: (context, state) => const InboxScreen(),
-          ),
-          GoRoute(
-            path: '/more',
-            builder: (context, state) => const SettingsScreen(),
-            routes: [
-              GoRoute(
-                path: 'areas',
-                parentNavigatorKey: rootNavigatorKey,
-                builder: (context, state) => const AreasScreen(),
-              ),
-              GoRoute(
-                path: 'sync',
-                parentNavigatorKey: rootNavigatorKey,
-                builder: (context, state) => const SyncScreen(),
+                path: '/tasks',
+                builder: (context, state) => const TasksScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'new',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (context, state) {
+                      final projectId = state.uri.queryParameters['projectId'];
+                      // Project ids are uid strings; never parse them as ints.
+                      return TaskFormScreen(defaultProjectId: projectId);
+                    },
+                  ),
+                  GoRoute(
+                    path: ':id',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (context, state) {
+                      final id = state.pathParameters['id']!;
+                      return TaskDetailScreen(taskId: id);
+                    },
+                    routes: [
+                      GoRoute(
+                        path: 'edit',
+                        parentNavigatorKey: rootNavigatorKey,
+                        builder: (context, state) {
+                          final id = state.pathParameters['id']!;
+                          return TaskFormScreen(taskId: id);
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

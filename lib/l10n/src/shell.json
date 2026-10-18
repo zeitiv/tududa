@@ -1,0 +1,5 @@
+{
+  "navToday": {"en": "Today", "de": "Heute", "zh": "今天", "description": "Bottom navigation: today's tasks"},
+  "navUpcoming": {"en": "Upcoming", "de": "Anstehend", "zh": "即将到来", "description": "Bottom navigation: upcoming tasks"},
+  "shellQuickAdd": {"en": "Quick add task", "de": "Aufgabe schnell hinzufügen", "zh": "快速添加任务", "description": "Tooltip of the global add button"}
+}

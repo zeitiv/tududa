@@ -302,6 +302,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get navTasks => 'Aufgaben';
 
   @override
+  String get navToday => 'Heute';
+
+  @override
+  String get navUpcoming => 'Anstehend';
+
+  @override
   String get noteColor => 'Farbe';
 
   @override
@@ -580,6 +586,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsTimezone => 'Zeitzone';
+
+  @override
+  String get shellQuickAdd => 'Aufgabe schnell hinzufügen';
 
   @override
   String get syncCancel => 'Abbrechen';

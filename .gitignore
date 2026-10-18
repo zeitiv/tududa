@@ -56,3 +56,7 @@ android/key.properties
 .claude/
 CLAUDE.md
 CLAUDE.local.md
+
+# Generated code (CI regenerates via build_runner)
+*.g.dart
+*.freezed.dart

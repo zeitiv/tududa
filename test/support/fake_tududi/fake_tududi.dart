@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' show HttpDate;
 
 import 'package:shelf/shelf.dart';
 
@@ -67,6 +68,14 @@ class FakeSession {
   final String csrfToken;
 }
 
+class _Failure {
+  _Failure(this.status, this.body, this.headers, {this.connection = false});
+  final int status;
+  final Object? body;
+  final Map<String, Object> headers;
+  final bool connection;
+}
+
 /// What a route handler receives.
 class RouteContext {
   RouteContext(this.request, this.params, this.body, this.session);
@@ -132,7 +141,7 @@ class FakeTududi {
   final Map<String, FakeSession> sessions = {};
   final Map<String, Map<String, dynamic>> tasks = {};
   final List<RecordedRequest> requests = [];
-  final Map<String, List<int>> _failures = {};
+  final Map<String, List<_Failure>> _failures = {};
   final List<_Route> _routes = [];
   int _idCounter = 0;
   int failedLogins = 0;
@@ -141,6 +150,12 @@ class FakeTududi {
   bool offline = false;
   Duration latency = Duration.zero;
   int loginFailureLimit = 5;
+
+  /// The server's idea of "now", used for the `Date` response header.
+  DateTime Function() clock = DateTime.now;
+
+  /// Added to [clock] for the `Date` header, to simulate a skewed device clock.
+  Duration serverSkew = Duration.zero;
 
   // ---- public API ----
   FakeUser addUser(
@@ -206,8 +221,25 @@ class FakeTududi {
 
   /// The next request to [path] (without `/api`, e.g. `/tasks`) fails with
   /// [status]. Calls stack: each call queues one failure.
-  void failNext(String path, int status) =>
-      _failures.putIfAbsent(path, () => []).add(status);
+  /// [body] defaults to `{error: 'Injected failure'}`; [headers] are added to
+  /// the response (e.g. `{'retry-after': '2'}` for a 429).
+  void failNext(
+    String path,
+    int status, {
+    Object? body,
+    Map<String, Object> headers = const {},
+  }) => _failures
+      .putIfAbsent(path, () => [])
+      .add(_Failure(status, body ?? {'error': 'Injected failure'}, headers));
+
+  /// The next [times] requests to [path] fail like a dropped connection.
+  void failNextConnection(String path, {int times = 1}) {
+    for (var i = 0; i < times; i++) {
+      _failures
+          .putIfAbsent(path, () => [])
+          .add(_Failure(0, null, const {}, connection: true));
+    }
+  }
 
   /// Registers a route. [pattern] excludes `/api`, supports `:param`.
   void route(
@@ -263,13 +295,17 @@ class FakeTududi {
     requests.add(rec);
     final res = await _dispatch(req, path, body);
     rec.status = res.statusCode;
-    return res;
+    return res.change(
+      headers: {'date': HttpDate.format(clock().add(serverSkew).toUtc())},
+    );
   }
 
   Future<Response> _dispatch(Request req, String path, Object? body) async {
     final queue = _failures[path];
     if (queue != null && queue.isNotEmpty) {
-      return json(queue.removeAt(0), {'error': 'Injected failure'});
+      final f = queue.removeAt(0);
+      if (f.connection) throw const FakeConnectionError();
+      return json(f.status, f.body, headers: f.headers);
     }
 
     final parts = path.split('/').where((s) => s.isNotEmpty).toList();
@@ -328,9 +364,11 @@ class FakeTududi {
       if (user == null || user.password != password) {
         failedLogins++;
         if (failedLogins >= loginFailureLimit) {
-          return json(429, {
-            'error': 'Too many login attempts, please try again later.',
-          });
+          return json(
+            429,
+            {'error': 'Too many login attempts, please try again later.'},
+            headers: {'retry-after': '900'},
+          );
         }
         return json(401, {
           'errors': ['Invalid credentials'],

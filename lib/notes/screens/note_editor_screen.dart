@@ -400,48 +400,61 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
                   Text(strings.noteColor, style: theme.textTheme.labelLarge),
                   const SizedBox(height: 8),
                   Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: _colors.map((c) {
+                    spacing: 0,
+                    runSpacing: 0,
+                    children: _colors.indexed.map((entry) {
+                      final (index, c) = entry;
                       final isSelected = _color == c;
                       final displayColor =
                           parseNoteColor(c) ?? theme.colorScheme.surface;
                       return Semantics(
                         button: true,
                         selected: isSelected,
-                        label: strings.noteColor,
+                        label: c == null
+                            ? strings.a11yNoteColorNone
+                            : strings.a11yNoteColorOption(
+                                index,
+                                _colors.length - 1,
+                              ),
                         child: InkResponse(
                           radius: 24,
+                          // 48dp tap target around the 40dp swatch.
                           onTap: () {
                             setState(() => _color = c);
                             _syncDirty();
                           },
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: displayColor,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: isSelected
-                                    ? theme.colorScheme.primary
-                                    : theme.colorScheme.outline,
-                                width: isSelected ? 2.5 : 1,
+                          child: SizedBox.square(
+                            dimension: 48,
+                            child: Center(
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: displayColor,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? theme.colorScheme.primary
+                                        : theme.colorScheme.outline,
+                                    width: isSelected ? 2.5 : 1,
+                                  ),
+                                ),
+                                child: c == null
+                                    ? Icon(
+                                        Icons.format_color_reset,
+                                        size: 16,
+                                        color:
+                                            theme.colorScheme.onSurfaceVariant,
+                                      )
+                                    : isSelected
+                                    ? const Icon(
+                                        Icons.check,
+                                        size: 18,
+                                        color: Colors.black87,
+                                      )
+                                    : null,
                               ),
                             ),
-                            child: c == null
-                                ? Icon(
-                                    Icons.format_color_reset,
-                                    size: 16,
-                                    color: theme.colorScheme.onSurfaceVariant,
-                                  )
-                                : isSelected
-                                ? const Icon(
-                                    Icons.check,
-                                    size: 18,
-                                    color: Colors.black87,
-                                  )
-                                : null,
                           ),
                         ),
                       );

@@ -62,14 +62,20 @@ class AppDatabase extends _$AppDatabase {
   late final KvDao kvDao = KvDao(this);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
-    // v2+: regenerate with `make-migrations` + `schema steps`, then pass
-    // `from1To2: (m, schema) async { ... }` here.
-    onUpgrade: stepByStep(),
+    onUpgrade: stepByStep(
+      // v2: query-plan indexes (see test/perf/query_plans_test.dart).
+      from1To2: (m, schema) async {
+        await m.create(schema.idxTasksServerId);
+        await m.create(schema.idxTasksArea);
+        await m.create(schema.idxTasksRecurringParent);
+        await m.create(schema.idxTasksList);
+      },
+    ),
   );
 
   /// Deletes every row of every table (including outbox, sync state, cached

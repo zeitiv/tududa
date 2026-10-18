@@ -1,0 +1,22 @@
+{
+  "a11yNoteColorNone": {
+    "en": "No color",
+    "de": "Keine Farbe",
+    "zh": "无颜色",
+    "description": "Screen reader label of the 'no color' swatch in the note color picker"
+  },
+  "a11yNoteColorOption": {
+    "en": "Color {index} of {count}",
+    "de": "Farbe {index} von {count}",
+    "zh": "颜色 {index}/{count}",
+    "description": "Screen reader label of a color swatch in the note color picker",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

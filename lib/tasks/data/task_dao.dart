@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 
 import '../../core/db/app_database.dart';
@@ -12,7 +13,9 @@ import 'task_fields.dart';
 
 /// A stream that re-runs [load] whenever one of [tables] is written, starting
 /// with an initial run. Unlike drift's own query streams it can combine
-/// several queries (a task with its tags, project, subtasks...). Updates that
+/// several queries (a task with its tags, project, subtasks...). A result
+/// equal to the previous one is not emitted, so writes that do not change what
+/// a screen shows do not rebuild it. Updates that
 /// arrive while a load runs cause exactly one more load.
 Stream<T> reactiveLoad<T>(
   AppDatabase db,
@@ -23,6 +26,8 @@ Stream<T> reactiveLoad<T>(
   StreamSubscription<Set<TableUpdate>>? sub;
   var loading = false;
   var again = false;
+  var hasLast = false;
+  T? last;
 
   Future<void> run() async {
     if (loading) {
@@ -34,7 +39,14 @@ Stream<T> reactiveLoad<T>(
       do {
         again = false;
         final value = await load();
-        if (!controller.isClosed) controller.add(value);
+        // Equal result: the tables changed but this view did not.
+        final same =
+            hasLast && const DeepCollectionEquality().equals(last, value);
+        if (!same && !controller.isClosed) {
+          hasLast = true;
+          last = value;
+          controller.add(value);
+        }
       } while (again && !controller.isClosed);
     } catch (e, st) {
       if (!controller.isClosed) controller.addError(e, st);
@@ -45,6 +57,8 @@ Stream<T> reactiveLoad<T>(
 
   controller = StreamController<T>(
     onListen: () {
+      hasLast = false;
+      last = null;
       sub = db
           .tableUpdates(TableUpdateQuery.onAllTables(tables))
           .listen((_) => unawaited(run()));

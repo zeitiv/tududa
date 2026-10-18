@@ -343,6 +343,8 @@ class _TaskTileState extends ConsumerState<TaskTile> {
             TaskQuickActions.toggleComplete(context, ref, task),
         CustomSemanticsAction(label: l.postponeTitle): () =>
             showPostponeSheet(context, ref, [task]),
+        CustomSemanticsAction(label: l.bulkPriority): () =>
+            TaskQuickActions.pickPriority(context, ref, task),
         CustomSemanticsAction(label: l.taskDelete): () =>
             TaskQuickActions.delete(context, ref, task),
         CustomSemanticsAction(label: l.tileEdit): _edit,

@@ -197,33 +197,52 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     initialValue: _status,
+                    isExpanded: true,
                     decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.flag_outlined),
                     ),
                     items: [
                       DropdownMenuItem(
                         value: 'not_started',
-                        child: Text(strings.projectStatusNotStarted),
+                        child: Text(
+                          strings.projectStatusNotStarted,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'planned',
-                        child: Text(strings.projectStatusPlanned),
+                        child: Text(
+                          strings.projectStatusPlanned,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'in_progress',
-                        child: Text(strings.projectStatusInProgress),
+                        child: Text(
+                          strings.projectStatusInProgress,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'waiting',
-                        child: Text(strings.projectStatusWaiting),
+                        child: Text(
+                          strings.projectStatusWaiting,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'done',
-                        child: Text(strings.projectStatusDone),
+                        child: Text(
+                          strings.projectStatusDone,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'cancelled',
-                        child: Text(strings.projectStatusCancelled),
+                        child: Text(
+                          strings.projectStatusCancelled,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                     onChanged: (v) =>
@@ -264,6 +283,7 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
 
                   // Area
                   DropdownButtonFormField<AreaUid?>(
+                    isExpanded: true,
                     initialValue: areas.any((a) => a.uid == _areaUid)
                         ? _areaUid
                         : null,
@@ -274,11 +294,16 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
                     items: [
                       DropdownMenuItem(
                         value: null,
-                        child: Text(strings.projectNoArea),
+                        child: Text(
+                          strings.projectNoArea,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       ...areas.map(
-                        (a) =>
-                            DropdownMenuItem(value: a.uid, child: Text(a.name)),
+                        (a) => DropdownMenuItem(
+                          value: a.uid,
+                          child: Text(a.name, overflow: TextOverflow.ellipsis),
+                        ),
                       ),
                     ],
                     onChanged: (v) => setState(() => _areaUid = v),

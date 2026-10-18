@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart' show CustomSemanticsAction;
 
 import '../../search/command_palette/command_palette.dart';
 
@@ -72,13 +73,22 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
             onPressed: () => context.push('/today/review'),
           ),
           // Tap: global search. Long-press: command palette.
-          GestureDetector(
-            onLongPress: () => showCommandPalette(context),
-            child: IconButton(
-              key: const Key('today.search'),
-              icon: const Icon(Icons.search),
-              tooltip: l10n.todaySearch,
-              onPressed: () => context.push('/search'),
+          // The gesture is invisible to screen readers: they get the palette
+          // as a custom action on the button instead.
+          Semantics(
+            customSemanticsActions: {
+              CustomSemanticsAction(label: l10n.paletteTitle): () =>
+                  showCommandPalette(context),
+            },
+            child: GestureDetector(
+              excludeFromSemantics: true,
+              onLongPress: () => showCommandPalette(context),
+              child: IconButton(
+                key: const Key('today.search'),
+                icon: const Icon(Icons.search),
+                tooltip: l10n.searchTitle,
+                onPressed: () => context.push('/search'),
+              ),
             ),
           ),
         ],
@@ -220,7 +230,9 @@ class TodaySection extends StatelessWidget {
                   ),
                 ),
               ),
-              ?action,
+              // Flexible: at large text sizes the button wraps instead of
+              // overflowing the card.
+              if (action != null) Flexible(child: action!),
             ],
           ),
           if (!collapsed)

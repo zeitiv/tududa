@@ -134,36 +134,57 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       ),
                       const SizedBox(height: 8),
                       if (authState.serverUrl != null)
-                        GestureDetector(
+                        // Whole chip is the tap target (48dp high); the URL
+                        // shrinks with an ellipsis instead of overflowing.
+                        Semantics(
+                          button: true,
+                          excludeSemantics: true,
+                          label:
+                              '${strings.authChangeServer}: '
+                              '${authState.serverUrl}',
                           onTap: () => context.go('/server-config'),
-                          child: SurfaceCard(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.dns_outlined,
-                                  size: 14,
-                                  color: theme.colorScheme.onSurfaceVariant,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(24),
+                            onTap: () => context.go('/server-config'),
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(minHeight: 48),
+                              child: SurfaceCard(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
                                 ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  authState.serverUrl!,
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme.onSurfaceVariant,
-                                  ),
+                                borderRadius: BorderRadius.circular(20),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.dns_outlined,
+                                      size: 14,
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Flexible(
+                                      child: Text(
+                                        authState.serverUrl!,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: theme.textTheme.bodySmall
+                                            ?.copyWith(
+                                              color: theme
+                                                  .colorScheme
+                                                  .onSurfaceVariant,
+                                            ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Icon(
+                                      Icons.edit_outlined,
+                                      size: 12,
+                                      color: theme.colorScheme.primary,
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 8),
-                                Icon(
-                                  Icons.edit_outlined,
-                                  size: 12,
-                                  color: theme.colorScheme.primary,
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ),

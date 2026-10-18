@@ -13,6 +13,16 @@ import 'sync_columns.dart';
 @TableIndex(name: 'idx_tasks_project', columns: {#projectLocalId})
 @TableIndex(name: 'idx_tasks_parent', columns: {#parentLocalId})
 @TableIndex(name: 'idx_tasks_completed_at', columns: {#completedAt})
+@TableIndex(name: 'idx_tasks_server_id', columns: {#serverId})
+@TableIndex(name: 'idx_tasks_area', columns: {#areaLocalId})
+@TableIndex(
+  name: 'idx_tasks_recurring_parent',
+  columns: {#recurringParentUid, #dueDate},
+)
+@TableIndex(
+  name: 'idx_tasks_list',
+  columns: {#pendingDelete, #parentLocalId, #dueDate},
+)
 class Tasks extends Table with SyncColumns {
   TextColumn get name => text().withDefault(const Constant(''))();
   TextColumn get originalName => text().nullable()();

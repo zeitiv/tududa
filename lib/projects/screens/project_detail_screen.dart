@@ -127,21 +127,23 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                     children: [
                       Row(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: statusColor.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              projectStatusLabel(strings, project.status),
-                              style: TextStyle(
-                                color: statusColor,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
+                          Flexible(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: statusColor.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                projectStatusLabel(strings, project.status),
+                                style: TextStyle(
+                                  color: statusColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
                           ),
@@ -176,9 +178,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
                             const SizedBox(width: 4),
-                            Text(
-                              strings.projectAreaLabel(project.areaName!),
-                              style: theme.textTheme.bodySmall,
+                            Flexible(
+                              child: Text(
+                                strings.projectAreaLabel(project.areaName!),
+                                style: theme.textTheme.bodySmall,
+                              ),
                             ),
                           ],
                         ),
@@ -189,7 +193,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                 const SizedBox(height: 20),
 
                 // Tasks section
-                Row(
+                // A Wrap, not a Row: long translations or large text move the
+                // button to its own line instead of overflowing.
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Text(
                       strings.projectTasksHeading,
@@ -197,7 +205,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const Spacer(),
                     TextButton.icon(
                       onPressed: () =>
                           context.push('/tasks/new?projectId=${project.id}'),

@@ -1,5 +1,21 @@
 {
   "@@locale": "en",
+  "a11yNoteColorNone": "No color",
+  "@a11yNoteColorNone": {
+    "description": "Screen reader label of the 'no color' swatch in the note color picker"
+  },
+  "a11yNoteColorOption": "Color {index} of {count}",
+  "@a11yNoteColorOption": {
+    "description": "Screen reader label of a color swatch in the note color picker",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "appName": "Tududa",
   "@appName": {
     "description": "App name"

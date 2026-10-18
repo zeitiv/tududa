@@ -100,6 +100,18 @@ abstract class AppLocalizations {
     Locale('zh'),
   ];
 
+  /// Screen reader label of the 'no color' swatch in the note color picker
+  ///
+  /// In en, this message translates to:
+  /// **'No color'**
+  String get a11yNoteColorNone;
+
+  /// Screen reader label of a color swatch in the note color picker
+  ///
+  /// In en, this message translates to:
+  /// **'Color {index} of {count}'**
+  String a11yNoteColorOption(int index, int count);
+
   /// App name
   ///
   /// In en, this message translates to:

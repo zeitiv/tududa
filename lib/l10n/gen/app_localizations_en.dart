@@ -10,6 +10,14 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get a11yNoteColorNone => 'No color';
+
+  @override
+  String a11yNoteColorOption(int index, int count) {
+    return 'Color $index of $count';
+  }
+
+  @override
   String get appName => 'Tududa';
 
   @override

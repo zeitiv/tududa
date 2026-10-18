@@ -1,5 +1,7 @@
 {
   "@@locale": "zh",
+  "a11yNoteColorNone": "无颜色",
+  "a11yNoteColorOption": "颜色 {index}/{count}",
   "appName": "Tududa",
   "areaAddTooltip": "新建区域",
   "areaCancel": "取消",

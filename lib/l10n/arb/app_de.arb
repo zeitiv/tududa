@@ -1,5 +1,7 @@
 {
   "@@locale": "de",
+  "a11yNoteColorNone": "Keine Farbe",
+  "a11yNoteColorOption": "Farbe {index} von {count}",
   "appName": "Tududa",
   "areaAddTooltip": "Neuer Bereich",
   "areaCancel": "Abbrechen",

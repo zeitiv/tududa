@@ -10,6 +10,14 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
+  String get a11yNoteColorNone => '无颜色';
+
+  @override
+  String a11yNoteColorOption(int index, int count) {
+    return '颜色 $index/$count';
+  }
+
+  @override
   String get appName => 'Tududa';
 
   @override

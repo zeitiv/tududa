@@ -438,8 +438,8 @@ class _KanbanCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      width: 40,
-                      height: 40,
+                      width: 48,
+                      height: 48,
                       child: IconButton(
                         tooltip: strings.kanbanV2MoveTo,
                         padding: EdgeInsets.zero,

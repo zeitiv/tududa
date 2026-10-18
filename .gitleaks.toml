@@ -1,0 +1,18 @@
+title = "Tududa gitleaks config"
+
+# Keep every rule from the upstream default ruleset; only the narrow allowlist below is added.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Test fixtures with fake credentials, and lockfiles"
+paths = [
+  # Fake Tududi server, fixtures and fake credentials used only by Dart tests.
+  '''^test/support/.*''',
+  # Fake credentials/cookies for the Kotlin vault and API client unit tests.
+  '''^android/tududi_core/src/test/.*''',
+  # Lockfiles contain package hashes that look like high-entropy secrets.
+  '''(^|/)pubspec\.lock$''',
+  '''(^|/)gradle\.lockfile$''',
+  '''(^|/)buildscript-gradle\.lockfile$''',
+]

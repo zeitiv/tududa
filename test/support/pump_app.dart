@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tududa/l10n/gen/app_localizations.dart';
 import 'package:tududa/settings/providers/settings_provider.dart';
 
 /// Pumps [home] inside a ProviderScope + MaterialApp with mocked prefs.
@@ -22,7 +23,9 @@ Future<void> pumpApp(
         ...overrides,
       ],
       child: MaterialApp(
-        locale: locale,
+        locale: locale ?? const Locale('en'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: home ?? const Scaffold(body: SizedBox()),
       ),
     ),

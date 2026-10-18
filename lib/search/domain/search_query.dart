@@ -1,4 +1,5 @@
 import '../../core/ids.dart';
+import '../../core/time/calendar_date.dart';
 
 /// Entity kinds `GET /search` can return; [wire] is the `type` discriminator
 /// and the value used in the `filters` parameter.
@@ -144,4 +145,144 @@ class SearchQuery {
 
   static bool _eq(Map<String, String> a, Map<String, String> b) =>
       a.length == b.length && a.entries.every((e) => b[e.key] == e.value);
+}
+
+/// `is:` values of the search syntax.
+enum SearchIs { overdue, today, done }
+
+/// `due:` values of the search syntax; a concrete day is kept in
+/// [ParsedSearch.dueDate] with [SearchDue.date].
+enum SearchDue { today, tomorrow, week, date }
+
+/// A raw search string split into its language-neutral syntax tokens:
+///
+/// - `#tag`, `+project`, `~area` (quote values with spaces: `#"to do"`)
+/// - `is:overdue|today|done`
+/// - `priority:high|medium|low`
+/// - `due:today|tomorrow|week|YYYY-MM-DD`
+///
+/// Everything else (including unknown `key:value` pairs and bare `#`, `+`,
+/// `~`) stays free [text].
+class ParsedSearch {
+  const ParsedSearch({
+    this.text = '',
+    this.tags = const [],
+    this.project,
+    this.area,
+    this.flags = const {},
+    this.priority,
+    this.due,
+    this.dueDate,
+  });
+
+  final String text;
+  final List<String> tags;
+  final String? project;
+  final String? area;
+  final Set<SearchIs> flags;
+
+  /// `low|medium|high`.
+  final String? priority;
+  final SearchDue? due;
+  final CalendarDate? dueDate;
+
+  static final _tokens = RegExp(r'''(?:[#+~]|[A-Za-z]+:)?"[^"]*"|\S+''');
+
+  static ParsedSearch parse(String raw) {
+    final free = <String>[];
+    final tags = <String>[];
+    String? project, area, priority;
+    final flags = <SearchIs>{};
+    SearchDue? due;
+    CalendarDate? dueDate;
+
+    String unquote(String v) =>
+        v.length >= 2 && v.startsWith('"') && v.endsWith('"')
+        ? v.substring(1, v.length - 1)
+        : v;
+
+    for (final m in _tokens.allMatches(raw)) {
+      final token = m[0]!;
+      final head = token[0];
+      final rest = unquote(token.substring(1)).trim();
+      if ((head == '#' || head == '+' || head == '~') && rest.isNotEmpty) {
+        if (head == '#') {
+          if (!tags.contains(rest)) tags.add(rest);
+        } else if (head == '+') {
+          project = rest;
+        } else {
+          area = rest;
+        }
+        continue;
+      }
+      final colon = token.indexOf(':');
+      if (colon > 0) {
+        final key = token.substring(0, colon).toLowerCase();
+        final value = unquote(token.substring(colon + 1)).trim().toLowerCase();
+        var ok = true;
+        switch (key) {
+          case 'is':
+            final f = SearchIs.values.asNameMap()[value];
+            f == null ? ok = false : flags.add(f);
+          case 'priority':
+            if (const {'high', 'medium', 'low'}.contains(value)) {
+              priority = value;
+            } else {
+              ok = false;
+            }
+          case 'due':
+            final d = {
+              'today': SearchDue.today,
+              'tomorrow': SearchDue.tomorrow,
+              'week': SearchDue.week,
+            }[value];
+            final date = CalendarDate.tryParse(value);
+            if (d != null) {
+              due = d;
+              dueDate = null;
+            } else if (date != null && value.length == 10) {
+              due = SearchDue.date;
+              dueDate = date;
+            } else {
+              ok = false;
+            }
+          default:
+            ok = false;
+        }
+        if (ok) continue;
+      }
+      free.add(token);
+    }
+    return ParsedSearch(
+      text: free.join(' '),
+      tags: tags,
+      project: project,
+      area: area,
+      flags: flags,
+      priority: priority,
+      due: due,
+      dueDate: dueDate,
+    );
+  }
+
+  /// Syntax that only applies to tasks.
+  bool get hasTaskFilters =>
+      flags.isNotEmpty || priority != null || due != null;
+
+  /// Syntax that narrows by relation (tag, project, area).
+  bool get hasRelationFilters =>
+      tags.isNotEmpty || project != null || area != null;
+
+  bool get isEmpty =>
+      text.trim().isEmpty && !hasTaskFilters && !hasRelationFilters;
+
+  /// Appends [token] to [raw], separated by a single space.
+  static String append(String raw, String token) {
+    final base = raw.trimRight();
+    return base.isEmpty ? token : '$base $token';
+  }
+
+  /// `#tag`, quoted when the name has whitespace.
+  static String tagToken(String name) =>
+      name.contains(RegExp(r'\s')) ? '#"$name"' : '#$name';
 }

@@ -479,6 +479,118 @@
   "noteV2Untitled": "Untitled",
   "noteV2ViewGrid": "Grid view",
   "noteV2ViewList": "List view",
+  "paletteAddTask": "Add task",
+  "@paletteAddTask": {
+    "description": "Palette command"
+  },
+  "paletteChangeTheme": "Change theme",
+  "@paletteChangeTheme": {
+    "description": "Palette command: cycles system/light/dark"
+  },
+  "paletteEmpty": "No matching commands",
+  "@paletteEmpty": {
+    "description": "Command palette: nothing matches"
+  },
+  "paletteGoAreas": "Go to Areas",
+  "@paletteGoAreas": {
+    "description": "Palette command: navigate"
+  },
+  "paletteGoCompleted": "Go to Completed",
+  "@paletteGoCompleted": {
+    "description": "Palette command: navigate"
+  },
+  "paletteGoInbox": "Go to Inbox",
+  "@paletteGoInbox": {
+    "description": "Palette command: navigate"
+  },
+  "paletteGoNotes": "Go to Notes",
+  "@paletteGoNotes": {
+    "description": "Palette command: navigate"
+  },
+  "paletteGoOverdue": "Go to Overdue",
+  "@paletteGoOverdue": {
+    "description": "Palette command: navigate"
+  },
+  "paletteGoProjects": "Go to Projects",
+  "@paletteGoProjects": {
+    "description": "Palette command: navigate"
+  },
+  "paletteGoSettings": "Go to Settings",
+  "@paletteGoSettings": {
+    "description": "Palette command: navigate"
+  },
+  "paletteGoSomeday": "Go to Someday",
+  "@paletteGoSomeday": {
+    "description": "Palette command: navigate"
+  },
+  "paletteGoSync": "Go to Sync",
+  "@paletteGoSync": {
+    "description": "Palette command: navigate"
+  },
+  "paletteGoToday": "Go to Today",
+  "@paletteGoToday": {
+    "description": "Palette command: navigate"
+  },
+  "paletteGoUpcoming": "Go to Upcoming",
+  "@paletteGoUpcoming": {
+    "description": "Palette command: navigate"
+  },
+  "paletteHint": "Type a command or search…",
+  "@paletteHint": {
+    "description": "Command palette text field hint"
+  },
+  "paletteItemPosition": "{label}, {index} of {total}",
+  "@paletteItemPosition": {
+    "description": "Screen reader: palette row position",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "paletteKindNote": "Note",
+  "@paletteKindNote": {
+    "description": "Kind label of an item in the palette"
+  },
+  "paletteKindProject": "Project",
+  "@paletteKindProject": {
+    "description": "Kind label of an item in the palette"
+  },
+  "paletteKindTask": "Task",
+  "@paletteKindTask": {
+    "description": "Kind label of an item in the palette"
+  },
+  "paletteResultCount": "{count, plural, =1{1 result} other{{count} results}}",
+  "@paletteResultCount": {
+    "description": "Screen reader: number of palette results",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "paletteRunSync": "Run sync now",
+  "@paletteRunSync": {
+    "description": "Palette command"
+  },
+  "paletteSearch": "Search",
+  "@paletteSearch": {
+    "description": "Palette command: open search with the typed text"
+  },
+  "paletteTitle": "Command palette",
+  "@paletteTitle": {
+    "description": "Semantic label of the command palette dialog"
+  },
+  "paletteToggleReduceMotion": "Toggle reduce motion",
+  "@paletteToggleReduceMotion": {
+    "description": "Palette command"
+  },
   "postponeNextWeek": "Next week",
   "@postponeNextWeek": {
     "description": "Postpone option: first day of next week"
@@ -858,6 +970,79 @@
   "@reviewTomorrow": {
     "description": "Review button"
   },
+  "searchClear": "Clear",
+  "@searchClear": {
+    "description": "Tooltip of the clear button in the search field"
+  },
+  "searchError": "Search failed",
+  "@searchError": {
+    "description": "Error state of the search screen"
+  },
+  "searchHint": "Search tasks, projects, notes",
+  "@searchHint": {
+    "description": "Placeholder of the search field"
+  },
+  "searchIntro": "Search by name, or use #tag, +project, ~area, is:overdue, priority:high",
+  "@searchIntro": {
+    "description": "Hint shown on the empty search screen"
+  },
+  "searchNoResults": "No results for “{query}”",
+  "@searchNoResults": {
+    "description": "Empty state of the search results",
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "searchOfflineBanner": "Showing offline results",
+  "@searchOfflineBanner": {
+    "description": "Banner when results come from the local database"
+  },
+  "searchRecent": "Recent searches",
+  "@searchRecent": {
+    "description": "Header of the recent searches list"
+  },
+  "searchRecentClear": "Clear all",
+  "@searchRecentClear": {
+    "description": "Button that deletes all recent searches"
+  },
+  "searchRemoveRecent": "Remove from recent searches",
+  "@searchRemoveRecent": {
+    "description": "Tooltip of the remove button of a recent search"
+  },
+  "searchRetry": "Try again",
+  "@searchRetry": {
+    "description": "Retry button of the search error state"
+  },
+  "searchTitle": "Search",
+  "@searchTitle": {
+    "description": "Title and accessibility label of the search screen"
+  },
+  "searchTypeAll": "All",
+  "@searchTypeAll": {
+    "description": "Search filter chip for all types"
+  },
+  "searchTypeAreas": "Areas",
+  "@searchTypeAreas": {
+    "description": "Search result group and filter chip"
+  },
+  "searchTypeNotes": "Notes",
+  "@searchTypeNotes": {
+    "description": "Search result group and filter chip"
+  },
+  "searchTypeProjects": "Projects",
+  "@searchTypeProjects": {
+    "description": "Search result group and filter chip"
+  },
+  "searchTypeTags": "Tags",
+  "@searchTypeTags": {
+    "description": "Search result group and filter chip"
+  },
+  "searchTypeTasks": "Tasks",
+  "@searchTypeTasks": {
+    "description": "Search result group and filter chip"
+  },
   "settingsAbout": "About Tududa",
   "settingsAboutSubtitle": "v1.0.1 • Open Source",
   "settingsAppearance": "Appearance",
@@ -1066,6 +1251,200 @@
   },
   "taskDetailProject": "Project",
   "taskDetailSubtasks": "Subtasks",
+  "taskEditArea": "Area",
+  "@taskEditArea": {
+    "description": "Label of the area field"
+  },
+  "taskEditDeferAfterDue": "Defer date must not be after the due date",
+  "@taskEditDeferAfterDue": {
+    "description": "Validation error of the form"
+  },
+  "taskEditDiscard": "Discard",
+  "@taskEditDiscard": {
+    "description": "Confirms discarding changes"
+  },
+  "taskEditDiscardBody": "You have unsaved changes that will be lost.",
+  "@taskEditDiscardBody": {
+    "description": "Body of the unsaved-changes dialog"
+  },
+  "taskEditDiscardTitle": "Discard changes?",
+  "@taskEditDiscardTitle": {
+    "description": "Title of the unsaved-changes dialog"
+  },
+  "taskEditDueTime": "Due time",
+  "@taskEditDueTime": {
+    "description": "Label of the due time field"
+  },
+  "taskEditEstimate": "Estimate",
+  "@taskEditEstimate": {
+    "description": "Label of the time estimate field"
+  },
+  "taskEditEstimateInvalid": "Enter a whole number of minutes",
+  "@taskEditEstimateInvalid": {
+    "description": "Validation error for the estimate"
+  },
+  "taskEditEstimateLabel": "Estimate (minutes)",
+  "@taskEditEstimateLabel": {
+    "description": "Label of the estimate input"
+  },
+  "taskEditKeepEditing": "Keep editing",
+  "@taskEditKeepEditing": {
+    "description": "Dismisses the unsaved-changes dialog"
+  },
+  "taskEditNextOccurrences": "Next occurrences",
+  "@taskEditNextOccurrences": {
+    "description": "Heading of the upcoming repeat dates"
+  },
+  "taskEditNoNote": "No notes",
+  "@taskEditNoNote": {
+    "description": "Shown when the note is empty"
+  },
+  "taskEditPendingSync": "Waiting to sync",
+  "@taskEditPendingSync": {
+    "description": "Chip shown on a task with local changes"
+  },
+  "taskEditPreviewDates": "{dates}",
+  "@taskEditPreviewDates": {
+    "description": "List of dates",
+    "placeholders": {
+      "dates": {
+        "type": "String"
+      }
+    }
+  },
+  "taskEditRecurDayOfMonth": "Day of the month",
+  "@taskEditRecurDayOfMonth": {
+    "description": "Label of the day-of-month picker"
+  },
+  "taskEditRecurEndDate": "End date",
+  "@taskEditRecurEndDate": {
+    "description": "Label of the recurrence end date"
+  },
+  "taskEditRecurFirst": "First",
+  "@taskEditRecurFirst": {
+    "description": "Ordinal for the nth weekday"
+  },
+  "taskEditRecurFourth": "Fourth",
+  "@taskEditRecurFourth": {
+    "description": "Ordinal for the nth weekday"
+  },
+  "taskEditRecurFrom": "Starting from {date}",
+  "@taskEditRecurFrom": {
+    "description": "Hint on the recurrence preview",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "taskEditRecurLast": "Last",
+  "@taskEditRecurLast": {
+    "description": "Ordinal for the nth weekday"
+  },
+  "taskEditRecurNeedsDue": "A repeating task needs a due date",
+  "@taskEditRecurNeedsDue": {
+    "description": "Validation error of the form"
+  },
+  "taskEditRecurNoEnd": "Never ends",
+  "@taskEditRecurNoEnd": {
+    "description": "Shown when a recurrence has no end date"
+  },
+  "taskEditRecurOrdinal": "Which one",
+  "@taskEditRecurOrdinal": {
+    "description": "Label of the nth-weekday picker"
+  },
+  "taskEditRecurPreview": "Next 5 occurrences",
+  "@taskEditRecurPreview": {
+    "description": "Heading of the recurrence preview"
+  },
+  "taskEditRecurPreviewEmpty": "No upcoming occurrences",
+  "@taskEditRecurPreviewEmpty": {
+    "description": "Shown when the rule yields no dates"
+  },
+  "taskEditRecurSecond": "Second",
+  "@taskEditRecurSecond": {
+    "description": "Ordinal for the nth weekday"
+  },
+  "taskEditRecurSummaryChange": "Change repeat",
+  "@taskEditRecurSummaryChange": {
+    "description": "Tooltip that opens the recurrence editor"
+  },
+  "taskEditRecurThird": "Third",
+  "@taskEditRecurThird": {
+    "description": "Ordinal for the nth weekday"
+  },
+  "taskEditRecurTitle": "Repeat",
+  "@taskEditRecurTitle": {
+    "description": "Title of the recurrence editor"
+  },
+  "taskEditRecurType": "Repeats",
+  "@taskEditRecurType": {
+    "description": "Label of the recurrence type"
+  },
+  "taskEditRecurWeekdayLabel": "Weekday",
+  "@taskEditRecurWeekdayLabel": {
+    "description": "Label of the weekday picker"
+  },
+  "taskEditRecurYearlyNote": "Yearly repeats are not supported by the server. Use monthly with an interval of 12 instead.",
+  "@taskEditRecurYearlyNote": {
+    "description": "Note about yearly recurrence"
+  },
+  "taskEditReminder": "Reminder",
+  "@taskEditReminder": {
+    "description": "Label of the reminder field"
+  },
+  "taskEditSetTime": "Set time",
+  "@taskEditSetTime": {
+    "description": "Action that picks a time"
+  },
+  "taskEditSkipOccurrence": "Skip this occurrence",
+  "@taskEditSkipOccurrence": {
+    "description": "Skips one occurrence of a repeating task"
+  },
+  "taskEditSkipped": "Occurrence skipped",
+  "@taskEditSkipped": {
+    "description": "Snackbar after skipping an occurrence"
+  },
+  "taskEditSubtaskAdd": "Add subtask",
+  "@taskEditSubtaskAdd": {
+    "description": "Tooltip of the add-subtask button"
+  },
+  "taskEditSubtaskDelete": "Delete subtask",
+  "@taskEditSubtaskDelete": {
+    "description": "Tooltip of the delete-subtask button"
+  },
+  "taskEditSubtaskHint": "Add a subtask",
+  "@taskEditSubtaskHint": {
+    "description": "Hint of the subtask input"
+  },
+  "taskEditSubtaskProgress": "{done} of {total} done",
+  "@taskEditSubtaskProgress": {
+    "description": "Progress of the subtasks",
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "taskEditSubtaskReorder": "Drag to reorder",
+  "@taskEditSubtaskReorder": {
+    "description": "Tooltip of the subtask drag handle"
+  },
+  "taskEditTagAdd": "Add tag",
+  "@taskEditTagAdd": {
+    "description": "Tooltip of the add-tag button"
+  },
+  "taskEditTagHint": "Add a tag",
+  "@taskEditTagHint": {
+    "description": "Hint of the tag input"
+  },
+  "taskEditTags": "Tags",
+  "@taskEditTags": {
+    "description": "Label of the tags field"
+  },
   "taskEmptyAll": "No tasks found.\nTap + to create one.",
   "taskEmptyCompleted": "No completed tasks yet.",
   "taskEmptyToday": "No tasks for today.\nEnjoy your free time! 🎉",

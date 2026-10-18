@@ -1,0 +1,162 @@
+{
+  "paletteTitle": {
+    "en": "Command palette",
+    "de": "Befehlspalette",
+    "zh": "命令面板",
+    "description": "Semantic label of the command palette dialog"
+  },
+  "paletteHint": {
+    "en": "Type a command or search…",
+    "de": "Befehl eingeben oder suchen…",
+    "zh": "输入命令或搜索…",
+    "description": "Command palette text field hint"
+  },
+  "paletteEmpty": {
+    "en": "No matching commands",
+    "de": "Keine passenden Befehle",
+    "zh": "没有匹配的命令",
+    "description": "Command palette: nothing matches"
+  },
+  "paletteResultCount": {
+    "en": "{count, plural, =1{1 result} other{{count} results}}",
+    "de": "{count, plural, =1{1 Ergebnis} other{{count} Ergebnisse}}",
+    "zh": "{count, plural, other{{count} 个结果}}",
+    "description": "Screen reader: number of palette results",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "paletteItemPosition": {
+    "en": "{label}, {index} of {total}",
+    "de": "{label}, {index} von {total}",
+    "zh": "{label}，第 {index} 项，共 {total} 项",
+    "description": "Screen reader: palette row position",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "paletteAddTask": {
+    "en": "Add task",
+    "de": "Aufgabe hinzufügen",
+    "zh": "添加任务",
+    "description": "Palette command"
+  },
+  "paletteGoToday": {
+    "en": "Go to Today",
+    "de": "Gehe zu Heute",
+    "zh": "前往今天",
+    "description": "Palette command: navigate"
+  },
+  "paletteGoInbox": {
+    "en": "Go to Inbox",
+    "de": "Gehe zu Eingang",
+    "zh": "前往收件箱",
+    "description": "Palette command: navigate"
+  },
+  "paletteGoUpcoming": {
+    "en": "Go to Upcoming",
+    "de": "Gehe zu Anstehend",
+    "zh": "前往即将到来",
+    "description": "Palette command: navigate"
+  },
+  "paletteGoProjects": {
+    "en": "Go to Projects",
+    "de": "Gehe zu Projekte",
+    "zh": "前往项目",
+    "description": "Palette command: navigate"
+  },
+  "paletteGoOverdue": {
+    "en": "Go to Overdue",
+    "de": "Gehe zu Überfällig",
+    "zh": "前往已逾期",
+    "description": "Palette command: navigate"
+  },
+  "paletteGoSomeday": {
+    "en": "Go to Someday",
+    "de": "Gehe zu Irgendwann",
+    "zh": "前往将来某天",
+    "description": "Palette command: navigate"
+  },
+  "paletteGoCompleted": {
+    "en": "Go to Completed",
+    "de": "Gehe zu Erledigt",
+    "zh": "前往已完成",
+    "description": "Palette command: navigate"
+  },
+  "paletteGoNotes": {
+    "en": "Go to Notes",
+    "de": "Gehe zu Notizen",
+    "zh": "前往笔记",
+    "description": "Palette command: navigate"
+  },
+  "paletteGoAreas": {
+    "en": "Go to Areas",
+    "de": "Gehe zu Bereiche",
+    "zh": "前往领域",
+    "description": "Palette command: navigate"
+  },
+  "paletteGoSettings": {
+    "en": "Go to Settings",
+    "de": "Gehe zu Einstellungen",
+    "zh": "前往设置",
+    "description": "Palette command: navigate"
+  },
+  "paletteGoSync": {
+    "en": "Go to Sync",
+    "de": "Gehe zu Synchronisierung",
+    "zh": "前往同步",
+    "description": "Palette command: navigate"
+  },
+  "paletteSearch": {
+    "en": "Search",
+    "de": "Suchen",
+    "zh": "搜索",
+    "description": "Palette command: open search with the typed text"
+  },
+  "paletteRunSync": {
+    "en": "Run sync now",
+    "de": "Jetzt synchronisieren",
+    "zh": "立即同步",
+    "description": "Palette command"
+  },
+  "paletteChangeTheme": {
+    "en": "Change theme",
+    "de": "Design wechseln",
+    "zh": "切换主题",
+    "description": "Palette command: cycles system/light/dark"
+  },
+  "paletteToggleReduceMotion": {
+    "en": "Toggle reduce motion",
+    "de": "Bewegung reduzieren umschalten",
+    "zh": "切换减少动画",
+    "description": "Palette command"
+  },
+  "paletteKindTask": {
+    "en": "Task",
+    "de": "Aufgabe",
+    "zh": "任务",
+    "description": "Kind label of an item in the palette"
+  },
+  "paletteKindProject": {
+    "en": "Project",
+    "de": "Projekt",
+    "zh": "项目",
+    "description": "Kind label of an item in the palette"
+  },
+  "paletteKindNote": {
+    "en": "Note",
+    "de": "Notiz",
+    "zh": "笔记",
+    "description": "Kind label of an item in the palette"
+  }
+}

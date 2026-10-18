@@ -27,6 +27,7 @@ sealed class SearchResult {
         dueDate: CalendarDate.tryParse(json['due_date'] as String?),
         projectName: _projectName(json),
         description: description,
+        priority: _priority(json['priority']),
       ),
       SearchType.project => ProjectHit(
         uid: ProjectUid(uid),
@@ -67,6 +68,16 @@ sealed class SearchResult {
     return null;
   }
 
+  /// Priority as `low|medium|high` from a name or the integer 0..2.
+  static String? _priority(Object? v) {
+    if (v is String) {
+      final n = int.tryParse(v);
+      return n == null ? v : _priority(n);
+    }
+    if (v is int) return const ['low', 'medium', 'high'][v.clamp(0, 2)];
+    return null;
+  }
+
   static String? _projectName(Map<String, dynamic> json) {
     for (final key in ['Project', 'project']) {
       final p = json[key];
@@ -84,6 +95,7 @@ final class TaskHit extends SearchResult {
     this.dueDate,
     this.projectName,
     this.description,
+    this.priority,
   });
   final TaskUid uid;
   @override
@@ -94,6 +106,9 @@ final class TaskHit extends SearchResult {
   final CalendarDate? dueDate;
   final String? projectName;
   final String? description;
+
+  /// `low|medium|high`, null if the server sent none.
+  final String? priority;
   @override
   SearchType get type => SearchType.task;
 }

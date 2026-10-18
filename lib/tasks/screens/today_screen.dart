@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../search/command_palette/command_palette.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -68,12 +71,15 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
             tooltip: l10n.todayReview,
             onPressed: () => context.push('/today/review'),
           ),
-          // Enabled with search in M6.
-          IconButton(
-            key: const Key('today.search'),
-            icon: const Icon(Icons.search),
-            tooltip: l10n.todaySearch,
-            onPressed: null,
+          // Tap: global search. Long-press: command palette.
+          GestureDetector(
+            onLongPress: () => showCommandPalette(context),
+            child: IconButton(
+              key: const Key('today.search'),
+              icon: const Icon(Icons.search),
+              tooltip: l10n.todaySearch,
+              onPressed: () => context.push('/search'),
+            ),
           ),
         ],
       ),

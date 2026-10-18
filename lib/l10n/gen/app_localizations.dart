@@ -1168,6 +1168,150 @@ abstract class AppLocalizations {
   /// **'List view'**
   String get noteV2ViewList;
 
+  /// Palette command
+  ///
+  /// In en, this message translates to:
+  /// **'Add task'**
+  String get paletteAddTask;
+
+  /// Palette command: cycles system/light/dark
+  ///
+  /// In en, this message translates to:
+  /// **'Change theme'**
+  String get paletteChangeTheme;
+
+  /// Command palette: nothing matches
+  ///
+  /// In en, this message translates to:
+  /// **'No matching commands'**
+  String get paletteEmpty;
+
+  /// Palette command: navigate
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Areas'**
+  String get paletteGoAreas;
+
+  /// Palette command: navigate
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Completed'**
+  String get paletteGoCompleted;
+
+  /// Palette command: navigate
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Inbox'**
+  String get paletteGoInbox;
+
+  /// Palette command: navigate
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Notes'**
+  String get paletteGoNotes;
+
+  /// Palette command: navigate
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Overdue'**
+  String get paletteGoOverdue;
+
+  /// Palette command: navigate
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Projects'**
+  String get paletteGoProjects;
+
+  /// Palette command: navigate
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Settings'**
+  String get paletteGoSettings;
+
+  /// Palette command: navigate
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Someday'**
+  String get paletteGoSomeday;
+
+  /// Palette command: navigate
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Sync'**
+  String get paletteGoSync;
+
+  /// Palette command: navigate
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Today'**
+  String get paletteGoToday;
+
+  /// Palette command: navigate
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Upcoming'**
+  String get paletteGoUpcoming;
+
+  /// Command palette text field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Type a command or search…'**
+  String get paletteHint;
+
+  /// Screen reader: palette row position
+  ///
+  /// In en, this message translates to:
+  /// **'{label}, {index} of {total}'**
+  String paletteItemPosition(String label, int index, int total);
+
+  /// Kind label of an item in the palette
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get paletteKindNote;
+
+  /// Kind label of an item in the palette
+  ///
+  /// In en, this message translates to:
+  /// **'Project'**
+  String get paletteKindProject;
+
+  /// Kind label of an item in the palette
+  ///
+  /// In en, this message translates to:
+  /// **'Task'**
+  String get paletteKindTask;
+
+  /// Screen reader: number of palette results
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 result} other{{count} results}}'**
+  String paletteResultCount(int count);
+
+  /// Palette command
+  ///
+  /// In en, this message translates to:
+  /// **'Run sync now'**
+  String get paletteRunSync;
+
+  /// Palette command: open search with the typed text
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get paletteSearch;
+
+  /// Semantic label of the command palette dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Command palette'**
+  String get paletteTitle;
+
+  /// Palette command
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle reduce motion'**
+  String get paletteToggleReduceMotion;
+
   /// Postpone option: first day of next week
   ///
   /// In en, this message translates to:
@@ -1738,6 +1882,108 @@ abstract class AppLocalizations {
   /// **'Tomorrow'**
   String get reviewTomorrow;
 
+  /// Tooltip of the clear button in the search field
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get searchClear;
+
+  /// Error state of the search screen
+  ///
+  /// In en, this message translates to:
+  /// **'Search failed'**
+  String get searchError;
+
+  /// Placeholder of the search field
+  ///
+  /// In en, this message translates to:
+  /// **'Search tasks, projects, notes'**
+  String get searchHint;
+
+  /// Hint shown on the empty search screen
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name, or use #tag, +project, ~area, is:overdue, priority:high'**
+  String get searchIntro;
+
+  /// Empty state of the search results
+  ///
+  /// In en, this message translates to:
+  /// **'No results for “{query}”'**
+  String searchNoResults(String query);
+
+  /// Banner when results come from the local database
+  ///
+  /// In en, this message translates to:
+  /// **'Showing offline results'**
+  String get searchOfflineBanner;
+
+  /// Header of the recent searches list
+  ///
+  /// In en, this message translates to:
+  /// **'Recent searches'**
+  String get searchRecent;
+
+  /// Button that deletes all recent searches
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all'**
+  String get searchRecentClear;
+
+  /// Tooltip of the remove button of a recent search
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from recent searches'**
+  String get searchRemoveRecent;
+
+  /// Retry button of the search error state
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get searchRetry;
+
+  /// Title and accessibility label of the search screen
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchTitle;
+
+  /// Search filter chip for all types
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get searchTypeAll;
+
+  /// Search result group and filter chip
+  ///
+  /// In en, this message translates to:
+  /// **'Areas'**
+  String get searchTypeAreas;
+
+  /// Search result group and filter chip
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get searchTypeNotes;
+
+  /// Search result group and filter chip
+  ///
+  /// In en, this message translates to:
+  /// **'Projects'**
+  String get searchTypeProjects;
+
+  /// Search result group and filter chip
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get searchTypeTags;
+
+  /// Search result group and filter chip
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks'**
+  String get searchTypeTasks;
+
   /// No description provided for @settingsAbout.
   ///
   /// In en, this message translates to:
@@ -2289,6 +2535,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Subtasks'**
   String get taskDetailSubtasks;
+
+  /// Label of the area field
+  ///
+  /// In en, this message translates to:
+  /// **'Area'**
+  String get taskEditArea;
+
+  /// Validation error of the form
+  ///
+  /// In en, this message translates to:
+  /// **'Defer date must not be after the due date'**
+  String get taskEditDeferAfterDue;
+
+  /// Confirms discarding changes
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get taskEditDiscard;
+
+  /// Body of the unsaved-changes dialog
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved changes that will be lost.'**
+  String get taskEditDiscardBody;
+
+  /// Title of the unsaved-changes dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Discard changes?'**
+  String get taskEditDiscardTitle;
+
+  /// Label of the due time field
+  ///
+  /// In en, this message translates to:
+  /// **'Due time'**
+  String get taskEditDueTime;
+
+  /// Label of the time estimate field
+  ///
+  /// In en, this message translates to:
+  /// **'Estimate'**
+  String get taskEditEstimate;
+
+  /// Validation error for the estimate
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a whole number of minutes'**
+  String get taskEditEstimateInvalid;
+
+  /// Label of the estimate input
+  ///
+  /// In en, this message translates to:
+  /// **'Estimate (minutes)'**
+  String get taskEditEstimateLabel;
+
+  /// Dismisses the unsaved-changes dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get taskEditKeepEditing;
+
+  /// Heading of the upcoming repeat dates
+  ///
+  /// In en, this message translates to:
+  /// **'Next occurrences'**
+  String get taskEditNextOccurrences;
+
+  /// Shown when the note is empty
+  ///
+  /// In en, this message translates to:
+  /// **'No notes'**
+  String get taskEditNoNote;
+
+  /// Chip shown on a task with local changes
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting to sync'**
+  String get taskEditPendingSync;
+
+  /// List of dates
+  ///
+  /// In en, this message translates to:
+  /// **'{dates}'**
+  String taskEditPreviewDates(String dates);
+
+  /// Label of the day-of-month picker
+  ///
+  /// In en, this message translates to:
+  /// **'Day of the month'**
+  String get taskEditRecurDayOfMonth;
+
+  /// Label of the recurrence end date
+  ///
+  /// In en, this message translates to:
+  /// **'End date'**
+  String get taskEditRecurEndDate;
+
+  /// Ordinal for the nth weekday
+  ///
+  /// In en, this message translates to:
+  /// **'First'**
+  String get taskEditRecurFirst;
+
+  /// Ordinal for the nth weekday
+  ///
+  /// In en, this message translates to:
+  /// **'Fourth'**
+  String get taskEditRecurFourth;
+
+  /// Hint on the recurrence preview
+  ///
+  /// In en, this message translates to:
+  /// **'Starting from {date}'**
+  String taskEditRecurFrom(String date);
+
+  /// Ordinal for the nth weekday
+  ///
+  /// In en, this message translates to:
+  /// **'Last'**
+  String get taskEditRecurLast;
+
+  /// Validation error of the form
+  ///
+  /// In en, this message translates to:
+  /// **'A repeating task needs a due date'**
+  String get taskEditRecurNeedsDue;
+
+  /// Shown when a recurrence has no end date
+  ///
+  /// In en, this message translates to:
+  /// **'Never ends'**
+  String get taskEditRecurNoEnd;
+
+  /// Label of the nth-weekday picker
+  ///
+  /// In en, this message translates to:
+  /// **'Which one'**
+  String get taskEditRecurOrdinal;
+
+  /// Heading of the recurrence preview
+  ///
+  /// In en, this message translates to:
+  /// **'Next 5 occurrences'**
+  String get taskEditRecurPreview;
+
+  /// Shown when the rule yields no dates
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming occurrences'**
+  String get taskEditRecurPreviewEmpty;
+
+  /// Ordinal for the nth weekday
+  ///
+  /// In en, this message translates to:
+  /// **'Second'**
+  String get taskEditRecurSecond;
+
+  /// Tooltip that opens the recurrence editor
+  ///
+  /// In en, this message translates to:
+  /// **'Change repeat'**
+  String get taskEditRecurSummaryChange;
+
+  /// Ordinal for the nth weekday
+  ///
+  /// In en, this message translates to:
+  /// **'Third'**
+  String get taskEditRecurThird;
+
+  /// Title of the recurrence editor
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat'**
+  String get taskEditRecurTitle;
+
+  /// Label of the recurrence type
+  ///
+  /// In en, this message translates to:
+  /// **'Repeats'**
+  String get taskEditRecurType;
+
+  /// Label of the weekday picker
+  ///
+  /// In en, this message translates to:
+  /// **'Weekday'**
+  String get taskEditRecurWeekdayLabel;
+
+  /// Note about yearly recurrence
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly repeats are not supported by the server. Use monthly with an interval of 12 instead.'**
+  String get taskEditRecurYearlyNote;
+
+  /// Label of the reminder field
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder'**
+  String get taskEditReminder;
+
+  /// Action that picks a time
+  ///
+  /// In en, this message translates to:
+  /// **'Set time'**
+  String get taskEditSetTime;
+
+  /// Skips one occurrence of a repeating task
+  ///
+  /// In en, this message translates to:
+  /// **'Skip this occurrence'**
+  String get taskEditSkipOccurrence;
+
+  /// Snackbar after skipping an occurrence
+  ///
+  /// In en, this message translates to:
+  /// **'Occurrence skipped'**
+  String get taskEditSkipped;
+
+  /// Tooltip of the add-subtask button
+  ///
+  /// In en, this message translates to:
+  /// **'Add subtask'**
+  String get taskEditSubtaskAdd;
+
+  /// Tooltip of the delete-subtask button
+  ///
+  /// In en, this message translates to:
+  /// **'Delete subtask'**
+  String get taskEditSubtaskDelete;
+
+  /// Hint of the subtask input
+  ///
+  /// In en, this message translates to:
+  /// **'Add a subtask'**
+  String get taskEditSubtaskHint;
+
+  /// Progress of the subtasks
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} done'**
+  String taskEditSubtaskProgress(int done, int total);
+
+  /// Tooltip of the subtask drag handle
+  ///
+  /// In en, this message translates to:
+  /// **'Drag to reorder'**
+  String get taskEditSubtaskReorder;
+
+  /// Tooltip of the add-tag button
+  ///
+  /// In en, this message translates to:
+  /// **'Add tag'**
+  String get taskEditTagAdd;
+
+  /// Hint of the tag input
+  ///
+  /// In en, this message translates to:
+  /// **'Add a tag'**
+  String get taskEditTagHint;
+
+  /// Label of the tags field
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get taskEditTags;
 
   /// No description provided for @taskEmptyAll.
   ///

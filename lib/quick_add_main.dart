@@ -14,6 +14,10 @@ import 'tasks/quick_add/quick_add_sheet.dart';
 
 const _channel = MethodChannel('tududa/quickadd');
 
+/// Bumped every time native shows the (reused) activity again, so the sheet
+/// is rebuilt empty and refocused.
+final ValueNotifier<int> _openCount = ValueNotifier<int>(0);
+
 /// Second Dart entrypoint: the native QuickAddActivity (opened from the
 /// home-screen widget) runs this to show quick add over a transparent
 /// window. It uses the app's providers, so saves go through the outbox.
@@ -22,6 +26,10 @@ Future<void> quickAddMain() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DateFormats.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
+  _channel.setMethodCallHandler((call) async {
+    if (call.method == 'open') _openCount.value++;
+    return null;
+  });
   runApp(
     ProviderScope(
       retry: (_, _) => null,
@@ -109,7 +117,11 @@ class QuickAddApp extends ConsumerWidget {
                         clipBehavior: Clip.antiAlias,
                         child: Padding(
                           padding: const EdgeInsets.only(top: 12),
-                          child: QuickAddSheet(onClose: close),
+                          child: ValueListenableBuilder<int>(
+                            valueListenable: _openCount,
+                            builder: (_, n, _) =>
+                                QuickAddSheet(key: ValueKey(n), onClose: close),
+                          ),
                         ),
                       ),
                     ),

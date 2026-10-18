@@ -39,6 +39,7 @@ Future<void> showQuickAddSheet(
                 project == null
                     ? '/tasks/new'
                     : '/tasks/new?projectId=${Uri.encodeQueryComponent(project)}',
+                extra: draft,
               );
             },
     ),

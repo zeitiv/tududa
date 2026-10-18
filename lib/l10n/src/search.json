@@ -1,0 +1,109 @@
+{
+ "searchTitle": {
+  "en": "Search",
+  "de": "Suche",
+  "zh": "搜索",
+  "description": "Title and accessibility label of the search screen"
+ },
+ "searchHint": {
+  "en": "Search tasks, projects, notes",
+  "de": "Aufgaben, Projekte, Notizen suchen",
+  "zh": "搜索任务、项目、笔记",
+  "description": "Placeholder of the search field"
+ },
+ "searchClear": {
+  "en": "Clear",
+  "de": "Löschen",
+  "zh": "清除",
+  "description": "Tooltip of the clear button in the search field"
+ },
+ "searchRecent": {
+  "en": "Recent searches",
+  "de": "Letzte Suchen",
+  "zh": "最近搜索",
+  "description": "Header of the recent searches list"
+ },
+ "searchRecentClear": {
+  "en": "Clear all",
+  "de": "Alle löschen",
+  "zh": "全部清除",
+  "description": "Button that deletes all recent searches"
+ },
+ "searchIntro": {
+  "en": "Search by name, or use #tag, +project, ~area, is:overdue, priority:high",
+  "de": "Nach Namen suchen oder #tag, +projekt, ~bereich, is:overdue, priority:high verwenden",
+  "zh": "按名称搜索，或使用 #标签、+项目、~领域、is:overdue、priority:high",
+  "description": "Hint shown on the empty search screen"
+ },
+ "searchOfflineBanner": {
+  "en": "Showing offline results",
+  "de": "Offline-Ergebnisse werden angezeigt",
+  "zh": "正在显示离线结果",
+  "description": "Banner when results come from the local database"
+ },
+ "searchNoResults": {
+  "en": "No results for “{query}”",
+  "de": "Keine Ergebnisse für „{query}“",
+  "zh": "没有“{query}”的结果",
+  "description": "Empty state of the search results",
+  "placeholders": {
+   "query": {
+    "type": "String"
+   }
+  }
+ },
+ "searchError": {
+  "en": "Search failed",
+  "de": "Suche fehlgeschlagen",
+  "zh": "搜索失败",
+  "description": "Error state of the search screen"
+ },
+ "searchRetry": {
+  "en": "Try again",
+  "de": "Erneut versuchen",
+  "zh": "重试",
+  "description": "Retry button of the search error state"
+ },
+ "searchTypeAll": {
+  "en": "All",
+  "de": "Alle",
+  "zh": "全部",
+  "description": "Search filter chip for all types"
+ },
+ "searchTypeTasks": {
+  "en": "Tasks",
+  "de": "Aufgaben",
+  "zh": "任务",
+  "description": "Search result group and filter chip"
+ },
+ "searchTypeProjects": {
+  "en": "Projects",
+  "de": "Projekte",
+  "zh": "项目",
+  "description": "Search result group and filter chip"
+ },
+ "searchTypeAreas": {
+  "en": "Areas",
+  "de": "Bereiche",
+  "zh": "领域",
+  "description": "Search result group and filter chip"
+ },
+ "searchTypeNotes": {
+  "en": "Notes",
+  "de": "Notizen",
+  "zh": "笔记",
+  "description": "Search result group and filter chip"
+ },
+ "searchTypeTags": {
+  "en": "Tags",
+  "de": "Tags",
+  "zh": "标签",
+  "description": "Search result group and filter chip"
+ },
+ "searchRemoveRecent": {
+  "en": "Remove from recent searches",
+  "de": "Aus letzten Suchen entfernen",
+  "zh": "从最近搜索中移除",
+  "description": "Tooltip of the remove button of a recent search"
+ }
+}

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../l10n/l10n_ext.dart';
+import '../../search/command_palette/command_palette_shortcuts.dart';
 import '../../tasks/quick_add/quick_add_sheet.dart';
 import 'offline_banner.dart';
 
@@ -22,7 +23,10 @@ class ShellScaffold extends StatelessWidget {
       shell.goBranch(i, initialLocation: i == shell.currentIndex);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      CommandPaletteShortcuts(child: _buildScaffold(context));
+
+  Widget _buildScaffold(BuildContext context) {
     final l10n = context.l10n;
     final index = shell.currentIndex;
     final wide = MediaQuery.sizeOf(context).width >= kRailBreakpoint;

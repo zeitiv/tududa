@@ -610,6 +610,88 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noteV2ViewList => 'List view';
 
   @override
+  String get paletteAddTask => 'Add task';
+
+  @override
+  String get paletteChangeTheme => 'Change theme';
+
+  @override
+  String get paletteEmpty => 'No matching commands';
+
+  @override
+  String get paletteGoAreas => 'Go to Areas';
+
+  @override
+  String get paletteGoCompleted => 'Go to Completed';
+
+  @override
+  String get paletteGoInbox => 'Go to Inbox';
+
+  @override
+  String get paletteGoNotes => 'Go to Notes';
+
+  @override
+  String get paletteGoOverdue => 'Go to Overdue';
+
+  @override
+  String get paletteGoProjects => 'Go to Projects';
+
+  @override
+  String get paletteGoSettings => 'Go to Settings';
+
+  @override
+  String get paletteGoSomeday => 'Go to Someday';
+
+  @override
+  String get paletteGoSync => 'Go to Sync';
+
+  @override
+  String get paletteGoToday => 'Go to Today';
+
+  @override
+  String get paletteGoUpcoming => 'Go to Upcoming';
+
+  @override
+  String get paletteHint => 'Type a command or search…';
+
+  @override
+  String paletteItemPosition(String label, int index, int total) {
+    return '$label, $index of $total';
+  }
+
+  @override
+  String get paletteKindNote => 'Note';
+
+  @override
+  String get paletteKindProject => 'Project';
+
+  @override
+  String get paletteKindTask => 'Task';
+
+  @override
+  String paletteResultCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count results',
+      one: '1 result',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get paletteRunSync => 'Run sync now';
+
+  @override
+  String get paletteSearch => 'Search';
+
+  @override
+  String get paletteTitle => 'Command palette';
+
+  @override
+  String get paletteToggleReduceMotion => 'Toggle reduce motion';
+
+  @override
   String get postponeNextWeek => 'Next week';
 
   @override
@@ -994,6 +1076,60 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewTomorrow => 'Tomorrow';
 
   @override
+  String get searchClear => 'Clear';
+
+  @override
+  String get searchError => 'Search failed';
+
+  @override
+  String get searchHint => 'Search tasks, projects, notes';
+
+  @override
+  String get searchIntro =>
+      'Search by name, or use #tag, +project, ~area, is:overdue, priority:high';
+
+  @override
+  String searchNoResults(String query) {
+    return 'No results for “$query”';
+  }
+
+  @override
+  String get searchOfflineBanner => 'Showing offline results';
+
+  @override
+  String get searchRecent => 'Recent searches';
+
+  @override
+  String get searchRecentClear => 'Clear all';
+
+  @override
+  String get searchRemoveRecent => 'Remove from recent searches';
+
+  @override
+  String get searchRetry => 'Try again';
+
+  @override
+  String get searchTitle => 'Search';
+
+  @override
+  String get searchTypeAll => 'All';
+
+  @override
+  String get searchTypeAreas => 'Areas';
+
+  @override
+  String get searchTypeNotes => 'Notes';
+
+  @override
+  String get searchTypeProjects => 'Projects';
+
+  @override
+  String get searchTypeTags => 'Tags';
+
+  @override
+  String get searchTypeTasks => 'Tasks';
+
+  @override
   String get settingsAbout => 'About Tududa';
 
   @override
@@ -1351,6 +1487,147 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taskDetailSubtasks => 'Subtasks';
+
+  @override
+  String get taskEditArea => 'Area';
+
+  @override
+  String get taskEditDeferAfterDue =>
+      'Defer date must not be after the due date';
+
+  @override
+  String get taskEditDiscard => 'Discard';
+
+  @override
+  String get taskEditDiscardBody =>
+      'You have unsaved changes that will be lost.';
+
+  @override
+  String get taskEditDiscardTitle => 'Discard changes?';
+
+  @override
+  String get taskEditDueTime => 'Due time';
+
+  @override
+  String get taskEditEstimate => 'Estimate';
+
+  @override
+  String get taskEditEstimateInvalid => 'Enter a whole number of minutes';
+
+  @override
+  String get taskEditEstimateLabel => 'Estimate (minutes)';
+
+  @override
+  String get taskEditKeepEditing => 'Keep editing';
+
+  @override
+  String get taskEditNextOccurrences => 'Next occurrences';
+
+  @override
+  String get taskEditNoNote => 'No notes';
+
+  @override
+  String get taskEditPendingSync => 'Waiting to sync';
+
+  @override
+  String taskEditPreviewDates(String dates) {
+    return '$dates';
+  }
+
+  @override
+  String get taskEditRecurDayOfMonth => 'Day of the month';
+
+  @override
+  String get taskEditRecurEndDate => 'End date';
+
+  @override
+  String get taskEditRecurFirst => 'First';
+
+  @override
+  String get taskEditRecurFourth => 'Fourth';
+
+  @override
+  String taskEditRecurFrom(String date) {
+    return 'Starting from $date';
+  }
+
+  @override
+  String get taskEditRecurLast => 'Last';
+
+  @override
+  String get taskEditRecurNeedsDue => 'A repeating task needs a due date';
+
+  @override
+  String get taskEditRecurNoEnd => 'Never ends';
+
+  @override
+  String get taskEditRecurOrdinal => 'Which one';
+
+  @override
+  String get taskEditRecurPreview => 'Next 5 occurrences';
+
+  @override
+  String get taskEditRecurPreviewEmpty => 'No upcoming occurrences';
+
+  @override
+  String get taskEditRecurSecond => 'Second';
+
+  @override
+  String get taskEditRecurSummaryChange => 'Change repeat';
+
+  @override
+  String get taskEditRecurThird => 'Third';
+
+  @override
+  String get taskEditRecurTitle => 'Repeat';
+
+  @override
+  String get taskEditRecurType => 'Repeats';
+
+  @override
+  String get taskEditRecurWeekdayLabel => 'Weekday';
+
+  @override
+  String get taskEditRecurYearlyNote =>
+      'Yearly repeats are not supported by the server. Use monthly with an interval of 12 instead.';
+
+  @override
+  String get taskEditReminder => 'Reminder';
+
+  @override
+  String get taskEditSetTime => 'Set time';
+
+  @override
+  String get taskEditSkipOccurrence => 'Skip this occurrence';
+
+  @override
+  String get taskEditSkipped => 'Occurrence skipped';
+
+  @override
+  String get taskEditSubtaskAdd => 'Add subtask';
+
+  @override
+  String get taskEditSubtaskDelete => 'Delete subtask';
+
+  @override
+  String get taskEditSubtaskHint => 'Add a subtask';
+
+  @override
+  String taskEditSubtaskProgress(int done, int total) {
+    return '$done of $total done';
+  }
+
+  @override
+  String get taskEditSubtaskReorder => 'Drag to reorder';
+
+  @override
+  String get taskEditTagAdd => 'Add tag';
+
+  @override
+  String get taskEditTagHint => 'Add a tag';
+
+  @override
+  String get taskEditTags => 'Tags';
 
   @override
   String get taskEmptyAll => 'No tasks found.\nTap + to create one.';

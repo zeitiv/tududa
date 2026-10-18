@@ -1,0 +1,284 @@
+{
+ "taskEditDueTime": {
+  "en": "Due time",
+  "de": "Fälligkeitszeit",
+  "zh": "截止时间",
+  "description": "Label of the due time field"
+ },
+ "taskEditReminder": {
+  "en": "Reminder",
+  "de": "Erinnerung",
+  "zh": "提醒",
+  "description": "Label of the reminder field"
+ },
+ "taskEditEstimate": {
+  "en": "Estimate",
+  "de": "Schätzung",
+  "zh": "预计时长",
+  "description": "Label of the time estimate field"
+ },
+ "taskEditEstimateLabel": {
+  "en": "Estimate (minutes)",
+  "de": "Schätzung (Minuten)",
+  "zh": "预计时长（分钟）",
+  "description": "Label of the estimate input"
+ },
+ "taskEditEstimateInvalid": {
+  "en": "Enter a whole number of minutes",
+  "de": "Ganze Minutenzahl eingeben",
+  "zh": "请输入整数分钟数",
+  "description": "Validation error for the estimate"
+ },
+ "taskEditArea": {
+  "en": "Area",
+  "de": "Bereich",
+  "zh": "领域",
+  "description": "Label of the area field"
+ },
+ "taskEditTags": {
+  "en": "Tags",
+  "de": "Tags",
+  "zh": "标签",
+  "description": "Label of the tags field"
+ },
+ "taskEditTagHint": {
+  "en": "Add a tag",
+  "de": "Tag hinzufügen",
+  "zh": "添加标签",
+  "description": "Hint of the tag input"
+ },
+ "taskEditTagAdd": {
+  "en": "Add tag",
+  "de": "Tag hinzufügen",
+  "zh": "添加标签",
+  "description": "Tooltip of the add-tag button"
+ },
+ "taskEditSetTime": {
+  "en": "Set time",
+  "de": "Zeit festlegen",
+  "zh": "设置时间",
+  "description": "Action that picks a time"
+ },
+ "taskEditDeferAfterDue": {
+  "en": "Defer date must not be after the due date",
+  "de": "Zurückstellen darf nicht nach dem Fälligkeitsdatum liegen",
+  "zh": "推迟日期不能晚于截止日期",
+  "description": "Validation error of the form"
+ },
+ "taskEditRecurNeedsDue": {
+  "en": "A repeating task needs a due date",
+  "de": "Eine wiederkehrende Aufgabe braucht ein Fälligkeitsdatum",
+  "zh": "重复任务需要截止日期",
+  "description": "Validation error of the form"
+ },
+ "taskEditDiscardTitle": {
+  "en": "Discard changes?",
+  "de": "Änderungen verwerfen?",
+  "zh": "放弃更改？",
+  "description": "Title of the unsaved-changes dialog"
+ },
+ "taskEditDiscardBody": {
+  "en": "You have unsaved changes that will be lost.",
+  "de": "Nicht gespeicherte Änderungen gehen verloren.",
+  "zh": "未保存的更改将会丢失。",
+  "description": "Body of the unsaved-changes dialog"
+ },
+ "taskEditDiscard": {
+  "en": "Discard",
+  "de": "Verwerfen",
+  "zh": "放弃",
+  "description": "Confirms discarding changes"
+ },
+ "taskEditKeepEditing": {
+  "en": "Keep editing",
+  "de": "Weiter bearbeiten",
+  "zh": "继续编辑",
+  "description": "Dismisses the unsaved-changes dialog"
+ },
+ "taskEditPendingSync": {
+  "en": "Waiting to sync",
+  "de": "Wartet auf Synchronisierung",
+  "zh": "等待同步",
+  "description": "Chip shown on a task with local changes"
+ },
+ "taskEditNextOccurrences": {
+  "en": "Next occurrences",
+  "de": "Nächste Termine",
+  "zh": "接下来的日期",
+  "description": "Heading of the upcoming repeat dates"
+ },
+ "taskEditSkipOccurrence": {
+  "en": "Skip this occurrence",
+  "de": "Diesen Termin überspringen",
+  "zh": "跳过本次",
+  "description": "Skips one occurrence of a repeating task"
+ },
+ "taskEditSkipped": {
+  "en": "Occurrence skipped",
+  "de": "Termin übersprungen",
+  "zh": "已跳过本次",
+  "description": "Snackbar after skipping an occurrence"
+ },
+ "taskEditNoNote": {
+  "en": "No notes",
+  "de": "Keine Notizen",
+  "zh": "无备注",
+  "description": "Shown when the note is empty"
+ },
+ "taskEditSubtaskHint": {
+  "en": "Add a subtask",
+  "de": "Teilaufgabe hinzufügen",
+  "zh": "添加子任务",
+  "description": "Hint of the subtask input"
+ },
+ "taskEditSubtaskAdd": {
+  "en": "Add subtask",
+  "de": "Teilaufgabe hinzufügen",
+  "zh": "添加子任务",
+  "description": "Tooltip of the add-subtask button"
+ },
+ "taskEditSubtaskDelete": {
+  "en": "Delete subtask",
+  "de": "Teilaufgabe löschen",
+  "zh": "删除子任务",
+  "description": "Tooltip of the delete-subtask button"
+ },
+ "taskEditSubtaskReorder": {
+  "en": "Drag to reorder",
+  "de": "Zum Sortieren ziehen",
+  "zh": "拖动排序",
+  "description": "Tooltip of the subtask drag handle"
+ },
+ "taskEditSubtaskProgress": {
+  "en": "{done} of {total} done",
+  "de": "{done} von {total} erledigt",
+  "zh": "已完成 {done}/{total}",
+  "description": "Progress of the subtasks",
+  "placeholders": {
+   "done": {
+    "type": "int"
+   },
+   "total": {
+    "type": "int"
+   }
+  }
+ },
+ "taskEditRecurTitle": {
+  "en": "Repeat",
+  "de": "Wiederholen",
+  "zh": "重复",
+  "description": "Title of the recurrence editor"
+ },
+ "taskEditRecurType": {
+  "en": "Repeats",
+  "de": "Wiederholung",
+  "zh": "重复方式",
+  "description": "Label of the recurrence type"
+ },
+ "taskEditRecurDayOfMonth": {
+  "en": "Day of the month",
+  "de": "Tag des Monats",
+  "zh": "每月几号",
+  "description": "Label of the day-of-month picker"
+ },
+ "taskEditRecurWeekdayLabel": {
+  "en": "Weekday",
+  "de": "Wochentag",
+  "zh": "星期",
+  "description": "Label of the weekday picker"
+ },
+ "taskEditRecurOrdinal": {
+  "en": "Which one",
+  "de": "Welcher",
+  "zh": "第几个",
+  "description": "Label of the nth-weekday picker"
+ },
+ "taskEditRecurFirst": {
+  "en": "First",
+  "de": "Erster",
+  "zh": "第一个",
+  "description": "Ordinal for the nth weekday"
+ },
+ "taskEditRecurSecond": {
+  "en": "Second",
+  "de": "Zweiter",
+  "zh": "第二个",
+  "description": "Ordinal for the nth weekday"
+ },
+ "taskEditRecurThird": {
+  "en": "Third",
+  "de": "Dritter",
+  "zh": "第三个",
+  "description": "Ordinal for the nth weekday"
+ },
+ "taskEditRecurFourth": {
+  "en": "Fourth",
+  "de": "Vierter",
+  "zh": "第四个",
+  "description": "Ordinal for the nth weekday"
+ },
+ "taskEditRecurLast": {
+  "en": "Last",
+  "de": "Letzter",
+  "zh": "最后一个",
+  "description": "Ordinal for the nth weekday"
+ },
+ "taskEditRecurEndDate": {
+  "en": "End date",
+  "de": "Enddatum",
+  "zh": "结束日期",
+  "description": "Label of the recurrence end date"
+ },
+ "taskEditRecurNoEnd": {
+  "en": "Never ends",
+  "de": "Endet nie",
+  "zh": "永不结束",
+  "description": "Shown when a recurrence has no end date"
+ },
+ "taskEditRecurPreview": {
+  "en": "Next 5 occurrences",
+  "de": "Nächste 5 Termine",
+  "zh": "接下来 5 次",
+  "description": "Heading of the recurrence preview"
+ },
+ "taskEditRecurPreviewEmpty": {
+  "en": "No upcoming occurrences",
+  "de": "Keine weiteren Termine",
+  "zh": "没有后续日期",
+  "description": "Shown when the rule yields no dates"
+ },
+ "taskEditRecurYearlyNote": {
+  "en": "Yearly repeats are not supported by the server. Use monthly with an interval of 12 instead.",
+  "de": "Jährliche Wiederholungen werden vom Server nicht unterstützt. Nutze stattdessen monatlich mit Intervall 12.",
+  "zh": "服务器不支持每年重复。请改用间隔为 12 的每月重复。",
+  "description": "Note about yearly recurrence"
+ },
+ "taskEditRecurFrom": {
+  "en": "Starting from {date}",
+  "de": "Ab {date}",
+  "zh": "从 {date} 开始",
+  "description": "Hint on the recurrence preview",
+  "placeholders": {
+   "date": {
+    "type": "String"
+   }
+  }
+ },
+ "taskEditRecurSummaryChange": {
+  "en": "Change repeat",
+  "de": "Wiederholung ändern",
+  "zh": "更改重复",
+  "description": "Tooltip that opens the recurrence editor"
+ },
+ "taskEditPreviewDates": {
+  "en": "{dates}",
+  "de": "{dates}",
+  "zh": "{dates}",
+  "description": "List of dates",
+  "placeholders": {
+   "dates": {
+    "type": "String"
+   }
+  }
+ }
+}

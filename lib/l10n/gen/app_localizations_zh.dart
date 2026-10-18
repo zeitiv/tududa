@@ -594,6 +594,87 @@ class AppLocalizationsZh extends AppLocalizations {
   String get noteV2ViewList => '列表视图';
 
   @override
+  String get paletteAddTask => '添加任务';
+
+  @override
+  String get paletteChangeTheme => '切换主题';
+
+  @override
+  String get paletteEmpty => '没有匹配的命令';
+
+  @override
+  String get paletteGoAreas => '前往领域';
+
+  @override
+  String get paletteGoCompleted => '前往已完成';
+
+  @override
+  String get paletteGoInbox => '前往收件箱';
+
+  @override
+  String get paletteGoNotes => '前往笔记';
+
+  @override
+  String get paletteGoOverdue => '前往已逾期';
+
+  @override
+  String get paletteGoProjects => '前往项目';
+
+  @override
+  String get paletteGoSettings => '前往设置';
+
+  @override
+  String get paletteGoSomeday => '前往将来某天';
+
+  @override
+  String get paletteGoSync => '前往同步';
+
+  @override
+  String get paletteGoToday => '前往今天';
+
+  @override
+  String get paletteGoUpcoming => '前往即将到来';
+
+  @override
+  String get paletteHint => '输入命令或搜索…';
+
+  @override
+  String paletteItemPosition(String label, int index, int total) {
+    return '$label，第 $index 项，共 $total 项';
+  }
+
+  @override
+  String get paletteKindNote => '笔记';
+
+  @override
+  String get paletteKindProject => '项目';
+
+  @override
+  String get paletteKindTask => '任务';
+
+  @override
+  String paletteResultCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 个结果',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get paletteRunSync => '立即同步';
+
+  @override
+  String get paletteSearch => '搜索';
+
+  @override
+  String get paletteTitle => '命令面板';
+
+  @override
+  String get paletteToggleReduceMotion => '切换减少动画';
+
+  @override
   String get postponeNextWeek => '下周';
 
   @override
@@ -972,6 +1053,59 @@ class AppLocalizationsZh extends AppLocalizations {
   String get reviewTomorrow => '明天';
 
   @override
+  String get searchClear => '清除';
+
+  @override
+  String get searchError => '搜索失败';
+
+  @override
+  String get searchHint => '搜索任务、项目、笔记';
+
+  @override
+  String get searchIntro => '按名称搜索，或使用 #标签、+项目、~领域、is:overdue、priority:high';
+
+  @override
+  String searchNoResults(String query) {
+    return '没有“$query”的结果';
+  }
+
+  @override
+  String get searchOfflineBanner => '正在显示离线结果';
+
+  @override
+  String get searchRecent => '最近搜索';
+
+  @override
+  String get searchRecentClear => '全部清除';
+
+  @override
+  String get searchRemoveRecent => '从最近搜索中移除';
+
+  @override
+  String get searchRetry => '重试';
+
+  @override
+  String get searchTitle => '搜索';
+
+  @override
+  String get searchTypeAll => '全部';
+
+  @override
+  String get searchTypeAreas => '领域';
+
+  @override
+  String get searchTypeNotes => '笔记';
+
+  @override
+  String get searchTypeProjects => '项目';
+
+  @override
+  String get searchTypeTags => '标签';
+
+  @override
+  String get searchTypeTasks => '任务';
+
+  @override
   String get settingsAbout => '关于 Tududa';
 
   @override
@@ -1317,6 +1451,144 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get taskDetailSubtasks => '子任务';
+
+  @override
+  String get taskEditArea => '领域';
+
+  @override
+  String get taskEditDeferAfterDue => '推迟日期不能晚于截止日期';
+
+  @override
+  String get taskEditDiscard => '放弃';
+
+  @override
+  String get taskEditDiscardBody => '未保存的更改将会丢失。';
+
+  @override
+  String get taskEditDiscardTitle => '放弃更改？';
+
+  @override
+  String get taskEditDueTime => '截止时间';
+
+  @override
+  String get taskEditEstimate => '预计时长';
+
+  @override
+  String get taskEditEstimateInvalid => '请输入整数分钟数';
+
+  @override
+  String get taskEditEstimateLabel => '预计时长（分钟）';
+
+  @override
+  String get taskEditKeepEditing => '继续编辑';
+
+  @override
+  String get taskEditNextOccurrences => '接下来的日期';
+
+  @override
+  String get taskEditNoNote => '无备注';
+
+  @override
+  String get taskEditPendingSync => '等待同步';
+
+  @override
+  String taskEditPreviewDates(String dates) {
+    return '$dates';
+  }
+
+  @override
+  String get taskEditRecurDayOfMonth => '每月几号';
+
+  @override
+  String get taskEditRecurEndDate => '结束日期';
+
+  @override
+  String get taskEditRecurFirst => '第一个';
+
+  @override
+  String get taskEditRecurFourth => '第四个';
+
+  @override
+  String taskEditRecurFrom(String date) {
+    return '从 $date 开始';
+  }
+
+  @override
+  String get taskEditRecurLast => '最后一个';
+
+  @override
+  String get taskEditRecurNeedsDue => '重复任务需要截止日期';
+
+  @override
+  String get taskEditRecurNoEnd => '永不结束';
+
+  @override
+  String get taskEditRecurOrdinal => '第几个';
+
+  @override
+  String get taskEditRecurPreview => '接下来 5 次';
+
+  @override
+  String get taskEditRecurPreviewEmpty => '没有后续日期';
+
+  @override
+  String get taskEditRecurSecond => '第二个';
+
+  @override
+  String get taskEditRecurSummaryChange => '更改重复';
+
+  @override
+  String get taskEditRecurThird => '第三个';
+
+  @override
+  String get taskEditRecurTitle => '重复';
+
+  @override
+  String get taskEditRecurType => '重复方式';
+
+  @override
+  String get taskEditRecurWeekdayLabel => '星期';
+
+  @override
+  String get taskEditRecurYearlyNote => '服务器不支持每年重复。请改用间隔为 12 的每月重复。';
+
+  @override
+  String get taskEditReminder => '提醒';
+
+  @override
+  String get taskEditSetTime => '设置时间';
+
+  @override
+  String get taskEditSkipOccurrence => '跳过本次';
+
+  @override
+  String get taskEditSkipped => '已跳过本次';
+
+  @override
+  String get taskEditSubtaskAdd => '添加子任务';
+
+  @override
+  String get taskEditSubtaskDelete => '删除子任务';
+
+  @override
+  String get taskEditSubtaskHint => '添加子任务';
+
+  @override
+  String taskEditSubtaskProgress(int done, int total) {
+    return '已完成 $done/$total';
+  }
+
+  @override
+  String get taskEditSubtaskReorder => '拖动排序';
+
+  @override
+  String get taskEditTagAdd => '添加标签';
+
+  @override
+  String get taskEditTagHint => '添加标签';
+
+  @override
+  String get taskEditTags => '标签';
 
   @override
   String get taskEmptyAll => '暂无任务\n点击 + 新建';

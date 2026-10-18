@@ -12,6 +12,7 @@ import '../../tasks/screens/daily_review_screen.dart';
 import '../../tasks/screens/task_list_screen.dart';
 import '../../tasks/screens/task_detail_screen.dart';
 import '../../tasks/screens/task_form_screen.dart';
+import '../../tasks/quick_add/quick_add_support.dart' show QuickAddDraft;
 import '../../projects/screens/projects_screen.dart';
 import '../../projects/screens/project_detail_screen.dart';
 import '../../projects/screens/project_form_screen.dart';
@@ -207,7 +208,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                     builder: (context, state) {
                       final projectId = state.uri.queryParameters['projectId'];
                       // Project ids are uid strings; never parse them as ints.
-                      return TaskFormScreen(defaultProjectId: projectId);
+                      final extra = state.extra;
+                      return TaskFormScreen(
+                        defaultProjectId: projectId,
+                        draft: extra is QuickAddDraft ? extra : null,
+                      );
                     },
                   ),
                   GoRoute(

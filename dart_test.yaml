@@ -1,0 +1,3 @@
+tags:
+  # Golden (screenshot) tests, see test/goldens/golden_harness.dart.
+  golden:

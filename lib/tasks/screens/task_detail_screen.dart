@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+
 import '../providers/task_provider.dart';
 import '../models/task_model.dart';
 import '../../core/theme/app_theme.dart';
@@ -34,8 +35,10 @@ class TaskDetailScreen extends ConsumerWidget {
           );
         }
 
-        final priorityColor =
-            AppTheme.getPriorityColor(task.priority, theme.colorScheme);
+        final priorityColor = AppTheme.getPriorityColor(
+          task.priority,
+          theme.colorScheme,
+        );
 
         return Scaffold(
           appBar: AppBar(
@@ -52,14 +55,17 @@ class TaskDetailScreen extends ConsumerWidget {
                       builder: (ctx) => AlertDialog(
                         title: const Text('Delete Task'),
                         content: const Text(
-                            'Are you sure you want to delete this task?'),
+                          'Are you sure you want to delete this task?',
+                        ),
                         actions: [
                           TextButton(
-                              onPressed: () => Navigator.pop(ctx, false),
-                              child: const Text('Cancel')),
+                            onPressed: () => Navigator.pop(ctx, false),
+                            child: const Text('Cancel'),
+                          ),
                           FilledButton(
-                              onPressed: () => Navigator.pop(ctx, true),
-                              child: const Text('Delete')),
+                            onPressed: () => Navigator.pop(ctx, true),
+                            child: const Text('Delete'),
+                          ),
                         ],
                       ),
                     );
@@ -79,14 +85,16 @@ class TaskDetailScreen extends ConsumerWidget {
                 itemBuilder: (context) => [
                   PopupMenuItem(
                     value: 'toggle',
-                    child: Text(task.isCompleted
-                        ? 'Mark as Incomplete'
-                        : 'Mark as Complete'),
+                    child: Text(
+                      task.isCompleted
+                          ? 'Mark as Incomplete'
+                          : 'Mark as Complete',
+                    ),
                   ),
                   const PopupMenuItem(
-                      value: 'delete',
-                      child:
-                          Text('Delete', style: TextStyle(color: Colors.red))),
+                    value: 'delete',
+                    child: Text('Delete', style: TextStyle(color: Colors.red)),
+                  ),
                 ],
               ),
             ],
@@ -130,8 +138,9 @@ class TaskDetailScreen extends ConsumerWidget {
                   task.name,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    decoration:
-                        task.isCompleted ? TextDecoration.lineThrough : null,
+                    decoration: task.isCompleted
+                        ? TextDecoration.lineThrough
+                        : null,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -142,7 +151,8 @@ class TaskDetailScreen extends ConsumerWidget {
                     icon: Icons.calendar_today_outlined,
                     label: 'Due',
                     value: DateFormat.yMMMd().format(task.dueDate!),
-                    isOverdue: task.dueDate!.isBefore(DateTime.now()) &&
+                    isOverdue:
+                        task.dueDate!.isBefore(DateTime.now()) &&
                         !task.isCompleted,
                   ),
                 if (task.deferUntil != null)
@@ -171,13 +181,17 @@ class TaskDetailScreen extends ConsumerWidget {
                     spacing: 6,
                     runSpacing: 6,
                     children: task.tags!
-                        .map((tag) => Chip(
-                              label: Text(tag.name,
-                                  style: theme.textTheme.labelSmall),
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
-                              visualDensity: VisualDensity.compact,
-                            ))
+                        .map(
+                          (tag) => Chip(
+                            label: Text(
+                              tag.name,
+                              style: theme.textTheme.labelSmall,
+                            ),
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            visualDensity: VisualDensity.compact,
+                          ),
+                        )
                         .toList(),
                   ),
                 ],
@@ -190,11 +204,8 @@ class TaskDetailScreen extends ConsumerWidget {
                   MarkdownBody(
                     data: task.note!,
                     selectable: true,
-                    styleSheet: MarkdownStyleSheet.fromTheme(
-                      Theme.of(context),
-                    ).copyWith(
-                      p: theme.textTheme.bodyMedium,
-                    ),
+                    styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
+                        .copyWith(p: theme.textTheme.bodyMedium),
                   ),
                 ],
 
@@ -203,31 +214,36 @@ class TaskDetailScreen extends ConsumerWidget {
                   const SizedBox(height: 24),
                   const Divider(),
                   const SizedBox(height: 12),
-                  Text('Subtasks',
-                      style: theme.textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.w600)),
+                  Text(
+                    'Subtasks',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 8),
-                  ...task.subtasks!.map((sub) => ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: Icon(
-                          sub.isCompleted
-                              ? Icons.check_circle
-                              : Icons.radio_button_unchecked,
-                          color: sub.isCompleted
-                              ? Colors.green
-                              : theme.colorScheme.outline,
-                          size: 22,
+                  ...task.subtasks!.map(
+                    (sub) => ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Icon(
+                        sub.isCompleted
+                            ? Icons.check_circle
+                            : Icons.radio_button_unchecked,
+                        color: sub.isCompleted
+                            ? Colors.green
+                            : theme.colorScheme.outline,
+                        size: 22,
+                      ),
+                      title: Text(
+                        sub.name,
+                        style: TextStyle(
+                          decoration: sub.isCompleted
+                              ? TextDecoration.lineThrough
+                              : null,
                         ),
-                        title: Text(
-                          sub.name,
-                          style: TextStyle(
-                            decoration: sub.isCompleted
-                                ? TextDecoration.lineThrough
-                                : null,
-                          ),
-                        ),
-                        dense: true,
-                      )),
+                      ),
+                      dense: true,
+                    ),
+                  ),
                 ],
 
                 // Habit info
@@ -235,23 +251,29 @@ class TaskDetailScreen extends ConsumerWidget {
                   const SizedBox(height: 24),
                   const Divider(),
                   const SizedBox(height: 12),
-                  Text('Habit Tracker',
-                      style: theme.textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.w600)),
+                  Text(
+                    'Habit Tracker',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
                       _HabitStat(
-                          label: 'Current Streak',
-                          value: '${task.habitCurrentStreak}'),
+                        label: 'Current Streak',
+                        value: '${task.habitCurrentStreak}',
+                      ),
                       const SizedBox(width: 24),
                       _HabitStat(
-                          label: 'Best Streak',
-                          value: '${task.habitBestStreak}'),
+                        label: 'Best Streak',
+                        value: '${task.habitBestStreak}',
+                      ),
                       const SizedBox(width: 24),
                       _HabitStat(
-                          label: 'Total',
-                          value: '${task.habitTotalCompletions}'),
+                        label: 'Total',
+                        value: '${task.habitTotalCompletions}',
+                      ),
                     ],
                   ),
                 ],
@@ -288,8 +310,11 @@ class _InfoChip extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
-  const _InfoChip(
-      {required this.icon, required this.label, required this.color});
+  const _InfoChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -304,9 +329,14 @@ class _InfoChip extends StatelessWidget {
         children: [
           Icon(icon, size: 16, color: color),
           const SizedBox(width: 4),
-          Text(label,
-              style: TextStyle(
-                  color: color, fontSize: 12, fontWeight: FontWeight.w600)),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );
@@ -338,14 +368,19 @@ class _MetaRow extends StatelessWidget {
         children: [
           Icon(icon, size: 18, color: color),
           const SizedBox(width: 8),
-          Text('$label: ',
-              style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
-          Text(value,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: color,
-                fontWeight: isOverdue ? FontWeight.w600 : FontWeight.w500,
-              )),
+          Text(
+            '$label: ',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          Text(
+            value,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: color,
+              fontWeight: isOverdue ? FontWeight.w600 : FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );
@@ -362,9 +397,12 @@ class _HabitStat extends StatelessWidget {
     final theme = Theme.of(context);
     return Column(
       children: [
-        Text(value,
-            style: theme.textTheme.headlineSmall
-                ?.copyWith(fontWeight: FontWeight.bold)),
+        Text(
+          value,
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         Text(label, style: theme.textTheme.bodySmall),
       ],
     );

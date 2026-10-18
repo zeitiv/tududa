@@ -1,8 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../l10n/strings.dart';
 
-final sharedPreferencesProvider = Provider<SharedPreferences>((ref) => throw UnimplementedError());
+final sharedPreferencesProvider = Provider<SharedPreferences>(
+  (ref) => throw UnimplementedError(),
+);
 
 enum AppThemeMode { light, dark, system }
 
@@ -15,10 +18,7 @@ class AppSettings {
     this.locale = 'zh', // Default to Chinese
   });
 
-  AppSettings copyWith({
-    AppThemeMode? themeMode,
-    String? locale,
-  }) {
+  AppSettings copyWith({AppThemeMode? themeMode, String? locale}) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
       locale: locale ?? this.locale,
@@ -33,13 +33,13 @@ class SettingsNotifier extends Notifier<AppSettings> {
   @override
   AppSettings build() {
     final prefs = ref.watch(sharedPreferencesProvider);
-    
+
     final themeStr = prefs.getString(_themeKey) ?? 'system';
     final themeMode = AppThemeMode.values.firstWhere(
       (e) => e.name == themeStr,
       orElse: () => AppThemeMode.system,
     );
-    
+
     final locale = prefs.getString(_localeKey) ?? 'zh';
 
     return AppSettings(themeMode: themeMode, locale: locale);

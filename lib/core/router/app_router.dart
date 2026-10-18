@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/screens/server_config_screen.dart';
 import '../../auth/screens/login_screen.dart';
@@ -28,13 +29,15 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/tasks',
     redirect: (context, state) {
       final isAuth = authState.status == AuthStatus.authenticated;
-      final isLoading = authState.status == AuthStatus.loading ||
+      final isLoading =
+          authState.status == AuthStatus.loading ||
           authState.status == AuthStatus.initial;
-      final hasServer = authState.serverUrl != null && authState.serverUrl!.isNotEmpty;
+      final hasServer =
+          authState.serverUrl != null && authState.serverUrl!.isNotEmpty;
 
       final currentPath = state.matchedLocation;
-      final isAuthRoute = currentPath == '/login' ||
-          currentPath == '/server-config';
+      final isAuthRoute =
+          currentPath == '/login' || currentPath == '/server-config';
 
       if (isLoading) return null;
 
@@ -42,7 +45,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         if (!hasServer && currentPath != '/server-config') {
           return '/server-config';
         }
-        if (hasServer && currentPath != '/login' && currentPath != '/server-config') {
+        if (hasServer &&
+            currentPath != '/login' &&
+            currentPath != '/server-config') {
           return '/login';
         }
         return null;
@@ -80,7 +85,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 parentNavigatorKey: rootNavigatorKey,
                 builder: (context, state) {
                   final projectId = state.uri.queryParameters['projectId'];
-                  return TaskFormScreen(defaultProjectId: projectId != null ? int.tryParse(projectId) : null);
+                  return TaskFormScreen(
+                    defaultProjectId: projectId != null
+                        ? int.tryParse(projectId)
+                        : null,
+                  );
                 },
               ),
               GoRoute(

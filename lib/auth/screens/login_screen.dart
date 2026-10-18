@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../providers/auth_provider.dart';
 
 import '../../l10n/strings.dart';
@@ -45,15 +46,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final success = await ref.read(authProvider.notifier).login(
-      _emailController.text.trim(),
-      _passwordController.text,
-    );
+    final success = await ref
+        .read(authProvider.notifier)
+        .login(_emailController.text.trim(), _passwordController.text);
 
     if (!success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(ref.read(authProvider).error ?? context.l10n.loginFailed),
+          content: Text(
+            ref.read(authProvider).error ?? context.l10n.loginFailed,
+          ),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
@@ -99,11 +101,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                              color: theme.colorScheme.primary.withValues(
+                                alpha: 0.3,
+                              ),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
-                          ]
+                          ],
                         ),
                         child: const Icon(
                           Icons.check_rounded,
@@ -125,15 +129,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         GestureDetector(
                           onTap: () => context.go('/server-config'),
                           child: GlassContainer(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
                             borderRadius: BorderRadius.circular(20),
                             blur: 4.0,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.dns_outlined,
-                                    size: 14,
-                                    color: theme.colorScheme.onSurfaceVariant),
+                                Icon(
+                                  Icons.dns_outlined,
+                                  size: 14,
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   authState.serverUrl!,
@@ -142,9 +151,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                Icon(Icons.edit_outlined,
-                                    size: 12,
-                                    color: theme.colorScheme.primary),
+                                Icon(
+                                  Icons.edit_outlined,
+                                  size: 12,
+                                  color: theme.colorScheme.primary,
+                                ),
                               ],
                             ),
                           ),
@@ -161,14 +172,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           labelText: strings.email,
                           prefixIcon: const Icon(Icons.email_outlined),
                           filled: true,
-                          fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                          fillColor: theme.colorScheme.surface.withValues(
+                            alpha: 0.5,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
                             borderSide: BorderSide.none,
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return strings.emailRequired;
+                          if (v == null || v.trim().isEmpty)
+                            return strings.emailRequired;
                           if (!v.contains('@')) return strings.invalidEmail;
                           return null;
                         },
@@ -184,21 +198,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           labelText: strings.password,
                           prefixIcon: const Icon(Icons.lock_outlined),
                           filled: true,
-                          fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                          fillColor: theme.colorScheme.surface.withValues(
+                            alpha: 0.5,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
                             borderSide: BorderSide.none,
                           ),
                           suffixIcon: IconButton(
-                            icon: Icon(_obscurePassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined),
-                            onPressed: () =>
-                                setState(() => _obscurePassword = !_obscurePassword),
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                            ),
+                            onPressed: () => setState(
+                              () => _obscurePassword = !_obscurePassword,
+                            ),
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return strings.passwordRequired;
+                          if (v == null || v.isEmpty)
+                            return strings.passwordRequired;
                           return null;
                         },
                         onFieldSubmitted: (_) => _login(),
@@ -226,8 +246,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                     color: theme.colorScheme.onPrimary,
                                   ),
                                 )
-                              : Text(strings.signIn,
-                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                              : Text(
+                                  strings.signIn,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                         ),
                       ),
                       const SizedBox(height: 16),

@@ -90,8 +90,13 @@ class Task extends Equatable {
 
   String get statusName {
     const names = [
-      'Not Started', 'In Progress', 'Done', 'Archived',
-      'Waiting', 'Cancelled', 'Planned',
+      'Not Started',
+      'In Progress',
+      'Done',
+      'Archived',
+      'Waiting',
+      'Cancelled',
+      'Planned',
     ];
     return (status >= 0 && status < names.length) ? names[status] : 'Unknown';
   }
@@ -130,7 +135,8 @@ class Task extends Equatable {
       habitTargetCount: json['habit_target_count'] as int?,
       habitFrequencyPeriod: json['habit_frequency_period'] as String?,
       habitStreakMode: json['habit_streak_mode'] as String? ?? 'calendar',
-      habitFlexibilityMode: json['habit_flexibility_mode'] as String? ?? 'flexible',
+      habitFlexibilityMode:
+          json['habit_flexibility_mode'] as String? ?? 'flexible',
       habitCurrentStreak: json['habit_current_streak'] as int? ?? 0,
       habitBestStreak: json['habit_best_streak'] as int? ?? 0,
       habitTotalCompletions: json['habit_total_completions'] as int? ?? 0,
@@ -166,14 +172,21 @@ class Task extends Equatable {
     if (deferUntil != null) map['defer_until'] = deferUntil!.toIso8601String();
     if (projectId != null) map['project_id'] = projectId;
     if (parentTaskId != null) map['parent_task_id'] = parentTaskId;
-    if (recurrenceInterval != null) map['recurrence_interval'] = recurrenceInterval;
-    if (recurrenceEndDate != null) map['recurrence_end_date'] = recurrenceEndDate!.toIso8601String();
-    if (recurrenceWeekday != null) map['recurrence_weekday'] = recurrenceWeekday;
-    if (recurrenceWeekdays != null) map['recurrence_weekdays'] = recurrenceWeekdays;
-    if (recurrenceMonthDay != null) map['recurrence_month_day'] = recurrenceMonthDay;
-    if (recurrenceWeekOfMonth != null) map['recurrence_week_of_month'] = recurrenceWeekOfMonth;
+    if (recurrenceInterval != null)
+      map['recurrence_interval'] = recurrenceInterval;
+    if (recurrenceEndDate != null)
+      map['recurrence_end_date'] = recurrenceEndDate!.toIso8601String();
+    if (recurrenceWeekday != null)
+      map['recurrence_weekday'] = recurrenceWeekday;
+    if (recurrenceWeekdays != null)
+      map['recurrence_weekdays'] = recurrenceWeekdays;
+    if (recurrenceMonthDay != null)
+      map['recurrence_month_day'] = recurrenceMonthDay;
+    if (recurrenceWeekOfMonth != null)
+      map['recurrence_week_of_month'] = recurrenceWeekOfMonth;
     if (habitTargetCount != null) map['habit_target_count'] = habitTargetCount;
-    if (habitFrequencyPeriod != null) map['habit_frequency_period'] = habitFrequencyPeriod;
+    if (habitFrequencyPeriod != null)
+      map['habit_frequency_period'] = habitFrequencyPeriod;
     return map;
   }
 
@@ -219,7 +232,8 @@ class Task extends Equatable {
       recurrenceWeekday: recurrenceWeekday ?? this.recurrenceWeekday,
       recurrenceWeekdays: recurrenceWeekdays ?? this.recurrenceWeekdays,
       recurrenceMonthDay: recurrenceMonthDay ?? this.recurrenceMonthDay,
-      recurrenceWeekOfMonth: recurrenceWeekOfMonth ?? this.recurrenceWeekOfMonth,
+      recurrenceWeekOfMonth:
+          recurrenceWeekOfMonth ?? this.recurrenceWeekOfMonth,
       completionBased: completionBased ?? this.completionBased,
       habitMode: habitMode ?? this.habitMode,
       habitTargetCount: habitTargetCount ?? this.habitTargetCount,
@@ -242,8 +256,13 @@ class Task extends Equatable {
     if (value is int) return value;
     if (value is String) {
       const map = {
-        'not_started': 0, 'in_progress': 1, 'done': 2,
-        'archived': 3, 'waiting': 4, 'cancelled': 5, 'planned': 6,
+        'not_started': 0,
+        'in_progress': 1,
+        'done': 2,
+        'archived': 3,
+        'waiting': 4,
+        'cancelled': 5,
+        'planned': 6,
       };
       return map[value] ?? 0;
     }
@@ -277,12 +296,7 @@ class Tag extends Equatable {
   final String name;
   final DateTime? createdAt;
 
-  const Tag({
-    this.id,
-    this.uid,
-    required this.name,
-    this.createdAt,
-  });
+  const Tag({this.id, this.uid, required this.name, this.createdAt});
 
   factory Tag.fromJson(Map<String, dynamic> json) {
     return Tag(
@@ -295,10 +309,7 @@ class Tag extends Equatable {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    if (id != null) 'id': id,
-    'name': name,
-  };
+  Map<String, dynamic> toJson() => {if (id != null) 'id': id, 'name': name};
 
   @override
   List<Object?> get props => [id, name];

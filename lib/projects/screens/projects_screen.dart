@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../providers/project_provider.dart';
 import '../models/project_model.dart';
 import '../../core/theme/app_theme.dart';
@@ -19,7 +20,9 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(projectListProvider.notifier).loadProjects());
+    Future.microtask(
+      () => ref.read(projectListProvider.notifier).loadProjects(),
+    );
   }
 
   @override
@@ -29,61 +32,64 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
     final strings = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(strings.projects),
-      ),
+      appBar: AppBar(title: Text(strings.projects)),
       body: projectState.isLoading
           ? const Center(child: CircularProgressIndicator())
           : projectState.error != null
-              ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(projectState.error!),
-                      const SizedBox(height: 8),
-                      FilledButton.tonal(
-                        onPressed: () =>
-                            ref.read(projectListProvider.notifier).loadProjects(),
-                        child: Text(strings.retry),
-                      ),
-                    ],
+          ? Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(projectState.error!),
+                  const SizedBox(height: 8),
+                  FilledButton.tonal(
+                    onPressed: () =>
+                        ref.read(projectListProvider.notifier).loadProjects(),
+                    child: Text(strings.retry),
                   ),
-                )
-              : projectState.projects.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.folder_open_outlined,
-                              size: 64, color: theme.colorScheme.outlineVariant),
-                          const SizedBox(height: 16),
-                          Text(
-                            strings.noProjectsYet,
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant),
-                          ),
-                        ],
-                      ),
-                    )
-                  : RefreshIndicator(
-                      onRefresh: () =>
-                          ref.read(projectListProvider.notifier).loadProjects(),
-                      child: ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
-                        itemCount: projectState.projects.length,
-                        itemBuilder: (context, index) {
-                          return _ProjectCard(
-                            project: projectState.projects[index],
-                            onTap: () {
-                              final id = projectState.projects[index].uid ?? 
-                                         projectState.projects[index].id?.toString();
-                              if (id != null) context.push('/projects/$id');
-                            },
-                          );
-                        },
-                      ),
+                ],
+              ),
+            )
+          : projectState.projects.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.folder_open_outlined,
+                    size: 64,
+                    color: theme.colorScheme.outlineVariant,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    strings.noProjectsYet,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
+                  ),
+                ],
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: () =>
+                  ref.read(projectListProvider.notifier).loadProjects(),
+              child: ListView.builder(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
+                itemCount: projectState.projects.length,
+                itemBuilder: (context, index) {
+                  return _ProjectCard(
+                    project: projectState.projects[index],
+                    onTap: () {
+                      final id =
+                          projectState.projects[index].uid ??
+                          projectState.projects[index].id?.toString();
+                      if (id != null) context.push('/projects/$id');
+                    },
+                  );
+                },
+              ),
+            ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/projects/new'),
         icon: const Icon(Icons.add_rounded),
@@ -101,8 +107,10 @@ class _ProjectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final statusColor =
-        AppTheme.getProjectStatusColor(project.status, theme.colorScheme);
+    final statusColor = AppTheme.getProjectStatusColor(
+      project.status,
+      theme.colorScheme,
+    );
 
     return GlassContainer(
       margin: const EdgeInsets.only(bottom: 12),
@@ -136,8 +144,11 @@ class _ProjectCard extends StatelessWidget {
                     ),
                   ),
                   if (project.pinToSidebar)
-                    Icon(Icons.push_pin_rounded,
-                        size: 16, color: theme.colorScheme.primary),
+                    Icon(
+                      Icons.push_pin_rounded,
+                      size: 16,
+                      color: theme.colorScheme.primary,
+                    ),
                   if (project.priority != null && project.priority != 'none')
                     Padding(
                       padding: const EdgeInsets.only(left: 8),
@@ -145,7 +156,9 @@ class _ProjectCard extends StatelessWidget {
                         Icons.flag_rounded,
                         size: 16,
                         color: AppTheme.getStringPriorityColor(
-                            project.priority, theme.colorScheme),
+                          project.priority,
+                          theme.colorScheme,
+                        ),
                       ),
                     ),
                 ],
@@ -166,8 +179,10 @@ class _ProjectCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: statusColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
@@ -183,11 +198,13 @@ class _ProjectCard extends StatelessWidget {
                   ),
                   if (project.areaName != null) ...[
                     const SizedBox(width: 8),
-                    Icon(Icons.layers_outlined,
-                        size: 14, color: theme.colorScheme.onSurfaceVariant),
+                    Icon(
+                      Icons.layers_outlined,
+                      size: 14,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                     const SizedBox(width: 3),
-                    Text(project.areaName!,
-                        style: theme.textTheme.bodySmall),
+                    Text(project.areaName!, style: theme.textTheme.bodySmall),
                   ],
                   const Spacer(),
                   if (project.taskCount != null)
@@ -206,10 +223,10 @@ class _ProjectCard extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: project.progress,
                     minHeight: 4,
-                    backgroundColor:
-                        theme.colorScheme.surfaceContainerHighest,
+                    backgroundColor: theme.colorScheme.surfaceContainerHighest,
                     valueColor: AlwaysStoppedAnimation(
-                        theme.colorScheme.primary),
+                      theme.colorScheme.primary,
+                    ),
                   ),
                 ),
               ],

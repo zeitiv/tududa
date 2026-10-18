@@ -29,23 +29,19 @@ class Area extends Equatable {
       createdAt: json['created_at'] != null
           ? DateTime.tryParse(json['created_at'].toString())
           : (json['createdAt'] != null
-              ? DateTime.tryParse(json['createdAt'].toString())
-              : null),
+                ? DateTime.tryParse(json['createdAt'].toString())
+                : null),
       updatedAt: json['updated_at'] != null
           ? DateTime.tryParse(json['updated_at'].toString())
           : (json['updatedAt'] != null
-              ? DateTime.tryParse(json['updatedAt'].toString())
-              : null),
+                ? DateTime.tryParse(json['updatedAt'].toString())
+                : null),
       projectCount: json['projectCount'] as int?,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      if (id != null) 'id': id,
-      'name': name,
-      'description': description,
-    };
+    return {if (id != null) 'id': id, 'name': name, 'description': description};
   }
 
   Area copyWith({String? name, String? description}) {

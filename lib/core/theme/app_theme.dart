@@ -79,9 +79,7 @@ class AppTheme {
         indicatorColor: colorScheme.secondaryContainer,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return textTheme.labelLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-            );
+            return textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600);
           }
           return textTheme.labelLarge;
         }),
@@ -104,9 +102,7 @@ class AppTheme {
         highlightElevation: 4,
         backgroundColor: colorScheme.primaryContainer,
         foregroundColor: colorScheme.onPrimaryContainer,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
 
       // Chip
@@ -131,16 +127,11 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(
-            color: colorScheme.primary,
-            width: 2,
-          ),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(
-            color: colorScheme.error,
-          ),
+          borderSide: BorderSide(color: colorScheme.error),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
@@ -150,9 +141,7 @@ class AppTheme {
 
       // Dialog
       dialogTheme: DialogThemeData(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       ),
 
       // BottomSheet
@@ -174,9 +163,7 @@ class AppTheme {
       // SnackBar
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -195,7 +182,10 @@ class AppTheme {
   }
 
   // Priority colors (string-based, used by projects)
-  static Color getStringPriorityColor(String? priority, ColorScheme colorScheme) {
+  static Color getStringPriorityColor(
+    String? priority,
+    ColorScheme colorScheme,
+  ) {
     switch (priority) {
       case 'high':
       case 'urgent':
@@ -208,7 +198,7 @@ class AppTheme {
     }
   }
 
-  // Status colors  
+  // Status colors
   static Color getProjectStatusColor(String status, ColorScheme colorScheme) {
     switch (status) {
       case 'in_progress':

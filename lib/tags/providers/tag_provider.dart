@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/legacy.dart';
+
 import '../models/tag_model.dart';
 import '../../core/services/api_service.dart';
 
@@ -8,7 +9,11 @@ class TagListState {
   final bool isLoading;
   final String? error;
 
-  const TagListState({this.tags = const [], this.isLoading = false, this.error});
+  const TagListState({
+    this.tags = const [],
+    this.isLoading = false,
+    this.error,
+  });
 
   TagListState copyWith({List<Tag>? tags, bool? isLoading, String? error}) {
     return TagListState(
@@ -30,7 +35,9 @@ class TagNotifier extends StateNotifier<TagListState> {
         final List<dynamic> data = response.data is List
             ? response.data
             : (response.data['tags'] ?? []);
-        final tags = data.map((e) => Tag.fromJson(e as Map<String, dynamic>)).toList();
+        final tags = data
+            .map((e) => Tag.fromJson(e as Map<String, dynamic>))
+            .toList();
         state = state.copyWith(tags: tags, isLoading: false);
       } else {
         state = state.copyWith(isLoading: false, error: 'Failed');

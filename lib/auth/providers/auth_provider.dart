@@ -1,7 +1,9 @@
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../models/user_model.dart';
 import '../../core/services/api_service.dart';
 import '../../core/utils/constants.dart';
@@ -73,10 +75,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         if (userData != null) {
           final user = User.fromJson(userData);
           await _saveUserData(prefs, user);
-          state = state.copyWith(
-            status: AuthStatus.authenticated,
-            user: user,
-          );
+          state = state.copyWith(status: AuthStatus.authenticated, user: user);
           return;
         }
       }
@@ -91,10 +90,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       if (cachedData != null) {
         try {
           final user = User.fromJson(jsonDecode(cachedData));
-          state = state.copyWith(
-            status: AuthStatus.authenticated,
-            user: user,
-          );
+          state = state.copyWith(status: AuthStatus.authenticated, user: user);
           return;
         } catch (_) {}
       }
@@ -115,7 +111,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
       if (serverUrl.endsWith('/')) {
         serverUrl = serverUrl.substring(0, serverUrl.length - 1);
       }
-      if (!serverUrl.startsWith('http://') && !serverUrl.startsWith('https://')) {
+      if (!serverUrl.startsWith('http://') &&
+          !serverUrl.startsWith('https://')) {
         serverUrl = 'https://$serverUrl';
       }
 
@@ -154,10 +151,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setBool(AppConstants.isLoggedInKey, true);
           await _saveUserData(prefs, user);
-          state = state.copyWith(
-            status: AuthStatus.authenticated,
-            user: user,
-          );
+          state = state.copyWith(status: AuthStatus.authenticated, user: user);
           return true;
         }
       }
@@ -166,8 +160,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final data = response.data;
       String errorMsg = 'Invalid credentials';
       if (data is Map<String, dynamic>) {
-        errorMsg = data['error']?.toString() ??
-            (data['errors'] is List ? (data['errors'] as List).join(', ') : errorMsg);
+        errorMsg =
+            data['error']?.toString() ??
+            (data['errors'] is List
+                ? (data['errors'] as List).join(', ')
+                : errorMsg);
       }
       state = state.copyWith(
         status: AuthStatus.unauthenticated,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+
 import '../providers/note_provider.dart';
 import '../models/note_model.dart';
 import '../../common/widgets/glass_container.dart';
@@ -33,45 +34,49 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
       body: noteState.isLoading
           ? const Center(child: CircularProgressIndicator())
           : noteState.notes.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.note_outlined,
-                          size: 64, color: theme.colorScheme.outlineVariant),
-                      const SizedBox(height: 16),
-                      Text(strings.noNotesYet,
-                          textAlign: TextAlign.center,
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant)),
-                    ],
+          ? Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.note_outlined,
+                    size: 64,
+                    color: theme.colorScheme.outlineVariant,
                   ),
-                )
-              : RefreshIndicator(
-                  onRefresh: () =>
-                      ref.read(noteListProvider.notifier).loadNotes(),
-                  child: GridView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 12,
-                      crossAxisSpacing: 12,
-                      childAspectRatio: 0.85,
+                  const SizedBox(height: 16),
+                  Text(
+                    strings.noNotesYet,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
-                    itemCount: noteState.notes.length,
-                    itemBuilder: (context, index) {
-                      final note = noteState.notes[index];
-                      return _NoteCard(
-                        note: note,
-                        onTap: () {
-                          final id = note.uid ?? note.id?.toString();
-                          if (id != null) context.push('/notes/$id');
-                        },
-                      );
-                    },
                   ),
+                ],
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: () => ref.read(noteListProvider.notifier).loadNotes(),
+              child: GridView.builder(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 0.85,
                 ),
+                itemCount: noteState.notes.length,
+                itemBuilder: (context, index) {
+                  final note = noteState.notes[index];
+                  return _NoteCard(
+                    note: note,
+                    onTap: () {
+                      final id = note.uid ?? note.id?.toString();
+                      if (id != null) context.push('/notes/$id');
+                    },
+                  );
+                },
+              ),
+            ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/notes/new'),
         icon: const Icon(Icons.add_rounded),
@@ -113,8 +118,9 @@ class _NoteCard extends StatelessWidget {
               if (note.title != null && note.title!.isNotEmpty)
                 Text(
                   note.title!,
-                  style: theme.textTheme.titleSmall
-                      ?.copyWith(fontWeight: FontWeight.w600),
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -137,14 +143,18 @@ class _NoteCard extends StatelessWidget {
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.folder_outlined,
-                              size: 12,
-                              color: theme.colorScheme.onSurfaceVariant),
+                          Icon(
+                            Icons.folder_outlined,
+                            size: 12,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
                           const SizedBox(width: 3),
                           Flexible(
-                            child: Text(note.projectName!,
-                                style: theme.textTheme.labelSmall,
-                                overflow: TextOverflow.ellipsis),
+                            child: Text(
+                              note.projectName!,
+                              style: theme.textTheme.labelSmall,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ],
                       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../l10n/strings.dart';
 import '../../common/widgets/glass_container.dart';
 
@@ -32,52 +33,52 @@ class ShellScaffold extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         child: NavigationBar(
           selectedIndex: index,
-        onDestinationSelected: (i) {
-          switch (i) {
-            case 0:
-              context.go('/tasks');
-              break;
-            case 1:
-              context.go('/projects');
-              break;
-            case 2:
-              context.go('/notes');
-              break;
-            case 3:
-              context.go('/inbox');
-              break;
-            case 4:
-              context.go('/more');
-              break;
-          }
-        },
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.today_outlined),
-            selectedIcon: const Icon(Icons.today),
-            label: strings.tasks,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.folder_outlined),
-            selectedIcon: const Icon(Icons.folder),
-            label: strings.projects,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.note_outlined),
-            selectedIcon: const Icon(Icons.note),
-            label: strings.notes,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.inbox_outlined),
-            selectedIcon: const Icon(Icons.inbox),
-            label: strings.inbox,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.more_horiz_outlined),
-            selectedIcon: const Icon(Icons.more_horiz),
-            label: strings.more,
-          ),
-        ],
+          onDestinationSelected: (i) {
+            switch (i) {
+              case 0:
+                context.go('/tasks');
+                break;
+              case 1:
+                context.go('/projects');
+                break;
+              case 2:
+                context.go('/notes');
+                break;
+              case 3:
+                context.go('/inbox');
+                break;
+              case 4:
+                context.go('/more');
+                break;
+            }
+          },
+          destinations: [
+            NavigationDestination(
+              icon: const Icon(Icons.today_outlined),
+              selectedIcon: const Icon(Icons.today),
+              label: strings.tasks,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.folder_outlined),
+              selectedIcon: const Icon(Icons.folder),
+              label: strings.projects,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.note_outlined),
+              selectedIcon: const Icon(Icons.note),
+              label: strings.notes,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.inbox_outlined),
+              selectedIcon: const Icon(Icons.inbox),
+              label: strings.inbox,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.more_horiz_outlined),
+              selectedIcon: const Icon(Icons.more_horiz),
+              label: strings.more,
+            ),
+          ],
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+
 import '../models/task_model.dart';
 import '../providers/task_provider.dart';
 import '../../projects/providers/project_provider.dart';
@@ -45,7 +46,8 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
     }
     // Ensure projects are loaded for the picker
     Future.microtask(
-        () => ref.read(projectListProvider.notifier).loadProjects());
+      () => ref.read(projectListProvider.notifier).loadProjects(),
+    );
   }
 
   // Store the actual numeric id and uid from the loaded task
@@ -86,14 +88,18 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
       id: _loadedTaskId,
       uid: _loadedTaskUid,
       name: _nameController.text.trim(),
-      note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
+      note: _noteController.text.trim().isEmpty
+          ? null
+          : _noteController.text.trim(),
       priority: _priority,
       status: _status,
       dueDate: _dueDate,
       deferUntil: _deferUntil,
       projectId: _projectId,
       recurrenceType: _recurrenceType,
-      recurrenceInterval: _recurrenceType != 'none' ? _recurrenceInterval : null,
+      recurrenceInterval: _recurrenceType != 'none'
+          ? _recurrenceInterval
+          : null,
       recurrenceEndDate: _recurrenceEndDate,
       completionBased: _completionBased,
     );
@@ -113,9 +119,8 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
         }
         context.pop();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to save task')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Failed to save task')));
       }
     }
   }
@@ -160,8 +165,10 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
             onPressed: _isLoading ? null : _save,
             child: _isLoading
                 ? const SizedBox(
-                    width: 16, height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2))
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
                 : Text(strings.save),
           ),
         ],
@@ -182,8 +189,9 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                       labelText: strings.taskName,
                       hintText: strings.taskNameHint,
                     ),
-                    validator: (v) =>
-                        v == null || v.trim().isEmpty ? strings.nameRequired : null,
+                    validator: (v) => v == null || v.trim().isEmpty
+                        ? strings.nameRequired
+                        : null,
                   ),
                   const SizedBox(height: 16),
 
@@ -192,12 +200,25 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                   const SizedBox(height: 8),
                   SegmentedButton<int>(
                     segments: [
-                      ButtonSegment(value: 0, label: Text(strings.low), icon: const Icon(Icons.arrow_downward, size: 16)),
-                      ButtonSegment(value: 1, label: Text(strings.medium), icon: const Icon(Icons.remove, size: 16)),
-                      ButtonSegment(value: 2, label: Text(strings.high), icon: const Icon(Icons.arrow_upward, size: 16)),
+                      ButtonSegment(
+                        value: 0,
+                        label: Text(strings.low),
+                        icon: const Icon(Icons.arrow_downward, size: 16),
+                      ),
+                      ButtonSegment(
+                        value: 1,
+                        label: Text(strings.medium),
+                        icon: const Icon(Icons.remove, size: 16),
+                      ),
+                      ButtonSegment(
+                        value: 2,
+                        label: Text(strings.high),
+                        icon: const Icon(Icons.arrow_upward, size: 16),
+                      ),
                     ],
                     selected: {_priority},
-                    onSelectionChanged: (v) => setState(() => _priority = v.first),
+                    onSelectionChanged: (v) =>
+                        setState(() => _priority = v.first),
                   ),
                   const SizedBox(height: 20),
 
@@ -274,10 +295,10 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                     subtitle: Text(
                       _projectId != null
                           ? projectState.projects
-                                  .where((p) => p.id == _projectId)
-                                  .firstOrNull
-                                  ?.name ??
-                              'Selected'
+                                    .where((p) => p.id == _projectId)
+                                    .firstOrNull
+                                    ?.name ??
+                                'Selected'
                           : strings.none,
                     ),
                     trailing: const Icon(Icons.chevron_right),
@@ -295,14 +316,33 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                       prefixIcon: Icon(Icons.repeat),
                     ),
                     items: [
-                      DropdownMenuItem(value: 'none', child: Text(strings.none)),
-                      DropdownMenuItem(value: 'daily', child: Text(strings.daily)),
-                      DropdownMenuItem(value: 'weekly', child: Text(strings.weekly)),
-                      DropdownMenuItem(value: 'monthly', child: Text(strings.monthly)),
-                      DropdownMenuItem(value: 'monthly_weekday', child: Text('${strings.monthly} (Weekday)')),
-                      DropdownMenuItem(value: 'monthly_last_day', child: Text('${strings.monthly} (Last Day)')),
+                      DropdownMenuItem(
+                        value: 'none',
+                        child: Text(strings.none),
+                      ),
+                      DropdownMenuItem(
+                        value: 'daily',
+                        child: Text(strings.daily),
+                      ),
+                      DropdownMenuItem(
+                        value: 'weekly',
+                        child: Text(strings.weekly),
+                      ),
+                      DropdownMenuItem(
+                        value: 'monthly',
+                        child: Text(strings.monthly),
+                      ),
+                      DropdownMenuItem(
+                        value: 'monthly_weekday',
+                        child: Text('${strings.monthly} (Weekday)'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'monthly_last_day',
+                        child: Text('${strings.monthly} (Last Day)'),
+                      ),
                     ],
-                    onChanged: (v) => setState(() => _recurrenceType = v ?? 'none'),
+                    onChanged: (v) =>
+                        setState(() => _recurrenceType = v ?? 'none'),
                   ),
 
                   if (_recurrenceType != 'none') ...[
@@ -317,7 +357,10 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
                             decoration: const InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 8,
+                              ),
                             ),
                             onChanged: (v) {
                               final n = int.tryParse(v);
@@ -332,7 +375,11 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(strings.isZh ? '基于完成状态' : 'Completion-based'),
-                      subtitle: Text(strings.isZh ? '从上次完成时间开始循环' : 'Repeat from completion date'),
+                      subtitle: Text(
+                        strings.isZh
+                            ? '从上次完成时间开始循环'
+                            : 'Repeat from completion date',
+                      ),
                       value: _completionBased,
                       onChanged: (v) => setState(() => _completionBased = v),
                     ),
@@ -363,9 +410,13 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
       case 'daily':
         return strings.isZh ? '天' : (_recurrenceInterval == 1 ? 'day' : 'days');
       case 'weekly':
-        return strings.isZh ? '周' : (_recurrenceInterval == 1 ? 'week' : 'weeks');
+        return strings.isZh
+            ? '周'
+            : (_recurrenceInterval == 1 ? 'week' : 'weeks');
       default:
-        return strings.isZh ? '月' : (_recurrenceInterval == 1 ? 'month' : 'months');
+        return strings.isZh
+            ? '月'
+            : (_recurrenceInterval == 1 ? 'month' : 'months');
     }
   }
 
@@ -396,17 +447,19 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
             },
           ),
           const Divider(),
-          ...projectState.projects.map((p) => ListTile(
-                leading: const Icon(Icons.folder_outlined),
-                title: Text(p.name),
-                trailing: p.id == _projectId
-                    ? const Icon(Icons.check, color: Colors.green)
-                    : null,
-                onTap: () {
-                  setState(() => _projectId = p.id);
-                  Navigator.pop(context);
-                },
-              )),
+          ...projectState.projects.map(
+            (p) => ListTile(
+              leading: const Icon(Icons.folder_outlined),
+              title: Text(p.name),
+              trailing: p.id == _projectId
+                  ? const Icon(Icons.check, color: Colors.green)
+                  : null,
+              onTap: () {
+                setState(() => _projectId = p.id);
+                Navigator.pop(context);
+              },
+            ),
+          ),
           const SizedBox(height: 16),
         ],
       ),

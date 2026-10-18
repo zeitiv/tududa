@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/legacy.dart';
+
 import '../models/note_model.dart';
 import '../../core/services/api_service.dart';
 
@@ -14,11 +15,7 @@ class NoteListState {
     this.error,
   });
 
-  NoteListState copyWith({
-    List<Note>? notes,
-    bool? isLoading,
-    String? error,
-  }) {
+  NoteListState copyWith({List<Note>? notes, bool? isLoading, String? error}) {
     return NoteListState(
       notes: notes ?? this.notes,
       isLoading: isLoading ?? this.isLoading,
@@ -36,7 +33,9 @@ class NoteNotifier extends StateNotifier<NoteListState> {
       final queryParams = <String, dynamic>{};
       if (projectId != null) queryParams['project_id'] = projectId;
 
-      final response = await ApiService.instance.getNotes(queryParams: queryParams);
+      final response = await ApiService.instance.getNotes(
+        queryParams: queryParams,
+      );
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data is List
             ? response.data
@@ -70,7 +69,10 @@ class NoteNotifier extends StateNotifier<NoteListState> {
   Future<bool> updateNote(Note note) async {
     try {
       if (note.id == null) return false;
-      final response = await ApiService.instance.updateNote(note.id!, note.toJson());
+      final response = await ApiService.instance.updateNote(
+        note.id!,
+        note.toJson(),
+      );
       if (response.statusCode == 200) {
         await loadNotes();
         return true;
@@ -95,7 +97,8 @@ class NoteNotifier extends StateNotifier<NoteListState> {
   }
 }
 
-final noteListProvider =
-    StateNotifierProvider<NoteNotifier, NoteListState>((ref) {
+final noteListProvider = StateNotifierProvider<NoteNotifier, NoteListState>((
+  ref,
+) {
   return NoteNotifier();
 });

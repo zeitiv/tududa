@@ -30,10 +30,7 @@ class Tag extends Equatable {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    if (id != null) 'id': id,
-    'name': name,
-  };
+  Map<String, dynamic> toJson() => {if (id != null) 'id': id, 'name': name};
 
   @override
   List<Object?> get props => [id, name];

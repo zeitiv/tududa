@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/legacy.dart';
+
 import '../models/inbox_item_model.dart';
 import '../../core/services/api_service.dart';
 
@@ -10,7 +11,11 @@ class InboxState {
 
   const InboxState({this.items = const [], this.isLoading = false, this.error});
 
-  InboxState copyWith({List<InboxItem>? items, bool? isLoading, String? error}) {
+  InboxState copyWith({
+    List<InboxItem>? items,
+    bool? isLoading,
+    String? error,
+  }) {
     return InboxState(
       items: items ?? this.items,
       isLoading: isLoading ?? this.isLoading,
@@ -29,8 +34,12 @@ class InboxNotifier extends StateNotifier<InboxState> {
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data is List
             ? response.data
-            : (response.data['inboxItems'] ?? response.data['inbox_items'] ?? []);
-        final items = data.map((e) => InboxItem.fromJson(e as Map<String, dynamic>)).toList();
+            : (response.data['inboxItems'] ??
+                  response.data['inbox_items'] ??
+                  []);
+        final items = data
+            .map((e) => InboxItem.fromJson(e as Map<String, dynamic>))
+            .toList();
         state = state.copyWith(items: items, isLoading: false);
       } else {
         state = state.copyWith(isLoading: false, error: 'Failed');
@@ -43,7 +52,9 @@ class InboxNotifier extends StateNotifier<InboxState> {
 
   Future<bool> processItem(int id) async {
     try {
-      final response = await ApiService.instance.updateInboxItem(id, {'status': 'processed'});
+      final response = await ApiService.instance.updateInboxItem(id, {
+        'status': 'processed',
+      });
       if (response.statusCode == 200) {
         await loadItems();
         return true;
@@ -56,7 +67,9 @@ class InboxNotifier extends StateNotifier<InboxState> {
 
   Future<bool> ignoreItem(int id) async {
     try {
-      final response = await ApiService.instance.updateInboxItem(id, {'status': 'ignored'});
+      final response = await ApiService.instance.updateInboxItem(id, {
+        'status': 'ignored',
+      });
       if (response.statusCode == 200) {
         await loadItems();
         return true;

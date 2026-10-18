@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'app.dart';
 import 'auth/providers/auth_provider.dart';
 import 'core/services/api_service.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'settings/providers/settings_provider.dart';
 
 void main() async {
@@ -20,9 +22,7 @@ void main() async {
     ProviderScope(
       // Retries belong to the repositories, not to provider rebuilds.
       retry: (_, _) => null,
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(sharedPrefs),
-      ],
+      overrides: [sharedPreferencesProvider.overrideWithValue(sharedPrefs)],
       child: const _AppStartup(),
     ),
   );

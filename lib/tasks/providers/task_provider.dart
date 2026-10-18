@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+
 import '../models/task_model.dart';
 import '../../core/services/api_service.dart';
 
@@ -78,19 +79,20 @@ class TaskNotifier extends StateNotifier<TaskListState> {
           break;
       }
 
-      final response = await ApiService.instance.getTasks(queryParams: queryParams);
+      final response = await ApiService.instance.getTasks(
+        queryParams: queryParams,
+      );
 
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data is List
             ? response.data
             : (response.data['tasks'] ?? []);
-        final tasks = data.map((e) => Task.fromJson(e as Map<String, dynamic>)).toList();
+        final tasks = data
+            .map((e) => Task.fromJson(e as Map<String, dynamic>))
+            .toList();
         state = state.copyWith(tasks: tasks, isLoading: false);
       } else {
-        state = state.copyWith(
-          isLoading: false,
-          error: 'Failed to load tasks',
-        );
+        state = state.copyWith(isLoading: false, error: 'Failed to load tasks');
       }
     } catch (e) {
       debugPrint('Load tasks error: $e');
@@ -104,11 +106,15 @@ class TaskNotifier extends StateNotifier<TaskListState> {
   Future<bool> createTask(Task task) async {
     try {
       final response = await ApiService.instance.createTask(task.toJson());
-      if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 302) {
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 302) {
         await loadTasks();
         return true;
       }
-      debugPrint('Create task failed: status=${response.statusCode}, body=${response.data}');
+      debugPrint(
+        'Create task failed: status=${response.statusCode}, body=${response.data}',
+      );
       return false;
     } catch (e) {
       debugPrint('Create task error: $e');
@@ -128,11 +134,15 @@ class TaskNotifier extends StateNotifier<TaskListState> {
       debugPrint('Updating task $taskId with data: $data');
       final response = await ApiService.instance.updateTask(taskId, data);
       debugPrint('Update task response: status=${response.statusCode}');
-      if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 302) {
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 302) {
         await loadTasks();
         return true;
       }
-      debugPrint('Update task failed: status=${response.statusCode}, body=${response.data}');
+      debugPrint(
+        'Update task failed: status=${response.statusCode}, body=${response.data}',
+      );
       return false;
     } catch (e) {
       debugPrint('Update task error: $e');
@@ -144,11 +154,12 @@ class TaskNotifier extends StateNotifier<TaskListState> {
     try {
       final taskId = task.uid ?? task.id?.toString();
       if (taskId == null) return false;
-      final newStatus = task.isDone ? (task.note?.isNotEmpty == true ? 1 : 0) : 2;
-      final response = await ApiService.instance.updateTask(
-        taskId,
-        {'status': newStatus},
-      );
+      final newStatus = task.isDone
+          ? (task.note?.isNotEmpty == true ? 1 : 0)
+          : 2;
+      final response = await ApiService.instance.updateTask(taskId, {
+        'status': newStatus,
+      });
       if (response.statusCode == 200 || response.statusCode == 302) {
         await loadTasks();
         return true;
@@ -162,10 +173,9 @@ class TaskNotifier extends StateNotifier<TaskListState> {
   Future<bool> updateTaskStatus(dynamic id, int status) async {
     try {
       if (id == null) return false;
-      final response = await ApiService.instance.updateTask(
-        id,
-        {'status': status},
-      );
+      final response = await ApiService.instance.updateTask(id, {
+        'status': status,
+      });
       if (response.statusCode == 200) {
         await loadTasks();
         return true;
@@ -230,12 +240,17 @@ class TaskNotifier extends StateNotifier<TaskListState> {
 }
 
 /// Task list provider
-final taskListProvider = StateNotifierProvider<TaskNotifier, TaskListState>((ref) {
+final taskListProvider = StateNotifierProvider<TaskNotifier, TaskListState>((
+  ref,
+) {
   return TaskNotifier();
 });
 
 /// Single task provider
-final taskDetailProvider = FutureProvider.family<Task?, dynamic>((ref, id) async {
+final taskDetailProvider = FutureProvider.family<Task?, dynamic>((
+  ref,
+  id,
+) async {
   try {
     final response = await ApiService.instance.getTask(id);
     if (response.statusCode == 200 && response.data != null) {

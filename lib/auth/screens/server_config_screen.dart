@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../providers/auth_provider.dart';
 import '../../l10n/strings.dart';
 
@@ -87,7 +88,9 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen>
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.3,
+                            ),
                             blurRadius: 20,
                             offset: const Offset(0, 8),
                           ),
@@ -154,7 +157,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen>
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   color: theme.colorScheme.onPrimary,
-                                )
+                                ),
                               )
                             : const Icon(Icons.arrow_forward_rounded),
                         label: Text(

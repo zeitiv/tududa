@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../settings/providers/settings_provider.dart';
 
 class AppStrings {
@@ -31,9 +32,13 @@ class AppStrings {
   String get newTask => isZh ? '新建任务' : 'New Task';
   String get editTask => isZh ? '编辑任务' : 'Edit Task';
   String get addTask => isZh ? '添加任务' : 'Add Task';
-  String get noTasksYet => isZh ? '暂无任务\n点击 + 新建' : 'No tasks found.\nTap + to create one.';
-  String get noTasksToday => isZh ? '今天没有任务啦。\n好好享受空闲时光！🎉' : 'No tasks for today.\nEnjoy your free time! 🎉';
-  String get noCompletedTasks => isZh ? '还没有已完成的任务。' : 'No completed tasks yet.';
+  String get noTasksYet =>
+      isZh ? '暂无任务\n点击 + 新建' : 'No tasks found.\nTap + to create one.';
+  String get noTasksToday => isZh
+      ? '今天没有任务啦。\n好好享受空闲时光！🎉'
+      : 'No tasks for today.\nEnjoy your free time! 🎉';
+  String get noCompletedTasks =>
+      isZh ? '还没有已完成的任务。' : 'No completed tasks yet.';
   String get retry => isZh ? '重试' : 'Retry';
   String get today => isZh ? '今天' : 'Today';
   String get upcoming => isZh ? '即将到来' : 'Upcoming';
@@ -57,7 +62,8 @@ class AppStrings {
   String get weekly => isZh ? '每周' : 'Weekly';
   String get monthly => isZh ? '每月' : 'Monthly';
   String get noteDetail => isZh ? '备注' : 'Notes';
-  String get noteHint => isZh ? '添加详情 (支持 Markdown)' : 'Add details (Markdown supported)';
+  String get noteHint =>
+      isZh ? '添加详情 (支持 Markdown)' : 'Add details (Markdown supported)';
 
   // Projects
   String get newProject => isZh ? '新建项目' : 'New Project';
@@ -65,7 +71,8 @@ class AppStrings {
   String get projectTasks => isZh ? '项目任务' : 'Project Tasks';
   String get board => isZh ? '看板' : 'Board';
   String get list => isZh ? '列表' : 'List';
-  String get noProjectsYet => isZh ? '暂无项目\n点击 + 新建' : 'No projects yet.\nTap + to create one.';
+  String get noProjectsYet =>
+      isZh ? '暂无项目\n点击 + 新建' : 'No projects yet.\nTap + to create one.';
   String get projectName => isZh ? '项目名称' : 'Project Name';
   String get projectNameHint => isZh ? '最多6个词' : 'Max 6 words';
   String get desc => isZh ? '描述' : 'Description';
@@ -77,7 +84,8 @@ class AppStrings {
   String get area => isZh ? '区域' : 'Area';
   String get noArea => isZh ? '无区域' : 'No Area';
   String get pinSidebar => isZh ? '固定到侧边栏' : 'Pin to Sidebar';
-  String get pinSidebarHint => isZh ? '方便从导航快速访问' : 'Quick access from navigation';
+  String get pinSidebarHint =>
+      isZh ? '方便从导航快速访问' : 'Quick access from navigation';
 
   // Kanban Statuses
   String get toDo => isZh ? '待办' : 'To Do';
@@ -89,16 +97,20 @@ class AppStrings {
   // Notes
   String get newNote => isZh ? '新建笔记' : 'New Note';
   String get editNote => isZh ? '编辑笔记' : 'Edit Note';
-  String get noNotesYet => isZh ? '暂无笔记\n点击 + 新建' : 'No notes yet.\nTap + to create one.';
+  String get noNotesYet =>
+      isZh ? '暂无笔记\n点击 + 新建' : 'No notes yet.\nTap + to create one.';
   String get noteTitle => isZh ? '笔记标题' : 'Note Title';
   String get titleRequired => isZh ? '标题不能为空' : 'Title is required';
   String get color => isZh ? '颜色' : 'Color';
   String get content => isZh ? '内容' : 'Content';
-  String get contentHint => isZh ? '记下你的想法 (支持 Markdown)' : 'Jot down your thoughts (Markdown supported)';
+  String get contentHint => isZh
+      ? '记下你的想法 (支持 Markdown)'
+      : 'Jot down your thoughts (Markdown supported)';
 
   // Inbox
   String get inboxEmpty => isZh ? '收件箱为空' : 'Inbox is empty';
-  String get inboxTelegramHint => isZh ? '来自 Telegram 的项目将显示在这里' : 'Items from Telegram will appear here';
+  String get inboxTelegramHint =>
+      isZh ? '来自 Telegram 的项目将显示在这里' : 'Items from Telegram will appear here';
   String get markProcessed => isZh ? '标记为已处理' : 'Mark as Processed';
   String get ignore => isZh ? '忽略' : 'Ignore';
   String get delete => isZh ? '删除' : 'Delete';
@@ -116,9 +128,10 @@ class AppStrings {
   String get serverUrl => isZh ? '服务器地址' : 'Server URL';
   String get about => isZh ? '关于 Tududa' : 'About Tududa';
   String get signOut => isZh ? '退出登录' : 'Sign Out';
-  String get signOutConfirm => isZh ? '确定要退出登录吗？' : 'Are you sure you want to sign out?';
+  String get signOutConfirm =>
+      isZh ? '确定要退出登录吗？' : 'Are you sure you want to sign out?';
   String get cancel => isZh ? '取消' : 'Cancel';
-  
+
   // Theme Modes
   String get lightMode => isZh ? '浅色' : 'Light';
   String get darkMode => isZh ? '深色' : 'Dark';

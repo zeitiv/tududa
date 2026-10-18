@@ -46,9 +46,7 @@ class User extends Equatable {
 
   String get displayName {
     if (name != null && name!.isNotEmpty) {
-      return surname != null && surname!.isNotEmpty
-          ? '$name $surname'
-          : name!;
+      return surname != null && surname!.isNotEmpty ? '$name $surname' : name!;
     }
     return email;
   }
@@ -84,7 +82,8 @@ class User extends Equatable {
       todaySettings: json['today_settings'] as Map<String, dynamic>?,
       sidebarSettings: json['sidebar_settings'] as Map<String, dynamic>?,
       uiSettings: json['ui_settings'] as Map<String, dynamic>?,
-      notificationPreferences: json['notification_preferences'] as Map<String, dynamic>?,
+      notificationPreferences:
+          json['notification_preferences'] as Map<String, dynamic>?,
     );
   }
 
@@ -149,7 +148,8 @@ class User extends Equatable {
       todaySettings: todaySettings ?? this.todaySettings,
       sidebarSettings: sidebarSettings ?? this.sidebarSettings,
       uiSettings: uiSettings ?? this.uiSettings,
-      notificationPreferences: notificationPreferences ?? this.notificationPreferences,
+      notificationPreferences:
+          notificationPreferences ?? this.notificationPreferences,
     );
   }
 

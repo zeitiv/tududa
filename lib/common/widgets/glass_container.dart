@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class GlassContainer extends StatelessWidget {
@@ -28,7 +29,11 @@ class GlassContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final baseColor = color ?? (theme.brightness == Brightness.light ? Colors.white : theme.colorScheme.surface);
+    final baseColor =
+        color ??
+        (theme.brightness == Brightness.light
+            ? Colors.white
+            : theme.colorScheme.surface);
 
     return Container(
       width: width,
@@ -56,7 +61,7 @@ class GlassContainer extends StatelessWidget {
               color: baseColor.withValues(alpha: opacity),
               borderRadius: borderRadius,
               border: Border.all(
-                color: theme.brightness == Brightness.light 
+                color: theme.brightness == Brightness.light
                     ? Colors.white.withValues(alpha: 0.5)
                     : Colors.white.withValues(alpha: 0.1),
                 width: 1.5,

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+
 import '../models/project_model.dart';
 import '../../core/services/api_service.dart';
 
@@ -46,7 +47,10 @@ class ProjectNotifier extends StateNotifier<ProjectListState> {
             .toList();
         state = state.copyWith(projects: projects, isLoading: false);
       } else {
-        state = state.copyWith(isLoading: false, error: 'Failed to load projects');
+        state = state.copyWith(
+          isLoading: false,
+          error: 'Failed to load projects',
+        );
       }
     } catch (e) {
       debugPrint('Load projects error: $e');
@@ -56,7 +60,9 @@ class ProjectNotifier extends StateNotifier<ProjectListState> {
 
   Future<bool> createProject(Project project) async {
     try {
-      final response = await ApiService.instance.createProject(project.toJson());
+      final response = await ApiService.instance.createProject(
+        project.toJson(),
+      );
       if (response.statusCode == 200 || response.statusCode == 201) {
         await loadProjects();
         return true;
@@ -76,7 +82,9 @@ class ProjectNotifier extends StateNotifier<ProjectListState> {
         projectId,
         project.toJson(),
       );
-      if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 302) {
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 302) {
         await loadProjects();
         return true;
       }
@@ -104,11 +112,13 @@ class ProjectNotifier extends StateNotifier<ProjectListState> {
 
 final projectListProvider =
     StateNotifierProvider<ProjectNotifier, ProjectListState>((ref) {
-  return ProjectNotifier();
-});
+      return ProjectNotifier();
+    });
 
-final projectDetailProvider =
-    FutureProvider.family<Project?, dynamic>((ref, id) async {
+final projectDetailProvider = FutureProvider.family<Project?, dynamic>((
+  ref,
+  id,
+) async {
   try {
     final response = await ApiService.instance.getProject(id);
     if (response.statusCode == 200 && response.data != null) {

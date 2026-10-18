@@ -85,13 +85,13 @@ class Project extends Equatable {
       createdAt: json['created_at'] != null
           ? DateTime.tryParse(json['created_at'].toString())
           : (json['createdAt'] != null
-              ? DateTime.tryParse(json['createdAt'].toString())
-              : null),
+                ? DateTime.tryParse(json['createdAt'].toString())
+                : null),
       updatedAt: json['updated_at'] != null
           ? DateTime.tryParse(json['updated_at'].toString())
           : (json['updatedAt'] != null
-              ? DateTime.tryParse(json['updatedAt'].toString())
-              : null),
+                ? DateTime.tryParse(json['updatedAt'].toString())
+                : null),
       areaName: json['Area'] != null ? json['Area']['name'] as String? : null,
       taskCount: _parseTaskCount(json),
       completedTaskCount: _parseCompletedCount(json),

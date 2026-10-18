@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/legacy.dart';
+
 import '../models/area_model.dart';
 import '../../core/services/api_service.dart';
 
@@ -8,7 +9,11 @@ class AreaListState {
   final bool isLoading;
   final String? error;
 
-  const AreaListState({this.areas = const [], this.isLoading = false, this.error});
+  const AreaListState({
+    this.areas = const [],
+    this.isLoading = false,
+    this.error,
+  });
 
   AreaListState copyWith({List<Area>? areas, bool? isLoading, String? error}) {
     return AreaListState(
@@ -30,7 +35,9 @@ class AreaNotifier extends StateNotifier<AreaListState> {
         final List<dynamic> data = response.data is List
             ? response.data
             : (response.data['areas'] ?? []);
-        final areas = data.map((e) => Area.fromJson(e as Map<String, dynamic>)).toList();
+        final areas = data
+            .map((e) => Area.fromJson(e as Map<String, dynamic>))
+            .toList();
         state = state.copyWith(areas: areas, isLoading: false);
       } else {
         state = state.copyWith(isLoading: false, error: 'Failed to load areas');
@@ -57,7 +64,10 @@ class AreaNotifier extends StateNotifier<AreaListState> {
   Future<bool> updateArea(Area area) async {
     try {
       if (area.id == null) return false;
-      final response = await ApiService.instance.updateArea(area.id!, area.toJson());
+      final response = await ApiService.instance.updateArea(
+        area.id!,
+        area.toJson(),
+      );
       if (response.statusCode == 200) {
         await loadAreas();
         return true;
@@ -82,6 +92,8 @@ class AreaNotifier extends StateNotifier<AreaListState> {
   }
 }
 
-final areaListProvider = StateNotifierProvider<AreaNotifier, AreaListState>((ref) {
+final areaListProvider = StateNotifierProvider<AreaNotifier, AreaListState>((
+  ref,
+) {
   return AreaNotifier();
 });

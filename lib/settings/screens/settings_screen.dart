@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../auth/providers/auth_provider.dart';
 import '../providers/settings_provider.dart';
 import '../../l10n/strings.dart';
@@ -94,12 +95,22 @@ class SettingsScreen extends ConsumerWidget {
               value: settings.themeMode,
               underline: const SizedBox(),
               items: [
-                DropdownMenuItem(value: AppThemeMode.light, child: Text(strings.lightMode)),
-                DropdownMenuItem(value: AppThemeMode.dark, child: Text(strings.darkMode)),
-                DropdownMenuItem(value: AppThemeMode.system, child: Text(strings.systemMode)),
+                DropdownMenuItem(
+                  value: AppThemeMode.light,
+                  child: Text(strings.lightMode),
+                ),
+                DropdownMenuItem(
+                  value: AppThemeMode.dark,
+                  child: Text(strings.darkMode),
+                ),
+                DropdownMenuItem(
+                  value: AppThemeMode.system,
+                  child: Text(strings.systemMode),
+                ),
               ],
               onChanged: (val) {
-                if (val != null) ref.read(settingsProvider.notifier).setThemeMode(val);
+                if (val != null)
+                  ref.read(settingsProvider.notifier).setThemeMode(val);
               },
             ),
           ),
@@ -115,7 +126,8 @@ class SettingsScreen extends ConsumerWidget {
                 DropdownMenuItem(value: 'en', child: Text('English')),
               ],
               onChanged: (val) {
-                if (val != null) ref.read(settingsProvider.notifier).setLocale(val);
+                if (val != null)
+                  ref.read(settingsProvider.notifier).setLocale(val);
               },
             ),
           ),
@@ -163,8 +175,10 @@ class SettingsScreen extends ConsumerWidget {
           // Logout
           ListTile(
             leading: Icon(Icons.logout_rounded, color: theme.colorScheme.error),
-            title: Text(strings.signOut,
-                style: TextStyle(color: theme.colorScheme.error)),
+            title: Text(
+              strings.signOut,
+              style: TextStyle(color: theme.colorScheme.error),
+            ),
             onTap: () async {
               final confirm = await showDialog<bool>(
                 context: context,
@@ -173,11 +187,13 @@ class SettingsScreen extends ConsumerWidget {
                   content: Text(strings.signOutConfirm),
                   actions: [
                     TextButton(
-                        onPressed: () => Navigator.pop(ctx, false),
-                        child: Text(strings.cancel)),
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: Text(strings.cancel),
+                    ),
                     FilledButton(
-                        onPressed: () => Navigator.pop(ctx, true),
-                        child: Text(strings.signOut)),
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: Text(strings.signOut),
+                    ),
                   ],
                 ),
               );

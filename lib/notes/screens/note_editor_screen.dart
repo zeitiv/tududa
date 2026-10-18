@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../models/note_model.dart';
 import '../providers/note_provider.dart';
 import '../../projects/providers/project_provider.dart';
@@ -42,7 +43,9 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
       _isEdit = true;
       _loadNote();
     }
-    Future.microtask(() => ref.read(projectListProvider.notifier).loadProjects());
+    Future.microtask(
+      () => ref.read(projectListProvider.notifier).loadProjects(),
+    );
   }
 
   Future<void> _loadNote() async {
@@ -75,7 +78,9 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
     final note = Note(
       uid: widget.noteId is String ? widget.noteId : null,
       id: widget.noteId is int ? widget.noteId : null,
-      title: _titleController.text.trim().isEmpty ? null : _titleController.text.trim(),
+      title: _titleController.text.trim().isEmpty
+          ? null
+          : _titleController.text.trim(),
       content: _contentController.text.trim(),
       projectId: _projectId,
       color: _color,
@@ -93,9 +98,8 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
       if (success) {
         context.pop();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to save note')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Failed to save note')));
       }
     }
   }
@@ -108,8 +112,14 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
         title: const Text('Delete Note'),
         content: const Text('Are you sure?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Delete')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Delete'),
+          ),
         ],
       ),
     );
@@ -144,7 +154,11 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
           TextButton(
             onPressed: _isLoading ? null : _save,
             child: _isLoading
-                ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
                 : Text(strings.save),
           ),
         ],
@@ -168,7 +182,9 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
                     fillColor: Colors.transparent,
                     filled: false,
                     hintStyle: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                      color: theme.colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.5,
+                      ),
                     ),
                   ),
                 ),
@@ -189,7 +205,9 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
                     fillColor: Colors.transparent,
                     filled: false,
                     hintStyle: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                      color: theme.colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.4,
+                      ),
                     ),
                   ),
                   style: theme.textTheme.bodyLarge,
@@ -205,7 +223,12 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
                   children: _colors.map((c) {
                     final isSelected = _color == c;
                     final displayColor = c != null
-                        ? Color(int.parse('FF${c.replaceFirst('#', '')}', radix: 16))
+                        ? Color(
+                            int.parse(
+                              'FF${c.replaceFirst('#', '')}',
+                              radix: 16,
+                            ),
+                          )
                         : theme.colorScheme.surface;
                     return GestureDetector(
                       onTap: () => setState(() => _color = c),
@@ -216,12 +239,18 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
                           color: displayColor,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: isSelected ? theme.colorScheme.primary : theme.colorScheme.outline,
+                            color: isSelected
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.outline,
                             width: isSelected ? 2.5 : 1,
                           ),
                         ),
                         child: c == null
-                            ? Icon(Icons.format_color_reset, size: 16, color: theme.colorScheme.onSurfaceVariant)
+                            ? Icon(
+                                Icons.format_color_reset,
+                                size: 16,
+                                color: theme.colorScheme.onSurfaceVariant,
+                              )
                             : null,
                       ),
                     );
@@ -239,8 +268,9 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
                   ),
                   items: [
                     DropdownMenuItem(value: null, child: Text(strings.none)),
-                    ...projectState.projects.map((p) =>
-                        DropdownMenuItem(value: p.id, child: Text(p.name))),
+                    ...projectState.projects.map(
+                      (p) => DropdownMenuItem(value: p.id, child: Text(p.name)),
+                    ),
                   ],
                   onChanged: (v) => setState(() => _projectId = v),
                 ),

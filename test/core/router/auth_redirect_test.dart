@@ -6,7 +6,7 @@ void main() {
   const pending = [AuthStatus.initial, AuthStatus.loading];
   const unauth = [AuthStatus.unauthenticated, AuthStatus.error];
   const locations = [
-    '/tasks',
+    '/today',
     '/tasks/5?x=1',
     '/projects',
     '/login',
@@ -48,7 +48,7 @@ void main() {
         expect(run(s, true, '/server-config'), isNull);
       });
       test('$s protected adds from', () {
-        expect(run(s, true, '/tasks'), '/login?from=%2Ftasks');
+        expect(run(s, true, '/today'), '/login?from=%2Ftoday');
       });
       test('$s from encodes query', () {
         final r = run(s, true, '/tasks/5?x=1&y=a b')!;
@@ -62,14 +62,14 @@ void main() {
   group('authenticated', () {
     for (final server in [true, false]) {
       test('protected stays server=$server', () {
-        expect(run(AuthStatus.authenticated, server, '/tasks'), isNull);
+        expect(run(AuthStatus.authenticated, server, '/today'), isNull);
         expect(run(AuthStatus.authenticated, server, '/projects/1'), isNull);
       });
-      test('auth route without from -> /tasks server=$server', () {
-        expect(run(AuthStatus.authenticated, server, '/login'), '/tasks');
+      test('auth route without from -> /today server=$server', () {
+        expect(run(AuthStatus.authenticated, server, '/login'), '/today');
         expect(
           run(AuthStatus.authenticated, server, '/server-config'),
-          '/tasks',
+          '/today',
         );
       });
     }
@@ -85,15 +85,15 @@ void main() {
       expect(login('/tasks/5?x=1&y=2'), '/tasks/5?x=1&y=2');
     });
     test('unsafe from falls back', () {
-      expect(login('//evil.com'), '/tasks');
-      expect(login('http://evil'), '/tasks');
-      expect(login('https://evil.com/x'), '/tasks');
-      expect(login('evil.com'), '/tasks');
-      expect(login('/\\evil.com'), '/tasks');
-      expect(login(''), '/tasks');
-      expect(login('/login'), '/tasks');
-      expect(login('/login?from=/tasks'), '/tasks');
-      expect(login('/server-config'), '/tasks');
+      expect(login('//evil.com'), '/today');
+      expect(login('http://evil'), '/today');
+      expect(login('https://evil.com/x'), '/today');
+      expect(login('evil.com'), '/today');
+      expect(login('/\\evil.com'), '/today');
+      expect(login(''), '/today');
+      expect(login('/login'), '/today');
+      expect(login('/login?from=/tasks'), '/today');
+      expect(login('/server-config'), '/today');
     });
     test('raw encoded from is decoded', () {
       expect(
@@ -110,7 +110,7 @@ void main() {
           hasServer: true,
           location: Uri.parse('/login?from=%2F%2Fevil.com'),
         ),
-        '/tasks',
+        '/today',
       );
     });
   });

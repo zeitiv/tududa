@@ -18,6 +18,8 @@ void main() async {
 
   runApp(
     ProviderScope(
+      // Retries belong to the repositories, not to provider rebuilds.
+      retry: (_, _) => null,
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sharedPrefs),
       ],

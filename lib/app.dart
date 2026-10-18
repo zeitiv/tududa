@@ -14,18 +14,11 @@ class TududiApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
     final settings = ref.watch(settingsProvider);
 
-    ThemeMode mode;
-    switch (settings.themeMode) {
-      case AppThemeMode.light:
-        mode = ThemeMode.light;
-        break;
-      case AppThemeMode.dark:
-        mode = ThemeMode.dark;
-        break;
-      case AppThemeMode.system:
-      default:
-        mode = ThemeMode.system;
-    }
+    final mode = switch (settings.themeMode) {
+      AppThemeMode.light => ThemeMode.light,
+      AppThemeMode.dark => ThemeMode.dark,
+      AppThemeMode.system => ThemeMode.system,
+    };
 
     return MaterialApp.router(
       title: 'Tududa',

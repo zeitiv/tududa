@@ -363,6 +363,18 @@ class _TaskListItem extends StatelessWidget {
       );
     }
 
+    // Local edits the server has not confirmed yet.
+    if (task.hasPendingSync) {
+      parts.add(
+        Icon(
+          Icons.sync_rounded,
+          key: const ValueKey('pending-sync'),
+          size: 14,
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      );
+    }
+
     if (parts.isEmpty) return null;
 
     return Padding(

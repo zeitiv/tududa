@@ -1,8 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/api/patch.dart' as pt;
+import '../../core/api/api_error.dart';
 import '../../core/ids.dart';
+import '../../core/sync/sync_engine.dart';
+import '../../core/sync/sync_handler.dart';
 import '../data/project_api.dart';
+import '../data/offline_project_repository.dart';
 import '../data/project_repository.dart';
 import '../data/project_tasks_source.dart';
 import '../models/project_model.dart';
@@ -11,132 +15,74 @@ import '../models/project_model.dart';
 /// retry again (and a 404 must surface at once).
 Duration? noRetry(int retryCount, Object error) => null;
 
-/// Projects of the signed-in user. Update and delete are optimistic and roll
-/// back on failure, rethrowing the `ApiError`.
-class ProjectList extends AsyncNotifier<List<Project>> {
-  ProjectRepository get _repo => ref.read(projectRepositoryProvider);
+/// Projects of the signed-in user, live from the local table. Edits are
+/// written locally (so they show at once) and synced in the background; a
+/// failed sync rolls the row back and reports a notice on the sync screen.
+class ProjectList extends StreamNotifier<List<Project>> {
+  OfflineProjectRepository get _repo => ref.read(projectRepositoryProvider);
 
   @override
-  Future<List<Project>> build() => ref.watch(projectRepositoryProvider).list();
+  Stream<List<Project>> build() =>
+      ref.watch(projectRepositoryProvider).watchAll();
 
-  Future<void> refresh() async {
-    state = await AsyncValue.guard(_repo.list);
-  }
+  /// Pull-to-refresh: runs a sync cycle.
+  Future<void> refresh() =>
+      ref.read(syncEngineProvider).requestSync(SyncReason.manual);
 
-  Future<Project> create(NewProject project) async {
-    final created = await _repo.create(project);
-    state = AsyncData([...?state.value, created]);
-    return created;
-  }
+  Future<Project> create(NewProject project) => _repo.create(project);
 
-  Future<Project> edit(ProjectUid uid, ProjectPatch patch) async {
-    final before = state.value;
-    if (before != null) {
-      state = AsyncData([
-        for (final p in before)
-          if (p.uid == uid) applyProjectPatch(p, patch) else p,
-      ]);
-    }
-    try {
-      final saved = await _repo.update(uid, patch);
-      state = AsyncData([
-        for (final p in state.value ?? const <Project>[])
-          if (p.uid == uid) saved else p,
-      ]);
-      ref.invalidate(projectDetailProvider(uid));
-      return saved;
-    } catch (_) {
-      if (before != null) state = AsyncData(before);
-      rethrow;
-    }
-  }
+  Future<Project> edit(ProjectUid uid, ProjectPatch patch) =>
+      _repo.update(uid, patch);
 
-  Future<void> delete(ProjectUid uid) async {
-    final before = state.value;
-    if (before != null) {
-      state = AsyncData([
-        for (final p in before)
-          if (p.uid != uid) p,
-      ]);
-    }
-    try {
-      await _repo.delete(uid);
-    } catch (_) {
-      if (before != null) state = AsyncData(before);
-      rethrow;
-    }
-  }
+  Future<void> delete(ProjectUid uid) => _repo.delete(uid);
 }
 
-final projectListProvider = AsyncNotifierProvider<ProjectList, List<Project>>(
+final projectListProvider = StreamNotifierProvider<ProjectList, List<Project>>(
   ProjectList.new,
   retry: noRetry,
 );
 
-/// One project by uid. A missing project surfaces as `NotFoundError`.
-class ProjectDetail extends AsyncNotifier<Project> {
+/// One project by uid (or local id). A missing project surfaces as
+/// `NotFoundError`.
+class ProjectDetail extends StreamNotifier<Project> {
   ProjectDetail(this.uid);
   final ProjectUid uid;
 
   @override
-  Future<Project> build() => ref.watch(projectRepositoryProvider).get(uid);
+  Stream<Project> build() => ref
+      .watch(projectRepositoryProvider)
+      .watchByKey(uid.value)
+      .map((p) => p ?? (throw const NotFoundError('Project not found')));
 
-  Future<Project> edit(ProjectPatch patch) async {
-    final before = state.value;
-    if (before != null) state = AsyncData(applyProjectPatch(before, patch));
-    try {
-      final saved = await ref
-          .read(projectRepositoryProvider)
-          .update(uid, patch);
-      state = AsyncData(saved);
-      return saved;
-    } catch (_) {
-      if (before != null) state = AsyncData(before);
-      rethrow;
-    }
-  }
+  Future<Project> edit(ProjectPatch patch) =>
+      ref.read(projectRepositoryProvider).update(uid, patch);
 }
 
 final projectDetailProvider =
-    AsyncNotifierProvider.family<ProjectDetail, Project, ProjectUid>(
+    StreamNotifierProvider.family<ProjectDetail, Project, ProjectUid>(
       ProjectDetail.new,
       retry: noRetry,
     );
 
-/// Tasks shown on a project's board, with optimistic status moves.
-class ProjectTasks extends AsyncNotifier<List<ProjectTaskRef>> {
+/// Tasks shown on a project's board, live from the tasks table; status moves
+/// are written locally and show at once.
+class ProjectTasks extends StreamNotifier<List<ProjectTaskRef>> {
   ProjectTasks(this.project);
   final ProjectUid project;
 
   @override
-  Future<List<ProjectTaskRef>> build() =>
-      ref.watch(projectTasksSourceProvider).tasksFor(project);
+  Stream<List<ProjectTaskRef>> build() =>
+      ref.watch(projectTasksSourceProvider).watchTasksFor(project);
 
-  Future<void> refresh() async {
-    state = await AsyncValue.guard(
-      () => ref.read(projectTasksSourceProvider).tasksFor(project),
-    );
-  }
+  Future<void> refresh() =>
+      ref.read(syncEngineProvider).requestSync(SyncReason.manual);
 
-  Future<void> setStatus(ProjectTaskRef task, int status) async {
-    final before = state.value;
-    if (before != null) {
-      state = AsyncData([
-        for (final t in before)
-          if (t.uid == task.uid) t.copyWith(status: status) else t,
-      ]);
-    }
-    try {
-      await ref.read(projectTasksSourceProvider).setStatus(task.uid, status);
-    } catch (_) {
-      if (before != null) state = AsyncData(before);
-      rethrow;
-    }
-  }
+  Future<void> setStatus(ProjectTaskRef task, int status) =>
+      ref.read(projectTasksSourceProvider).setStatus(task.uid, status);
 }
 
 final projectTasksProvider =
-    AsyncNotifierProvider.family<
+    StreamNotifierProvider.family<
       ProjectTasks,
       List<ProjectTaskRef>,
       ProjectUid

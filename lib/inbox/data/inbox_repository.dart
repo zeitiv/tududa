@@ -53,6 +53,8 @@ class RemoteInboxRepository implements InboxRepository {
       _api.analyzeText(text, cancelToken: cancelToken);
 }
 
-final inboxRepositoryProvider = Provider<InboxRepository>(
+/// The server-facing repository. The offline repository pages the server
+/// through it; the sync handler talks to `InboxApi` directly.
+final remoteInboxRepositoryProvider = Provider<RemoteInboxRepository>(
   (ref) => RemoteInboxRepository(InboxApi(ref.watch(dioProvider))),
 );

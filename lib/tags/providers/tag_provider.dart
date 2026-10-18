@@ -1,36 +1,33 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/api/api_providers.dart';
 import '../../core/api/patch.dart' show Patch;
-import '../data/remote_tag_repository.dart';
+import '../../core/db/app_database.dart';
+import '../../core/sync/sync_engine.dart';
+import '../../core/sync/sync_handler.dart';
+import '../data/offline_tag_repository.dart';
 import '../data/tag_patch.dart';
-import '../data/tag_repository.dart';
-import '../data/tags_api.dart';
 import '../domain/tag.dart';
 
-final tagRepositoryProvider = Provider<TagRepository>(
-  (ref) => RemoteTagRepository(TagsApi(ref.watch(dioProvider))),
+/// Reads and writes go to the local database; `TagSyncHandler` moves them to
+/// the server.
+final tagRepositoryProvider = Provider<OfflineTagRepository>(
+  (ref) => OfflineTagRepository(ref.watch(appDatabaseProvider)),
 );
 
-/// All tags. Mutations rethrow the repository's `ApiError` after leaving the
-/// current list untouched.
-class TagListNotifier extends AsyncNotifier<List<Tag>> {
-  TagRepository get _repo => ref.read(tagRepositoryProvider);
+/// All tags, live from the local database. Mutations return as soon as they
+/// are stored locally and throw an `ApiError` (validation, not found) for
+/// input the server would refuse.
+class TagListNotifier extends StreamNotifier<List<Tag>> {
+  OfflineTagRepository get _repo => ref.read(tagRepositoryProvider);
 
   @override
-  Future<List<Tag>> build() => ref.watch(tagRepositoryProvider).list();
+  Stream<List<Tag>> build() => ref.watch(tagRepositoryProvider).watchList();
 
-  Future<void> refresh() async {
-    state = await AsyncValue.guard(_repo.list);
-  }
+  /// Pull-to-refresh: runs a sync cycle now.
+  Future<void> refresh() =>
+      ref.read(syncEngineProvider).requestSync(SyncReason.manual);
 
-  List<Tag> get _current => state.value ?? const [];
-
-  Future<Tag> create(String name) async {
-    final tag = await _repo.create(name);
-    state = AsyncData([..._current.where((t) => t.name != tag.name), tag]);
-    return tag;
-  }
+  Future<Tag> create(String name) => _repo.create(name);
 
   Future<Tag> rename(Tag tag, String name) =>
       _update(tag, TagPatch(name: Patch.set(name)));
@@ -44,24 +41,16 @@ class TagListNotifier extends AsyncNotifier<List<Tag>> {
   Future<Tag> setPinned(Tag tag, bool pinned) =>
       _update(tag, TagPatch(pinned: Patch.set(pinned)));
 
-  Future<Tag> _update(Tag tag, TagPatch patch) async {
-    final updated = await _repo.update(tag.identifier, patch);
-    state = AsyncData([
-      for (final t in _current)
-        if (t.identifier == tag.identifier) updated else t,
-    ]);
-    return updated;
-  }
+  Future<Tag> _update(Tag tag, TagPatch patch) =>
+      _repo.update(_key(tag), patch);
 
-  Future<void> delete(Tag tag) async {
-    await _repo.delete(tag.identifier);
-    state = AsyncData([
-      for (final t in _current)
-        if (t.identifier != tag.identifier) t,
-    ]);
-  }
+  Future<void> delete(Tag tag) => _repo.delete(_key(tag));
+
+  /// The local id when known: it stays valid across renames and before the
+  /// tag has a uid.
+  String _key(Tag tag) => tag.localId?.value ?? tag.identifier;
 }
 
-final tagListProvider = AsyncNotifierProvider<TagListNotifier, List<Tag>>(
+final tagListProvider = StreamNotifierProvider<TagListNotifier, List<Tag>>(
   TagListNotifier.new,
 );

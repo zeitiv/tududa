@@ -29,14 +29,14 @@ void main() {
     expect(created.tags.single.name, 't');
 
     final updated = await repo.update(
-      created.uid,
+      created.uid!,
       const NotePatch(color: Patch.set('#FFF3CC')),
     );
     expect(updated.color, '#FFF3CC');
     expect(updated.title, 'New');
 
-    await repo.delete(created.uid);
-    expect(await errorOf(repo.get(created.uid)), isA<NotFoundError>());
+    await repo.delete(created.uid!);
+    expect(await errorOf(repo.get(created.uid!)), isA<NotFoundError>());
   });
 
   test('wrapped list and slug-suffixed uid', () async {

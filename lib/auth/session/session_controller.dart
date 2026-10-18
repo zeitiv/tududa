@@ -117,6 +117,10 @@ class SessionController extends Notifier<SessionState>
 
   /// Signs in. Throws [InvalidCredentialsError], [EmailNotVerifiedError],
   /// [PasswordLoginDisabledError], [RateLimitedError], [NetworkError], ...
+  /// Wipes the local database and outbox. Registered by the sync engine
+  /// (which depends on this controller, so the reverse dependency is a hook).
+  Future<void> Function()? onAccountChanged;
+
   Future<User> login(String email, String password) async {
     final trimmed = email.trim();
     state = SessionAuthenticating(lastEmail: trimmed);
@@ -127,6 +131,8 @@ class SessionController extends Notifier<SessionState>
       final old = cachedUser;
       if (old != null && old.uid != user.uid) {
         await _prefs.remove(AppConstants.userDataKey);
+        // Another person's rows and queued changes must not leak or sync.
+        await onAccountChanged?.call();
       }
       await _credentials.write(Credentials(email: trimmed, password: password));
       await _cacheUser(user);
@@ -166,10 +172,14 @@ class SessionController extends Notifier<SessionState>
     state = SessionSignedOut(lastEmail: email);
   }
 
+  /// Clears the session and every local copy of the account's data (rows,
+  /// outbox, sync state). Only used for sign-out, a different server or a
+  /// different account; a plain session expiry keeps queued changes.
   Future<void> _wipeSession() async {
     await _jar.deleteAll();
     await _credentials.clear();
     await _prefs.remove(AppConstants.userDataKey);
+    await onAccountChanged?.call();
   }
 
   /// Renews the session with the stored credentials. Concurrent callers share

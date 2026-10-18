@@ -16,6 +16,7 @@ import '../../notes/screens/note_editor_screen.dart';
 import '../../inbox/screens/inbox_screen.dart';
 import '../../areas/screens/areas_screen.dart';
 import '../../settings/screens/settings_screen.dart';
+import '../../settings/screens/sync_screen.dart';
 import '../../common/widgets/shell_scaffold.dart';
 import 'auth_redirect.dart';
 import 'router_refresh.dart';
@@ -153,6 +154,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: 'areas',
                 parentNavigatorKey: rootNavigatorKey,
                 builder: (context, state) => const AreasScreen(),
+              ),
+              GoRoute(
+                path: 'sync',
+                parentNavigatorKey: rootNavigatorKey,
+                builder: (context, state) => const SyncScreen(),
               ),
             ],
           ),

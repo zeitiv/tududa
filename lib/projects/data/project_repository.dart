@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/api/api_providers.dart';
+import '../../core/db/app_database.dart';
 import '../../core/ids.dart';
 import '../models/project_model.dart';
+import 'offline_project_repository.dart';
 import 'project_api.dart';
 
 abstract class ProjectRepository {
@@ -39,6 +40,9 @@ class RemoteProjectRepository implements ProjectRepository {
   Future<void> delete(ProjectUid uid) => _api.delete(uid);
 }
 
-final projectRepositoryProvider = Provider<ProjectRepository>(
-  (ref) => RemoteProjectRepository(ProjectApi(ref.watch(dioProvider))),
+/// The offline repository: reads the local table, writes table + outbox. The
+/// sync handler talks to the server (see [RemoteProjectRepository] /
+/// `ProjectApi`).
+final projectRepositoryProvider = Provider<OfflineProjectRepository>(
+  (ref) => OfflineProjectRepository(ref.watch(appDatabaseProvider)),
 );

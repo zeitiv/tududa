@@ -16,6 +16,10 @@ abstract class Area with _$Area {
     DateTime? createdAt,
     DateTime? updatedAt,
     int? projectCount,
+
+    /// Local primary key (offline store). [uid] holds this value until the
+    /// server has assigned a real uid.
+    String? localId,
   }) = _Area;
 
   factory Area.fromDto(AreaDto dto) => Area(

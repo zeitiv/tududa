@@ -13,7 +13,8 @@ import '../../l10n/strings.dart';
 
 /// Note editor screen (create/edit) with Markdown support.
 class NoteEditorScreen extends ConsumerStatefulWidget {
-  /// The note's uid (as in the `/notes/:id` route); null creates a note.
+  /// The note's uid or local id (as in the `/notes/:id` route); null creates
+  /// a note.
   final String? noteId;
   const NoteEditorScreen({super.key, this.noteId});
 
@@ -25,6 +26,10 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   String? _projectUid;
+
+  /// Only a project the user picked is written back, so a note whose
+  /// project has no uid yet keeps it.
+  bool _projectChanged = false;
   String? _color;
   bool _isLoading = false;
   bool _isEdit = false;
@@ -49,13 +54,22 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
     }
   }
 
-  NoteUid get _uid => NoteUid(widget.noteId!);
+  /// Resolved from the route id once loaded; all edits go by local id so
+  /// notes that have no uid yet can be saved too.
+  LocalId? _localId;
 
   Future<void> _loadNote() async {
     setState(() => _isLoading = true);
     try {
-      final note = await ref.read(noteRepositoryProvider).get(_uid);
+      final note = await ref
+          .read(noteRepositoryProvider)
+          .findByRouteId(widget.noteId!);
       if (!mounted) return;
+      if (note == null) {
+        setState(() => _isLoading = false);
+        return;
+      }
+      _localId = note.localId;
       _titleController.text = note.title ?? '';
       _contentController.text = note.content ?? '';
       setState(() {
@@ -79,13 +93,17 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
     bool success;
     try {
       if (_isEdit) {
-        await notifier.updateNote(
-          _uid,
+        final id = _localId;
+        if (id == null) throw const NotFoundError('Note not found');
+        await notifier.updateNoteLocal(
+          id,
           NotePatch(
             title: title.isEmpty ? const Patch.clear() : Patch.set(title),
             content: Patch.set(content),
             color: _color == null ? const Patch.clear() : Patch.set(_color!),
-            projectUid: projectUid == null
+            projectUid: !_projectChanged
+                ? const Patch.unset()
+                : projectUid == null
                 ? const Patch.clear()
                 : Patch.set(projectUid),
           ),
@@ -117,7 +135,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
   }
 
   Future<void> _delete() async {
-    if (widget.noteId == null) return;
+    if (widget.noteId == null || _localId == null) return;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -137,7 +155,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
     );
     if (confirm == true && mounted) {
       try {
-        await ref.read(noteListProvider.notifier).deleteNote(_uid);
+        await ref.read(noteListProvider.notifier).deleteNoteLocal(_localId!);
       } on ApiError {
         // Stay on the screen so the user can retry.
         return;
@@ -292,7 +310,10 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
                       ),
                     ),
                   ],
-                  onChanged: (v) => setState(() => _projectUid = v),
+                  onChanged: (v) => setState(() {
+                    _projectUid = v;
+                    _projectChanged = true;
+                  }),
                 ),
                 const SizedBox(height: 80),
               ],

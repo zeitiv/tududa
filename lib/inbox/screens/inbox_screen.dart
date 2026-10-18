@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../core/sync/sync_engine.dart';
+import '../../core/sync/sync_handler.dart' show SyncReason;
 import '../providers/inbox_provider.dart';
 import '../../l10n/strings.dart';
 
@@ -55,7 +57,8 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
               ),
             )
           : RefreshIndicator(
-              onRefresh: () => notifier.refresh(),
+              onRefresh: () =>
+                  ref.read(syncEngineProvider).requestSync(SyncReason.manual),
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 itemCount: items.length,

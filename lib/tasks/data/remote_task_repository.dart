@@ -14,7 +14,7 @@ import 'task_repository.dart';
 import 'tasks_api.dart';
 
 /// [TaskRepository] over the Tududi HTTP API.
-class RemoteTaskRepository implements TaskRepository {
+class RemoteTaskRepository extends TaskRepository {
   RemoteTaskRepository(this._api);
 
   final TasksApi _api;
@@ -88,8 +88,9 @@ final tasksApiProvider = Provider<TasksApi>(
   (ref) => TasksApi(ref.watch(dioProvider)),
 );
 
-/// The repository the app uses. Override in tests or when the offline
-/// repository replaces the remote one.
-final taskRepositoryProvider = Provider<TaskRepository>(
+/// The HTTP repository. The app itself uses the offline repository
+/// (`taskRepositoryProvider`); this one is an implementation detail for code
+/// that needs the server's view directly.
+final remoteTaskRepositoryProvider = Provider<TaskRepository>(
   (ref) => RemoteTaskRepository(ref.watch(tasksApiProvider)),
 );

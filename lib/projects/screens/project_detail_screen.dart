@@ -6,6 +6,8 @@ import '../providers/project_provider.dart';
 import '../../common/widgets/glass_container.dart';
 import '../../core/api/api_error.dart';
 import '../../core/ids.dart';
+import '../../core/sync/sync_engine.dart';
+import '../../core/sync/sync_handler.dart';
 import '../data/project_tasks_source.dart';
 import '../../core/theme/app_theme.dart';
 import '../widgets/kanban_board.dart';
@@ -107,11 +109,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
             ],
           ),
           body: RefreshIndicator(
-            onRefresh: () async {
-              ref.invalidate(projectDetailProvider(_uid));
-              ref.invalidate(projectTasksProvider(_uid));
-              await ref.read(projectTasksProvider(_uid).future);
-            },
+            onRefresh: () =>
+                ref.read(syncEngineProvider).requestSync(SyncReason.manual),
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [

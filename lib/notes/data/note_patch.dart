@@ -9,6 +9,7 @@ class NotePatch {
     this.content = const Patch.unset(),
     this.color = const Patch.unset(),
     this.projectUid = const Patch.unset(),
+    this.projectLocalId = const Patch.unset(),
     this.tags = const Patch.unset(),
   });
 
@@ -16,6 +17,10 @@ class NotePatch {
   final Patch<String> content;
   final Patch<String> color;
   final Patch<ProjectUid> projectUid;
+
+  /// Offline alternative to [projectUid]; ignored when building the request
+  /// body (the sync handler resolves the project's uid at send time).
+  final Patch<LocalId> projectLocalId;
 
   /// Tag names.
   final Patch<List<String>> tags;

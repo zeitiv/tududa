@@ -14,6 +14,9 @@ abstract class Tag with _$Tag {
   const factory Tag({
     int? id,
     TagUid? uid,
+
+    /// Local primary key; set for tags read from the offline store.
+    LocalId? localId,
     required String name,
     String? color,
     bool? pinned,

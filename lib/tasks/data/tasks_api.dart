@@ -48,6 +48,23 @@ class TasksApi {
     return _one(res.data);
   });
 
+  /// `POST /task` with an already built body (the sync handler builds it from
+  /// the stored row).
+  Future<TaskDto> createJson(Map<String, Object?> body) => guard(() async {
+    final res = await _dio.post<Object?>('/task', data: body);
+    return _one(res.data);
+  });
+
+  /// `PATCH /task/:uid` with an already built body.
+  Future<TaskDto> updateJson(TaskUid uid, Map<String, Object?> body) =>
+      guard(() async {
+        final res = await _dio.patch<Object?>(
+          '/task/${Uri.encodeComponent(uid.value)}',
+          data: body,
+        );
+        return _one(res.data);
+      });
+
   Future<void> delete(TaskUid uid) => guard(() async {
     await _dio.delete<Object?>('/task/${Uri.encodeComponent(uid.value)}');
   });

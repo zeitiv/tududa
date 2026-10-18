@@ -1,66 +1,71 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/api/api_providers.dart';
+import '../../core/api/api_error.dart';
+import '../../core/db/app_database.dart';
 import '../../core/ids.dart';
+import '../../core/sync/sync_engine.dart';
+import '../../core/sync/sync_handler.dart';
 import '../data/note_patch.dart';
-import '../data/note_repository.dart';
-import '../data/notes_api.dart';
-import '../data/remote_note_repository.dart';
+import '../data/offline_note_repository.dart';
 import '../domain/note.dart';
 
-final noteRepositoryProvider = Provider<NoteRepository>(
-  (ref) => RemoteNoteRepository(NotesApi(ref.watch(dioProvider))),
+/// Reads and writes go to the local database; `NoteSyncHandler` moves them to
+/// the server.
+final noteRepositoryProvider = Provider<OfflineNoteRepository>(
+  (ref) => OfflineNoteRepository(ref.watch(appDatabaseProvider)),
 );
 
-/// All notes. Mutations rethrow the repository's `ApiError`.
-class NoteListNotifier extends AsyncNotifier<List<Note>> {
-  NoteRepository get _repo => ref.read(noteRepositoryProvider);
+/// All notes, live from the local database. Mutations return as soon as they
+/// are stored locally.
+class NoteListNotifier extends StreamNotifier<List<Note>> {
+  OfflineNoteRepository get _repo => ref.read(noteRepositoryProvider);
 
   @override
-  Future<List<Note>> build() => ref.watch(noteRepositoryProvider).list();
+  Stream<List<Note>> build() => ref.watch(noteRepositoryProvider).watchList();
 
-  Future<void> refresh() async {
-    state = await AsyncValue.guard(_repo.list);
-  }
+  /// Pull-to-refresh: runs a sync cycle now.
+  Future<void> refresh() =>
+      ref.read(syncEngineProvider).requestSync(SyncReason.manual);
 
-  List<Note> get _current => state.value ?? const [];
+  Future<Note> create(NoteDraft draft) => _repo.create(draft);
 
-  Future<Note> create(NoteDraft draft) async {
-    final note = await _repo.create(draft);
-    state = AsyncData([note, ..._current]);
-    return note;
-  }
+  Future<Note> updateNote(NoteUid uid, NotePatch patch) =>
+      _repo.update(uid, patch);
 
-  Future<Note> updateNote(NoteUid uid, NotePatch patch) async {
-    final updated = await _repo.update(uid, patch);
-    state = AsyncData([
-      for (final n in _current)
-        if (n.uid == uid) updated else n,
-    ]);
-    ref.invalidate(noteByUidProvider(uid));
-    return updated;
-  }
+  /// For notes that may not have a uid yet.
+  Future<Note> updateNoteLocal(LocalId id, NotePatch patch) =>
+      _repo.updateByLocalId(id, patch);
 
-  Future<void> deleteNote(NoteUid uid) async {
-    await _repo.delete(uid);
-    state = AsyncData([
-      for (final n in _current)
-        if (n.uid != uid) n,
-    ]);
-    ref.invalidate(noteByUidProvider(uid));
-  }
+  Future<void> deleteNote(NoteUid uid) => _repo.delete(uid);
+
+  Future<void> deleteNoteLocal(LocalId id) => _repo.deleteByLocalId(id);
 }
 
-final noteListProvider = AsyncNotifierProvider<NoteListNotifier, List<Note>>(
+final noteListProvider = StreamNotifierProvider<NoteListNotifier, List<Note>>(
   NoteListNotifier.new,
 );
 
-/// One note, loaded by uid (what the editor needs when opened from a link).
-final noteByUidProvider = FutureProvider.family<Note, NoteUid>(
-  (ref, uid) => ref.watch(noteRepositoryProvider).get(uid),
+Stream<Note> _orNotFound(Stream<Note?> s) =>
+    s.map((n) => n ?? (throw const NotFoundError('Note not found')));
+
+/// One note by uid. Errors with `NotFoundError` while the note is unknown.
+final noteByUidProvider = StreamProvider.family<Note, NoteUid>(
+  (ref, uid) => _orNotFound(ref.watch(noteRepositoryProvider).watchByUid(uid)),
 );
 
-/// Notes of one project.
-final projectNotesProvider = FutureProvider.family<List<Note>, ProjectUid>(
-  (ref, uid) => ref.watch(noteRepositoryProvider).list(projectUid: uid),
+/// One note by local id; works before the note has a uid.
+final noteByLocalIdProvider = StreamProvider.family<Note, LocalId>(
+  (ref, id) =>
+      _orNotFound(ref.watch(noteRepositoryProvider).watchByLocalId(id)),
 );
+
+/// Notes of one project (by the project's uid).
+final projectNotesProvider = StreamProvider.family<List<Note>, ProjectUid>(
+  (ref, uid) => ref.watch(noteRepositoryProvider).watchList(projectUid: uid),
+);
+
+/// Notes of one project by its local id (projects not synced yet).
+final projectNotesByLocalIdProvider =
+    StreamProvider.family<List<Note>, LocalId>(
+      (ref, id) => ref.watch(noteRepositoryProvider).watchForProjectLocal(id),
+    );

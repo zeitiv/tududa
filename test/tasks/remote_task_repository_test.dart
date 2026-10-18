@@ -20,7 +20,7 @@ void main() {
   setUp(() async {
     rig = TaskTestRig();
     await rig.login();
-    repo = rig.container().read(taskRepositoryProvider);
+    repo = rig.container().read(remoteTaskRepositoryProvider);
   });
 
   test('the provider builds a RemoteTaskRepository', () {
@@ -166,6 +166,6 @@ void main() {
   test('ProviderContainer without the override fails loudly', () {
     final c = ProviderContainer();
     addTearDown(c.dispose);
-    expect(() => c.read(taskRepositoryProvider), throwsA(anything));
+    expect(() => c.read(remoteTaskRepositoryProvider), throwsA(anything));
   });
 }

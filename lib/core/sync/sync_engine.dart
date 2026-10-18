@@ -438,6 +438,9 @@ class SyncEngine {
     }
   }
 
+  /// Publishes a conflict notice (also used by user-initiated discards).
+  void addNotice(ConflictNotice n) => _addNotice(n);
+
   void _addNotice(ConflictNotice n) {
     _notices.add(n);
     if (_notices.length > 50) _notices.removeAt(0);
@@ -537,6 +540,9 @@ final syncEngineProvider = Provider<SyncEngine>((ref) {
     ref: ref,
   );
   unawaited(engine.start());
+  final session = ref.read(sessionControllerProvider.notifier);
+  session.onAccountChanged = engine.onAccountChanged;
+  ref.onDispose(() => session.onAccountChanged = null);
   ref.listen<SessionState>(sessionControllerProvider, (prev, next) {
     final wasIn = prev is SessionSignedIn && !prev.offline;
     if (next is SessionSignedIn && !next.offline && !wasIn) {

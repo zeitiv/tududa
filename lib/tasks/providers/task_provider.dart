@@ -1,20 +1,44 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../auth/session/session_providers.dart';
 import '../../core/api/api_error.dart';
+import '../../core/db/app_database.dart';
 import '../../core/ids.dart';
+import '../../core/sync/sync_engine.dart';
+import '../../core/sync/sync_handler.dart';
 import '../../core/time/calendar_date.dart';
-import '../data/remote_task_repository.dart';
+import '../data/offline_task_repository.dart';
+import '../data/task_dao.dart';
 import '../data/task_patch.dart';
 import '../data/task_query.dart';
 import '../data/task_repository.dart';
+import '../data/undo_token.dart';
 import '../domain/new_task.dart';
 import '../domain/task.dart';
+import '../domain/task_views.dart';
+
+export '../data/undo_token.dart' show UndoToken;
+export '../domain/task_views.dart' show TaskDay, TaskView;
 
 /// The task views of the Tasks screen.
-enum TaskFilter { today, upcoming, someday, completed, all }
+enum TaskFilter {
+  today,
+  upcoming,
+  someday,
+  completed,
+  all;
 
-/// Alias used by newer code.
-typedef TaskView = TaskFilter;
+  /// The list behind this tab.
+  TaskView get view => switch (this) {
+    TaskFilter.today => TaskView.today,
+    TaskFilter.upcoming => TaskView.upcoming,
+    TaskFilter.someday => TaskView.someday,
+    TaskFilter.completed => TaskView.completed,
+    TaskFilter.all => TaskView.all,
+  };
+}
 
 /// Task sort options.
 enum TaskSort { name, dueDate, createdAt, priority }
@@ -54,67 +78,103 @@ List<Task> sortTasks(
   return sorted;
 }
 
-/// Outcome of a task mutation. On failure the optimistic change has already
-/// been rolled back.
+/// Outcome of a task mutation. Writes go to the local database first, so a
+/// failure here is a local one (validation, unknown task); server errors show
+/// up in the sync status instead. [undo] reverts the change (see
+/// `TaskActions.undo`).
 class TaskResult<T> {
-  const TaskResult.ok([this.value]) : error = null;
-  const TaskResult.failure(ApiError this.error) : value = null;
+  const TaskResult.ok([this.value, this.undo]) : error = null;
+  const TaskResult.failure(ApiError this.error) : value = null, undo = null;
 
   final T? value;
   final ApiError? error;
+  final UndoToken? undo;
 
   bool get ok => error == null;
 }
 
-/// The tasks of one view.
-class TaskListNotifier extends AsyncNotifier<List<Task>> {
+/// The user's "today" (zone aware). Recomputed after midnight.
+final taskDayProvider = Provider<TaskDay>((ref) {
+  final day = TaskDay.fromClock(ref.watch(userClockProvider));
+  final untilMidnight = day.endUtc.difference(day.nowUtc);
+  final timer = Timer(
+    untilMidnight + const Duration(seconds: 1),
+    ref.invalidateSelf,
+  );
+  ref.onDispose(timer.cancel);
+  return day;
+});
+
+final taskDaoProvider = Provider<TaskDao>(
+  (ref) => TaskDao(ref.watch(appDatabaseProvider)),
+);
+
+/// The tasks of one list, live from the database.
+final taskViewListProvider = StreamProvider.family<List<Task>, TaskView>((
+  ref,
+  view,
+) {
+  final day = ref.watch(taskDayProvider);
+  return ref.watch(taskDaoProvider).watchView(view, today: day.date, day: day);
+});
+
+/// The tasks of one tab, live from the database: edits made offline show up
+/// at once, and the list follows sync results without reloading.
+class TaskListNotifier extends StreamNotifier<List<Task>> {
   TaskListNotifier(this.filter);
 
   final TaskFilter filter;
 
   @override
-  Future<List<Task>> build() => _load();
-
-  Future<List<Task>> _load() async {
-    final repo = ref.read(taskRepositoryProvider);
-    final page = await repo.fetch(taskQueryFor(filter));
-    return page.items;
+  Stream<List<Task>> build() {
+    final day = ref.watch(taskDayProvider);
+    return ref
+        .watch(taskDaoProvider)
+        .watchView(filter.view, today: day.date, day: day);
   }
 
-  /// Reloads from the server, keeping the old list on screen meanwhile.
-  /// Throws the [ApiError] if the reload fails and a list is already shown.
-  Future<void> refresh() async {
-    final result = await AsyncValue.guard(_load);
-    // A failed refresh keeps the list that is already on screen.
-    if (result.hasError && state.hasValue) throw result.error!;
-    state = result;
-  }
-
-  /// Replaces the list without a request (optimistic updates, rollbacks).
-  void replaceAll(List<Task> tasks) => state = AsyncData(tasks);
+  /// Pull-to-refresh: runs a sync cycle (pull, then push). Local edits are
+  /// merged, never overwritten. Completes when the cycle has finished.
+  Future<void> refresh() =>
+      ref.read(syncEngineProvider).requestSync(SyncReason.manual);
 }
 
 final taskListProvider =
-    AsyncNotifierProvider.family<TaskListNotifier, List<Task>, TaskFilter>(
+    StreamNotifierProvider.family<TaskListNotifier, List<Task>, TaskFilter>(
       TaskListNotifier.new,
     );
 
-/// One task, fetched by uid.
-class TaskDetailNotifier extends AsyncNotifier<Task> {
+/// One task, live from the database. Accepts the server uid or the local id
+/// (tasks created offline have no uid yet).
+class TaskDetailNotifier extends StreamNotifier<Task> {
   TaskDetailNotifier(this.uid);
 
   final TaskUid uid;
 
   @override
-  Future<Task> build() => ref.read(taskRepositoryProvider).get(uid);
-
-  void replace(Task task) => state = AsyncData(task);
+  Stream<Task> build() async* {
+    var seen = false;
+    await for (final t in ref.watch(taskDaoProvider).watchByAnyId(uid.value)) {
+      if (t == null) {
+        if (!seen) throw const NotFoundError('Task not found');
+        continue; // deleted while shown
+      }
+      seen = true;
+      yield t;
+    }
+  }
 }
 
 final taskDetailProvider =
-    AsyncNotifierProvider.family<TaskDetailNotifier, Task, TaskUid>(
+    StreamNotifierProvider.family<TaskDetailNotifier, Task, TaskUid>(
       TaskDetailNotifier.new,
     );
+
+/// The subtasks of a task, live.
+final taskSubtasksProvider = StreamProvider.family<List<Task>, String>(
+  (ref, parentLocalId) =>
+      ref.watch(taskDaoProvider).watchSubtasks(parentLocalId),
+);
 
 /// The view selected on the Tasks screen.
 class SelectedTaskFilter extends Notifier<TaskFilter> {
@@ -147,15 +207,15 @@ final taskSortProvider = NotifierProvider<TaskSortNotifier, TaskSortState>(
   TaskSortNotifier.new,
 );
 
-/// Status each task had before it was completed, so reopening restores it
-/// (default: not started). In memory only; the offline milestone persists it.
-final statusBeforeDoneProvider = Provider<Map<TaskUid, TaskStatus>>(
-  (ref) => {},
+/// Status a task had before it was completed (the `status_before_done`
+/// column), restored when it is reopened; null when unknown.
+final statusBeforeDoneProvider = FutureProvider.family<TaskStatus?, TaskUid>(
+  (ref, uid) => ref.read(offlineTaskRepositoryProvider).statusBeforeDone(uid),
 );
 
-/// All task mutations. Each one updates every loaded list and the detail
-/// provider optimistically, calls the repository, and on failure restores
-/// what it changed and returns the [ApiError] in the [TaskResult].
+/// All task mutations. They write to the local database (row, dirty marks
+/// and outbox entry in one transaction), so every list and the detail screen
+/// update at once; `SyncEngine` sends the change after the undo window.
 final taskActionsProvider = Provider<TaskActions>(TaskActions.new);
 
 class TaskActions {
@@ -165,28 +225,23 @@ class TaskActions {
 
   TaskRepository get _repo => _ref.read(taskRepositoryProvider);
 
-  Future<TaskResult<Task>> complete(Task task) {
-    if (task.isCompleted) return Future.value(TaskResult.ok(task));
-    _ref.read(statusBeforeDoneProvider)[task.uid] = task.status;
-    return _mutate(
-      task.uid,
-      (t) => t.copyWith(status: TaskStatus.done, completedAt: DateTime.now()),
-      () => _repo.complete(task.uid),
-    );
+  Future<TaskResult<T>> _run<T>(Future<Change<T>> Function() call) async {
+    try {
+      final change = await call();
+      return TaskResult.ok(change.value, change.undo);
+    } on ApiError catch (e) {
+      return TaskResult.failure(e);
+    }
   }
 
-  Future<TaskResult<Task>> uncomplete(Task task) async {
-    final before = _ref.read(statusBeforeDoneProvider);
-    final restoreTo = before[task.uid] ?? TaskStatus.notStarted;
-    final result = await _mutate(
-      task.uid,
-      (t) => t.copyWith(status: restoreTo, completedAt: null),
-      () => _repo.uncomplete(task.uid, restoreTo: restoreTo),
-    );
-    // Keep the remembered status if the request failed, for the retry.
-    if (result.ok) before.remove(task.uid);
-    return result;
+  Future<TaskResult<Task>> complete(Task task) {
+    if (task.isCompleted) return Future.value(TaskResult.ok(task));
+    return _run(() => _repo.completeTracked(task.uid));
   }
+
+  /// Reopens the task into the status it had before (not started if unknown).
+  Future<TaskResult<Task>> uncomplete(Task task) =>
+      _run(() => _repo.uncompleteTracked(task.uid));
 
   Future<TaskResult<Task>> toggleComplete(Task task) =>
       task.isCompleted ? uncomplete(task) : complete(task);
@@ -194,187 +249,45 @@ class TaskActions {
   /// Sets an arbitrary status (Kanban drag, form).
   Future<TaskResult<Task>> setStatus(Task task, TaskStatus status) {
     if (status == TaskStatus.done) return complete(task);
-    if (task.isCompleted) {
-      _ref.read(statusBeforeDoneProvider).remove(task.uid);
-    }
-    return _mutate(
-      task.uid,
-      (t) => t.copyWith(
-        status: status,
-        completedAt: status.isFinished ? t.completedAt : null,
-      ),
-      () => _repo.update(task.uid, TaskPatch.withStatus(status)),
+    return _run(
+      () => _repo.updateTracked(task.uid, TaskPatch.withStatus(status)),
     );
   }
 
-  Future<TaskResult<Task>> postpone(Task task, CalendarDate to) => _mutate(
-    task.uid,
-    (t) => t.copyWith(dueDate: to),
-    () => _repo.postpone(task.uid, to, keepTime: task.dueTime),
-  );
+  Future<TaskResult<Task>> postpone(Task task, CalendarDate to) =>
+      _run(() => _repo.postponeTracked(task.uid, to, keepTime: task.dueTime));
 
-  Future<TaskResult<void>> delete(TaskUid uid) async {
-    final snapshot = _snapshot(uid);
-    _edit(uid, (_) => null);
-    try {
-      await _repo.delete(uid);
-      return const TaskResult.ok();
-    } on ApiError catch (e) {
-      _restore(snapshot);
-      return TaskResult.failure(e);
-    }
-  }
+  Future<TaskResult<void>> delete(TaskUid uid) =>
+      _run(() => _repo.deleteTracked(uid));
 
-  /// Applies [patch] on the server, then updates the lists with the result.
-  Future<TaskResult<Task>> update(TaskUid uid, TaskPatch patch) async {
-    try {
-      final saved = await _repo.update(uid, patch);
-      _settle(uid, saved);
-      return TaskResult.ok(saved);
-    } on ApiError catch (e) {
-      return TaskResult.failure(e);
-    }
-  }
+  Future<TaskResult<Task>> update(TaskUid uid, TaskPatch patch) =>
+      _run(() => _repo.updateTracked(uid, patch));
 
-  /// Creates a task, then reloads the lists that are on screen.
+  /// Applies [patch] to several tasks as one undoable change.
+  Future<TaskResult<List<Task>>> bulk(List<TaskUid> uids, TaskPatch patch) =>
+      _run(() => _repo.bulk(uids, patch));
+
   Future<TaskResult<Task>> create(NewTask task) async {
     try {
-      final created = await _repo.create(task);
-      for (final f in TaskFilter.values) {
-        if (_ref.exists(taskListProvider(f))) {
-          _ref.invalidate(taskListProvider(f));
-        }
-      }
-      return TaskResult.ok(created);
+      return TaskResult.ok(await _repo.create(task));
     } on ApiError catch (e) {
       return TaskResult.failure(e);
     }
   }
 
+  /// Creates a subtask; the parent may still be waiting to be synced.
   Future<TaskResult<Task>> createSubtask(Task parent, String name) async {
-    final parentId = parent.serverId;
-    if (parentId == null) {
-      return const TaskResult.failure(
-        ValidationError('The parent task has no id yet'),
-      );
-    }
     try {
-      final sub = await _repo.createSubtask(parentId: parentId, name: name);
-      _ref.invalidate(taskDetailProvider(parent.uid));
-      return TaskResult.ok(sub);
+      return TaskResult.ok(await _repo.createSubtaskOf(parent.uid, name));
     } on ApiError catch (e) {
       return TaskResult.failure(e);
     }
   }
 
-  Future<TaskResult<Task?>> skipOccurrence(TaskUid uid) async {
-    try {
-      final next = await _repo.skipOccurrence(uid);
-      if (next != null) {
-        _settle(uid, next);
-      } else {
-        for (final f in TaskFilter.values) {
-          if (_ref.exists(taskListProvider(f))) {
-            _ref.invalidate(taskListProvider(f));
-          }
-        }
-        _ref.invalidate(taskDetailProvider(uid));
-      }
-      return TaskResult.ok(next);
-    } on ApiError catch (e) {
-      return TaskResult.failure(e);
-    }
-  }
+  Future<TaskResult<Task?>> skipOccurrence(TaskUid uid) =>
+      _run(() => _repo.skipOccurrenceTracked(uid));
 
-  // ---- optimistic plumbing ----
-
-  Future<TaskResult<Task>> _mutate(
-    TaskUid uid,
-    Task Function(Task) optimistic,
-    Future<Task> Function() call,
-  ) async {
-    final snapshot = _snapshot(uid);
-    _edit(uid, optimistic);
-    try {
-      final saved = await call();
-      _settle(uid, saved);
-      return TaskResult.ok(saved);
-    } on ApiError catch (e) {
-      _restore(snapshot);
-      return TaskResult.failure(e);
-    }
-  }
-
-  _Snapshot _snapshot(TaskUid uid) {
-    final lists = <TaskFilter, List<Task>>{};
-    for (final f in TaskFilter.values) {
-      if (!_ref.exists(taskListProvider(f))) continue;
-      final value = _ref.read(taskListProvider(f)).value;
-      if (value != null) lists[f] = value;
-    }
-    final details = <TaskUid, Task>{};
-    if (_ref.exists(taskDetailProvider(uid))) {
-      final detail = _ref.read(taskDetailProvider(uid)).value;
-      if (detail != null) details[uid] = detail;
-    }
-    return _Snapshot(lists, details);
-  }
-
-  void _restore(_Snapshot s) {
-    s.lists.forEach((f, list) {
-      if (_ref.exists(taskListProvider(f))) {
-        _ref.read(taskListProvider(f).notifier).replaceAll(list);
-      }
-    });
-    s.details.forEach((uid, task) {
-      if (_ref.exists(taskDetailProvider(uid))) {
-        _ref.read(taskDetailProvider(uid).notifier).replace(task);
-      }
-    });
-  }
-
-  /// Maps the task [uid] through [change] (null removes it) in every loaded
-  /// list and the detail provider.
-  void _edit(TaskUid uid, Task? Function(Task) change) {
-    for (final f in TaskFilter.values) {
-      if (!_ref.exists(taskListProvider(f))) continue;
-      final list = _ref.read(taskListProvider(f)).value;
-      if (list == null || !list.any((t) => t.uid == uid)) continue;
-      _ref.read(taskListProvider(f).notifier).replaceAll([
-        for (final t in list)
-          if (t.uid != uid) t else ?change(t),
-      ]);
-    }
-    if (_ref.exists(taskDetailProvider(uid))) {
-      final current = _ref.read(taskDetailProvider(uid)).value;
-      final changed = current == null ? null : change(current);
-      if (changed != null) {
-        _ref.read(taskDetailProvider(uid).notifier).replace(changed);
-      }
-    }
-  }
-
-  /// Puts the server's version into the lists. The completed view drops tasks
-  /// that are no longer finished.
-  void _settle(TaskUid uid, Task saved) {
-    for (final f in TaskFilter.values) {
-      if (!_ref.exists(taskListProvider(f))) continue;
-      final list = _ref.read(taskListProvider(f)).value;
-      if (list == null || !list.any((t) => t.uid == uid)) continue;
-      final keep = !(f == TaskFilter.completed && !saved.isCompleted);
-      _ref.read(taskListProvider(f).notifier).replaceAll([
-        for (final t in list)
-          if (t.uid != uid) t else if (keep) saved,
-      ]);
-    }
-    if (_ref.exists(taskDetailProvider(uid))) {
-      _ref.read(taskDetailProvider(uid).notifier).replace(saved);
-    }
-  }
-}
-
-class _Snapshot {
-  _Snapshot(this.lists, this.details);
-  final Map<TaskFilter, List<Task>> lists;
-  final Map<TaskUid, Task> details;
+  /// Reverts the change behind [token]: cancels it if it has not been sent,
+  /// otherwise queues the opposite change.
+  Future<bool> undo(UndoToken token) => _repo.undo(token);
 }

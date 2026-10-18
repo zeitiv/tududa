@@ -30,6 +30,10 @@ abstract class Project with _$Project {
     DateTime? updatedAt,
     int? taskCount,
     int? completedTaskCount,
+
+    /// Local primary key (offline store). [uid] holds this value until the
+    /// server has assigned a real uid.
+    String? localId,
   }) = _Project;
 
   factory Project.fromDto(ProjectDto d) => Project(

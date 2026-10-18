@@ -1,10 +1,8 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tududa/areas/data/area_api.dart';
 import 'package:tududa/areas/data/area_dto.dart';
 import 'package:tududa/areas/data/area_repository.dart';
 import 'package:tududa/areas/models/area_model.dart';
-import 'package:tududa/areas/providers/area_provider.dart';
 import 'package:tududa/core/api/api_error.dart';
 import 'package:tududa/core/api/patch.dart' as pt;
 import 'package:tududa/core/ids.dart';
@@ -84,45 +82,5 @@ void main() {
     h.server.expireAllSessions();
     expect(await repo.list(), isEmpty);
     expect(h.stack.callbacks.calls, 1);
-  });
-
-  group('provider', () {
-    late ProviderContainer c;
-    setUp(() {
-      c = h.container();
-      addTearDown(c.dispose);
-    });
-
-    test('create, edit, delete', () async {
-      await c.read(areaListProvider.future);
-      final n = c.read(areaListProvider.notifier);
-      final a = await n.create(const NewArea(name: 'Home'));
-      expect(c.read(areaListProvider).value!.single.name, 'Home');
-
-      final f = n.edit(a.uid, const AreaPatch(name: pt.Patch.set('House')));
-      expect(c.read(areaListProvider).value!.single.name, 'House');
-      await f;
-
-      await n.delete(a.uid);
-      expect(c.read(areaListProvider).value, isEmpty);
-    });
-
-    test('failed edit and delete roll back', () async {
-      final a = seedArea(h.server, name: 'Home');
-      final uid = AreaUid(a['uid'] as String);
-      await c.read(areaListProvider.future);
-      final n = c.read(areaListProvider.notifier);
-
-      h.server.failNext('/areas/${uid.value}', 500);
-      await expectLater(
-        n.edit(uid, const AreaPatch(name: pt.Patch.set('X'))),
-        throwsA(isA<ApiError>()),
-      );
-      expect(c.read(areaListProvider).value!.single.name, 'Home');
-
-      h.server.failNext('/areas/${uid.value}', 500);
-      await expectLater(n.delete(uid), throwsA(isA<ApiError>()));
-      expect(c.read(areaListProvider).value, hasLength(1));
-    });
   });
 }

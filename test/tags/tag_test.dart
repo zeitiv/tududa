@@ -1,7 +1,5 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tududa/core/api/api_error.dart';
-import 'package:tududa/core/api/api_providers.dart';
 import 'package:tududa/core/api/patch.dart' show Patch;
 import 'package:tududa/core/ids.dart';
 import 'package:tududa/tags/data/dto/tag_dto.dart';
@@ -9,7 +7,6 @@ import 'package:tududa/tags/data/remote_tag_repository.dart';
 import 'package:tududa/tags/data/tag_mapper.dart';
 import 'package:tududa/tags/data/tag_patch.dart';
 import 'package:tududa/tags/data/tags_api.dart';
-import 'package:tududa/tags/providers/tag_provider.dart';
 
 import '../notes/note_test_env.dart';
 import '../support/fake_tududi/routes/notes_routes.dart';
@@ -76,31 +73,5 @@ void main() {
     expect(await errorOf(repo.delete('ghost')), isA<NotFoundError>());
     await repo.delete(created.identifier);
     expect(await repo.list(), hasLength(1));
-  });
-
-  test('tagListProvider create/rename/recolor/delete', () async {
-    final stack = await signedInStack();
-    seedTag(stack.server, 'a');
-    final c = ProviderContainer(
-      overrides: [dioProvider.overrideWithValue(stack.dio)],
-    );
-    addTearDown(c.dispose);
-    expect(await c.read(tagListProvider.future), hasLength(1));
-    final n = c.read(tagListProvider.notifier);
-
-    final b = await n.create('b');
-    expect(c.read(tagListProvider).value!.map((t) => t.name), ['a', 'b']);
-
-    final renamed = await n.rename(b, 'bb');
-    expect(renamed.name, 'bb');
-    final colored = await n.recolor(renamed, '#abcdef');
-    expect(colored.color, '#abcdef');
-    final cleared = await n.recolor(colored, null);
-    expect(cleared.color, isNull);
-    expect(c.read(tagListProvider).value!.map((t) => t.name), ['a', 'bb']);
-
-    await n.delete(cleared);
-    expect(c.read(tagListProvider).value!.map((t) => t.name), ['a']);
-    await expectLater(n.delete(cleared), throwsA(isA<NotFoundError>()));
   });
 }

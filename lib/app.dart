@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
+import 'core/sync/sync_triggers.dart';
 
 import 'settings/providers/settings_provider.dart';
 
@@ -13,6 +14,8 @@ class TududiApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
+    // Keeps the sync engine reacting to connectivity, resume and local writes.
+    ref.watch(syncTriggersProvider);
     final settings = ref.watch(settingsProvider);
 
     final mode = switch (settings.themeMode) {

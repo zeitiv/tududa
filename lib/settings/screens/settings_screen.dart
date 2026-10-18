@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+
+import '../../common/widgets/sync_indicator.dart' show syncStatusLabel;
+import '../../core/db/app_database.dart';
+import '../../core/sync/sync_status.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -84,6 +89,13 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: Text(strings.areasDesc),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/more/areas'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.sync),
+            title: const Text('Sync'),
+            subtitle: Text(syncStatusLabel(ref.watch(syncStatusProvider))),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/more/sync'),
           ),
 
           _SectionHeader(title: strings.preferences),
@@ -182,11 +194,23 @@ class SettingsScreen extends ConsumerWidget {
               style: TextStyle(color: theme.colorScheme.error),
             ),
             onTap: () async {
+              // Signing out deletes the local copy, so warn about changes
+              // that have not reached the server yet.
+              final counts = await ref
+                  .read(appDatabaseProvider)
+                  .outboxDao
+                  .countsNow();
+              final unsynced = counts.pending + counts.failed + counts.stuck;
+              if (!context.mounted) return;
               final confirm = await showDialog<bool>(
                 context: context,
                 builder: (ctx) => AlertDialog(
                   title: Text(strings.signOut),
-                  content: Text(strings.signOutConfirm),
+                  content: Text(
+                    unsynced == 0
+                        ? strings.signOutConfirm
+                        : '${strings.signOutConfirm}\n\n$unsynced change(s) have not synced yet and will be lost.',
+                  ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(ctx, false),

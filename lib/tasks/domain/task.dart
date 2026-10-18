@@ -100,6 +100,16 @@ abstract class Task with _$Task {
     @Default(<Task>[]) List<Task> subtasks,
     DateTime? createdAt,
     DateTime? updatedAt,
+
+    /// Local database key (offline store). Null for tasks that did not come
+    /// from the database.
+    String? localId,
+
+    /// [localId] of the parent task when this is a subtask.
+    String? parentLocalId,
+
+    /// Local edits not confirmed by the server yet.
+    @Default(false) bool hasPendingSync,
   }) = _Task;
 
   bool get isDone => status == TaskStatus.done;

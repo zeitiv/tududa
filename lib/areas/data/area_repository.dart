@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/api/api_providers.dart';
+import '../../core/db/app_database.dart';
 import '../../core/ids.dart';
 import '../models/area_model.dart';
 import 'area_api.dart';
+import 'offline_area_repository.dart';
 
 abstract class AreaRepository {
   Future<List<Area>> list();
@@ -34,6 +35,8 @@ class RemoteAreaRepository implements AreaRepository {
   Future<void> delete(AreaUid uid) => _api.delete(uid);
 }
 
-final areaRepositoryProvider = Provider<AreaRepository>(
-  (ref) => RemoteAreaRepository(AreaApi(ref.watch(dioProvider))),
+/// The offline repository: reads the local table, writes table + outbox. The
+/// sync handler talks to the server (see [RemoteAreaRepository] / `AreaApi`).
+final areaRepositoryProvider = Provider<OfflineAreaRepository>(
+  (ref) => OfflineAreaRepository(ref.watch(appDatabaseProvider)),
 );

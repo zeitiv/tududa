@@ -1,7 +1,7 @@
+import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/api/api_client.dart';
-import '../../core/api/api_providers.dart';
+import '../../core/db/app_database.dart';
 import '../../core/ids.dart';
 
 /// A project a task can be filed under (just what the picker needs).
@@ -11,25 +11,18 @@ class ProjectOption {
   final String name;
 }
 
-/// Projects for the task form's picker. Kept separate from the projects
-/// feature so the task form only depends on `uid` and `name`.
-final projectOptionsProvider = FutureProvider<List<ProjectOption>>((ref) {
-  final dio = ref.watch(dioProvider);
-  return guard(() async {
-    final res = await dio.get<Object?>('/projects');
-    final data = res.data;
-    final raw = data is List
-        ? data
-        : (data is Map && data['projects'] is List
-              ? data['projects'] as List
-              : const []);
-    return [
-      for (final p in raw)
-        if (p is Map && p['uid'] is String)
-          ProjectOption(
-            uid: ProjectUid(p['uid'] as String),
-            name: (p['name'] as String?) ?? '',
-          ),
-    ];
-  });
+/// Projects for the task form's picker, from the offline store (so it works
+/// without a connection). A project created offline has no server uid yet;
+/// its local id stands in until it syncs.
+final projectOptionsProvider = StreamProvider<List<ProjectOption>>((ref) {
+  final db = ref.watch(appDatabaseProvider);
+  final query = db.select(db.projects)
+    ..where((p) => p.pendingDelete.equals(false) & p.name.equals('').not())
+    ..orderBy([(p) => OrderingTerm.asc(p.name)]);
+  return query.watch().map(
+    (rows) => [
+      for (final p in rows)
+        ProjectOption(uid: ProjectUid(p.uid ?? p.localId), name: p.name),
+    ],
+  );
 });

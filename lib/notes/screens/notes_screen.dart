@@ -60,8 +60,9 @@ class NotesScreen extends ConsumerWidget {
                   return _NoteCard(
                     note: note,
                     onTap: () {
+                      // Notes not on the server yet open by local id.
                       context.push(
-                        '/notes/${Uri.encodeComponent(note.uid.value)}',
+                        '/notes/${Uri.encodeComponent(note.routeId!)}',
                       );
                     },
                   );

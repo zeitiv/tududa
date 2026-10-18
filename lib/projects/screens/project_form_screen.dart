@@ -6,6 +6,7 @@ import '../../core/api/api_error.dart';
 import '../../core/api/patch.dart' as pt;
 import '../../core/ids.dart';
 import '../data/project_api.dart';
+import '../data/project_repository.dart';
 import '../models/project_model.dart';
 import '../providers/project_provider.dart';
 import '../../areas/models/area_model.dart';
@@ -48,7 +49,7 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
   Future<void> _loadProject() async {
     setState(() => _isLoading = true);
     try {
-      final project = await ref.read(projectDetailProvider(_uid!).future);
+      final project = await ref.read(projectRepositoryProvider).get(_uid!);
       if (!mounted) return;
       _nameController.text = project.name;
       _descController.text = project.description ?? '';

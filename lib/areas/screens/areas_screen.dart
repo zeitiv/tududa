@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/api/api_error.dart';
+import '../../core/api/patch.dart' as pt;
+import '../data/area_api.dart';
 import '../providers/area_provider.dart';
 import '../models/area_model.dart';
 
@@ -13,10 +16,10 @@ class AreasScreen extends ConsumerStatefulWidget {
 }
 
 class _AreasScreenState extends ConsumerState<AreasScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() => ref.read(areaListProvider.notifier).loadAreas());
+  void _showError(ApiError e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(e.message)));
   }
 
   void _showCreateDialog() {
@@ -57,16 +60,20 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
           FilledButton(
             onPressed: () async {
               if (nameController.text.trim().isNotEmpty) {
-                await ref
-                    .read(areaListProvider.notifier)
-                    .createArea(
-                      Area(
-                        name: nameController.text.trim(),
-                        description: descController.text.trim().isEmpty
-                            ? null
-                            : descController.text.trim(),
-                      ),
-                    );
+                try {
+                  await ref
+                      .read(areaListProvider.notifier)
+                      .create(
+                        NewArea(
+                          name: nameController.text.trim(),
+                          description: descController.text.trim().isEmpty
+                              ? null
+                              : descController.text.trim(),
+                        ),
+                      );
+                } on ApiError catch (e) {
+                  _showError(e);
+                }
                 if (ctx.mounted) Navigator.pop(ctx);
               }
             },
@@ -108,16 +115,21 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
           FilledButton(
             onPressed: () async {
               if (nameController.text.trim().isNotEmpty) {
-                await ref
-                    .read(areaListProvider.notifier)
-                    .updateArea(
-                      area.copyWith(
-                        name: nameController.text.trim(),
-                        description: descController.text.trim().isEmpty
-                            ? null
-                            : descController.text.trim(),
-                      ),
-                    );
+                try {
+                  await ref
+                      .read(areaListProvider.notifier)
+                      .edit(
+                        area.uid,
+                        AreaPatch(
+                          name: pt.Patch.set(nameController.text.trim()),
+                          description: descController.text.trim().isEmpty
+                              ? const pt.Patch.clear()
+                              : pt.Patch.set(descController.text.trim()),
+                        ),
+                      );
+                } on ApiError catch (e) {
+                  _showError(e);
+                }
                 if (ctx.mounted) Navigator.pop(ctx);
               }
             },
@@ -132,12 +144,15 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final areaState = ref.watch(areaListProvider);
+    final areas = areaState.value ?? const <Area>[];
 
     return Scaffold(
       appBar: AppBar(title: const Text('Areas')),
-      body: areaState.isLoading
+      body: areaState.isLoading && !areaState.hasValue
           ? const Center(child: CircularProgressIndicator())
-          : areaState.areas.isEmpty
+          : areaState.hasError && !areaState.hasValue
+          ? Center(child: Text('Error: ${areaState.error}'))
+          : areas.isEmpty
           ? Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -165,12 +180,12 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
               ),
             )
           : RefreshIndicator(
-              onRefresh: () => ref.read(areaListProvider.notifier).loadAreas(),
+              onRefresh: () => ref.read(areaListProvider.notifier).refresh(),
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                itemCount: areaState.areas.length,
+                itemCount: areas.length,
                 itemBuilder: (context, index) {
-                  final area = areaState.areas[index];
+                  final area = areas[index];
                   return ListTile(
                     leading: CircleAvatar(
                       backgroundColor: theme.colorScheme.secondaryContainer,
@@ -212,10 +227,14 @@ class _AreasScreenState extends ConsumerState<AreasScreen> {
                               ],
                             ),
                           );
-                          if (confirm == true && area.id != null) {
-                            ref
-                                .read(areaListProvider.notifier)
-                                .deleteArea(area.id!);
+                          if (confirm == true) {
+                            try {
+                              await ref
+                                  .read(areaListProvider.notifier)
+                                  .delete(area.uid);
+                            } on ApiError catch (e) {
+                              _showError(e);
+                            }
                           }
                         }
                       },

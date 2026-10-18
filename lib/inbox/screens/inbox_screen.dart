@@ -15,22 +15,19 @@ class InboxScreen extends ConsumerStatefulWidget {
 
 class _InboxScreenState extends ConsumerState<InboxScreen> {
   @override
-  void initState() {
-    super.initState();
-    Future.microtask(() => ref.read(inboxProvider.notifier).loadItems());
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final state = ref.watch(inboxProvider);
+    final async = ref.watch(inboxProvider);
+    final list = async.value;
+    final items = list?.items ?? const [];
+    final notifier = ref.read(inboxProvider.notifier);
     final strings = context.l10n;
 
     return Scaffold(
       appBar: AppBar(title: Text(strings.inbox)),
-      body: state.isLoading
+      body: list == null && async.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : state.items.isEmpty
+          : items.isEmpty
           ? Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -58,14 +55,17 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
               ),
             )
           : RefreshIndicator(
-              onRefresh: () => ref.read(inboxProvider.notifier).loadItems(),
+              onRefresh: () => notifier.refresh(),
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                itemCount: state.items.length,
+                itemCount: items.length,
                 itemBuilder: (context, index) {
-                  final item = state.items[index];
+                  if (index >= items.length - 3) {
+                    Future.microtask(notifier.loadMore);
+                  }
+                  final item = items[index];
                   return Dismissible(
-                    key: ValueKey(item.id),
+                    key: ValueKey('${item.uid.value}:${item.status.name}'),
                     direction: DismissDirection.horizontal,
                     background: Container(
                       alignment: Alignment.centerLeft,
@@ -81,9 +81,9 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
                     ),
                     onDismissed: (direction) {
                       if (direction == DismissDirection.startToEnd) {
-                        ref.read(inboxProvider.notifier).processItem(item.id!);
+                        notifier.process(item.uid);
                       } else {
-                        ref.read(inboxProvider.notifier).ignoreItem(item.id!);
+                        notifier.ignore(item.uid);
                       }
                     },
                     child: ListTile(
@@ -132,17 +132,11 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
                       trailing: PopupMenuButton<String>(
                         onSelected: (action) {
                           if (action == 'process') {
-                            ref
-                                .read(inboxProvider.notifier)
-                                .processItem(item.id!);
+                            notifier.process(item.uid);
                           } else if (action == 'ignore') {
-                            ref
-                                .read(inboxProvider.notifier)
-                                .ignoreItem(item.id!);
+                            notifier.ignore(item.uid);
                           } else if (action == 'delete') {
-                            ref
-                                .read(inboxProvider.notifier)
-                                .deleteItem(item.id!);
+                            notifier.delete(item.uid);
                           }
                         },
                         itemBuilder: (context) => [

@@ -4,11 +4,11 @@ import 'package:go_router/go_router.dart';
 
 import '../providers/project_provider.dart';
 import '../../common/widgets/glass_container.dart';
-import '../../tasks/models/task_model.dart';
-import '../../core/services/api_service.dart';
+import '../../core/api/api_error.dart';
+import '../../core/ids.dart';
+import '../data/project_tasks_source.dart';
 import '../../core/theme/app_theme.dart';
 import '../widgets/kanban_board.dart';
-import '../../tasks/providers/task_provider.dart';
 import '../../l10n/strings.dart';
 
 /// Project detail screen with tasks and notes.
@@ -22,57 +22,14 @@ class ProjectDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
-  List<Task> _tasks = [];
-  bool _loadingTasks = true;
   bool _isKanbanView = true;
-  int? _numericProjectId; // Cache the numeric project id for filtering
 
-  @override
-  void initState() {
-    super.initState();
-    // Don't load tasks here - wait for project detail to provide numeric ID
-  }
-
-  Future<void> _loadProjectTasks() async {
-    if (_numericProjectId == null) return; // Can't filter without numeric id
-    setState(() => _loadingTasks = true);
-    try {
-      final response = await ApiService.instance.getTasks(
-        queryParams: {'project_id': widget.projectId},
-      );
-      if (response.statusCode == 200 && mounted) {
-        final List<dynamic> data = response.data is List
-            ? response.data
-            : (response.data['tasks'] ?? []);
-        final allTasks = data
-            .map((e) => Task.fromJson(e as Map<String, dynamic>))
-            .toList();
-        // Client-side filter: only keep tasks that belong to this project
-        final filteredTasks = allTasks
-            .where((t) => t.projectId == _numericProjectId)
-            .toList();
-        setState(() {
-          _tasks = filteredTasks;
-          _loadingTasks = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) setState(() => _loadingTasks = false);
-    }
-  }
-
-  /// Called once we have the project detail to set the numeric id and load tasks
-  void _onProjectLoaded(int projectId) {
-    if (_numericProjectId != projectId) {
-      _numericProjectId = projectId;
-      _loadProjectTasks();
-    }
-  }
+  ProjectUid get _uid => ProjectUid(widget.projectId.toString());
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final projectAsync = ref.watch(projectDetailProvider(widget.projectId));
+    final projectAsync = ref.watch(projectDetailProvider(_uid));
     final strings = context.l10n;
 
     return projectAsync.when(
@@ -82,20 +39,13 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
       ),
       error: (e, _) => Scaffold(
         appBar: AppBar(),
-        body: Center(child: Text('Error: $e')),
+        body: Center(
+          child: Text(e is NotFoundError ? strings.noProjectsYet : 'Error: $e'),
+        ),
       ),
       data: (project) {
-        if (project == null) {
-          return Scaffold(
-            appBar: AppBar(),
-            body: Center(child: Text(strings.noProjectsYet)),
-          );
-        }
-
-        // Set numeric project id and trigger task loading on first load
-        if (project.id != null && _numericProjectId != project.id) {
-          Future.microtask(() => _onProjectLoaded(project.id!));
-        }
+        final tasksAsync = ref.watch(projectTasksProvider(_uid));
+        final tasks = tasksAsync.value ?? const <ProjectTaskRef>[];
 
         final statusColor = AppTheme.getProjectStatusColor(
           project.status,
@@ -108,8 +58,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
             actions: [
               IconButton(
                 icon: const Icon(Icons.edit_outlined),
-                onPressed: () =>
-                    context.push('/projects/${widget.projectId}/edit'),
+                onPressed: () => context.push('/projects/${_uid.value}/edit'),
               ),
               PopupMenuButton<String>(
                 onSelected: (action) async {
@@ -134,10 +83,17 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                       ),
                     );
                     if (confirm == true && context.mounted) {
-                      await ref
-                          .read(projectListProvider.notifier)
-                          .deleteProject(widget.projectId);
-                      if (context.mounted) context.pop();
+                      try {
+                        await ref
+                            .read(projectListProvider.notifier)
+                            .delete(_uid);
+                        if (context.mounted) context.pop();
+                      } on ApiError catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(SnackBar(content: Text(e.message)));
+                        }
+                      }
                     }
                   }
                 },
@@ -152,8 +108,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
           ),
           body: RefreshIndicator(
             onRefresh: () async {
-              ref.invalidate(projectDetailProvider(widget.projectId));
-              await _loadProjectTasks();
+              ref.invalidate(projectDetailProvider(_uid));
+              ref.invalidate(projectTasksProvider(_uid));
+              await ref.read(projectTasksProvider(_uid).future);
             },
             child: ListView(
               padding: const EdgeInsets.all(16),
@@ -185,11 +142,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                             ),
                           ),
                           const Spacer(),
-                          if (project.priority != null)
+                          if (project.priorityName != null)
                             Icon(
                               Icons.flag_rounded,
                               color: AppTheme.getStringPriorityColor(
-                                project.priority,
+                                project.priorityName,
                                 theme.colorScheme,
                               ),
                               size: 20,
@@ -271,14 +228,16 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                if (_loadingTasks)
+                if (tasksAsync.isLoading && !tasksAsync.hasValue)
                   const Center(
                     child: Padding(
                       padding: EdgeInsets.all(20),
                       child: CircularProgressIndicator(),
                     ),
                   )
-                else if (_tasks.isEmpty)
+                else if (tasksAsync.hasError && !tasksAsync.hasValue)
+                  Center(child: Text('Error: ${tasksAsync.error}'))
+                else if (tasks.isEmpty)
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(32),
@@ -296,35 +255,27 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                   SizedBox(
                     height: 500, // Fixed height for horizontal board
                     child: KanbanBoard(
-                      tasks: _tasks,
+                      tasks: tasks,
                       onTaskTap: (task) {
-                        final id = task.uid ?? task.id?.toString();
-                        if (id != null) context.push('/tasks/$id');
+                        context.push('/tasks/${task.uid.value}');
                       },
                       onTaskStatusChanged: (task, newStatus) async {
-                        final taskId = task.uid ?? task.id?.toString();
-                        if (taskId == null) return;
-
-                        // Optimistic update
-                        setState(() {
-                          final index = _tasks.indexWhere(
-                            (t) => (t.uid ?? t.id?.toString()) == taskId,
-                          );
-                          if (index != -1) {
-                            _tasks[index] = task.copyWith(status: newStatus);
+                        try {
+                          await ref
+                              .read(projectTasksProvider(_uid).notifier)
+                              .setStatus(task, newStatus);
+                        } on ApiError catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(SnackBar(content: Text(e.message)));
                           }
-                        });
-
-                        // Background update API
-                        await ref
-                            .read(taskListProvider.notifier)
-                            .updateTaskStatus(taskId, newStatus);
-                        _loadProjectTasks();
+                        }
                       },
                     ),
                   )
                 else
-                  ..._tasks.map(
+                  ...tasks.map(
                     (task) => ListTile(
                       contentPadding: const EdgeInsets.symmetric(horizontal: 4),
                       leading: Icon(
@@ -343,10 +294,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> {
                               : null,
                         ),
                       ),
-                      onTap: () {
-                        final id = task.uid ?? task.id?.toString();
-                        if (id != null) context.push('/tasks/$id');
-                      },
+                      onTap: () => context.push('/tasks/${task.uid.value}'),
                     ),
                   ),
                 const SizedBox(height: 32),

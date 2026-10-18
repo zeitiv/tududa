@@ -1,99 +1,78 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/api/patch.dart' as pt;
+import '../../core/ids.dart';
+import '../data/area_api.dart';
+import '../data/area_repository.dart';
 import '../models/area_model.dart';
-import '../../core/services/api_service.dart';
 
-class AreaListState {
-  final List<Area> areas;
-  final bool isLoading;
-  final String? error;
+/// Areas of the signed-in user. Mutations are optimistic where the result is
+/// predictable (update, delete) and roll back, rethrowing the `ApiError`.
+class AreaList extends AsyncNotifier<List<Area>> {
+  AreaRepository get _repo => ref.read(areaRepositoryProvider);
 
-  const AreaListState({
-    this.areas = const [],
-    this.isLoading = false,
-    this.error,
-  });
+  @override
+  Future<List<Area>> build() => ref.watch(areaRepositoryProvider).list();
 
-  AreaListState copyWith({List<Area>? areas, bool? isLoading, String? error}) {
-    return AreaListState(
-      areas: areas ?? this.areas,
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
-    );
+  Future<void> refresh() async {
+    state = await AsyncValue.guard(_repo.list);
   }
+
+  Future<Area> create(NewArea area) async {
+    final created = await _repo.create(area);
+    state = AsyncData([...?state.value, created]);
+    return created;
+  }
+
+  Future<Area> edit(AreaUid uid, AreaPatch patch) async {
+    final before = state.value;
+    if (before != null) {
+      state = AsyncData([
+        for (final a in before)
+          if (a.uid == uid) _apply(a, patch) else a,
+      ]);
+    }
+    try {
+      final saved = await _repo.update(uid, patch);
+      state = AsyncData([
+        for (final a in state.value ?? const <Area>[])
+          if (a.uid == uid) saved else a,
+      ]);
+      return saved;
+    } catch (_) {
+      if (before != null) state = AsyncData(before);
+      rethrow;
+    }
+  }
+
+  Future<void> delete(AreaUid uid) async {
+    final before = state.value;
+    if (before != null) {
+      state = AsyncData([
+        for (final a in before)
+          if (a.uid != uid) a,
+      ]);
+    }
+    try {
+      await _repo.delete(uid);
+    } catch (_) {
+      if (before != null) state = AsyncData(before);
+      rethrow;
+    }
+  }
+
+  static Area _apply(Area a, AreaPatch p) => a.copyWith(
+    name: _valueOf(p.name) ?? a.name,
+    description: p.description.isSet ? _valueOf(p.description) : a.description,
+  );
+
+  static String? _valueOf(pt.Patch<String> p) => switch (p) {
+    pt.Set<String>(:final value) => value,
+    _ => null,
+  };
 }
 
-class AreaNotifier extends StateNotifier<AreaListState> {
-  AreaNotifier() : super(const AreaListState());
-
-  Future<void> loadAreas() async {
-    state = state.copyWith(isLoading: true);
-    try {
-      final response = await ApiService.instance.getAreas();
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data is List
-            ? response.data
-            : (response.data['areas'] ?? []);
-        final areas = data
-            .map((e) => Area.fromJson(e as Map<String, dynamic>))
-            .toList();
-        state = state.copyWith(areas: areas, isLoading: false);
-      } else {
-        state = state.copyWith(isLoading: false, error: 'Failed to load areas');
-      }
-    } catch (e) {
-      debugPrint('Load areas error: $e');
-      state = state.copyWith(isLoading: false, error: 'Error: $e');
-    }
-  }
-
-  Future<bool> createArea(Area area) async {
-    try {
-      final response = await ApiService.instance.createArea(area.toJson());
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        await loadAreas();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future<bool> updateArea(Area area) async {
-    try {
-      if (area.id == null) return false;
-      final response = await ApiService.instance.updateArea(
-        area.id!,
-        area.toJson(),
-      );
-      if (response.statusCode == 200) {
-        await loadAreas();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future<bool> deleteArea(int id) async {
-    try {
-      final response = await ApiService.instance.deleteArea(id);
-      if (response.statusCode == 200 || response.statusCode == 204) {
-        await loadAreas();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
-    }
-  }
-}
-
-final areaListProvider = StateNotifierProvider<AreaNotifier, AreaListState>((
-  ref,
-) {
-  return AreaNotifier();
-});
+final areaListProvider = AsyncNotifierProvider<AreaList, List<Area>>(
+  AreaList.new,
+  retry: (_, _) => null,
+);

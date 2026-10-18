@@ -1,80 +1,67 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/tag_model.dart';
-import '../../core/services/api_service.dart';
+import '../../core/api/api_providers.dart';
+import '../../core/api/patch.dart' show Patch;
+import '../data/remote_tag_repository.dart';
+import '../data/tag_patch.dart';
+import '../data/tag_repository.dart';
+import '../data/tags_api.dart';
+import '../domain/tag.dart';
 
-class TagListState {
-  final List<Tag> tags;
-  final bool isLoading;
-  final String? error;
+final tagRepositoryProvider = Provider<TagRepository>(
+  (ref) => RemoteTagRepository(TagsApi(ref.watch(dioProvider))),
+);
 
-  const TagListState({
-    this.tags = const [],
-    this.isLoading = false,
-    this.error,
-  });
+/// All tags. Mutations rethrow the repository's `ApiError` after leaving the
+/// current list untouched.
+class TagListNotifier extends AsyncNotifier<List<Tag>> {
+  TagRepository get _repo => ref.read(tagRepositoryProvider);
 
-  TagListState copyWith({List<Tag>? tags, bool? isLoading, String? error}) {
-    return TagListState(
-      tags: tags ?? this.tags,
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
-    );
+  @override
+  Future<List<Tag>> build() => ref.watch(tagRepositoryProvider).list();
+
+  Future<void> refresh() async {
+    state = await AsyncValue.guard(_repo.list);
+  }
+
+  List<Tag> get _current => state.value ?? const [];
+
+  Future<Tag> create(String name) async {
+    final tag = await _repo.create(name);
+    state = AsyncData([..._current.where((t) => t.name != tag.name), tag]);
+    return tag;
+  }
+
+  Future<Tag> rename(Tag tag, String name) =>
+      _update(tag, TagPatch(name: Patch.set(name)));
+
+  /// A null [color] clears the colour.
+  Future<Tag> recolor(Tag tag, String? color) => _update(
+    tag,
+    TagPatch(color: color == null ? const Patch.clear() : Patch.set(color)),
+  );
+
+  Future<Tag> setPinned(Tag tag, bool pinned) =>
+      _update(tag, TagPatch(pinned: Patch.set(pinned)));
+
+  Future<Tag> _update(Tag tag, TagPatch patch) async {
+    final updated = await _repo.update(tag.identifier, patch);
+    state = AsyncData([
+      for (final t in _current)
+        if (t.identifier == tag.identifier) updated else t,
+    ]);
+    return updated;
+  }
+
+  Future<void> delete(Tag tag) async {
+    await _repo.delete(tag.identifier);
+    state = AsyncData([
+      for (final t in _current)
+        if (t.identifier != tag.identifier) t,
+    ]);
   }
 }
 
-class TagNotifier extends StateNotifier<TagListState> {
-  TagNotifier() : super(const TagListState());
-
-  Future<void> loadTags() async {
-    state = state.copyWith(isLoading: true);
-    try {
-      final response = await ApiService.instance.getTags();
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data is List
-            ? response.data
-            : (response.data['tags'] ?? []);
-        final tags = data
-            .map((e) => Tag.fromJson(e as Map<String, dynamic>))
-            .toList();
-        state = state.copyWith(tags: tags, isLoading: false);
-      } else {
-        state = state.copyWith(isLoading: false, error: 'Failed');
-      }
-    } catch (e) {
-      debugPrint('Load tags error: $e');
-      state = state.copyWith(isLoading: false, error: 'Error: $e');
-    }
-  }
-
-  Future<bool> createTag(String name) async {
-    try {
-      final response = await ApiService.instance.createTag({'name': name});
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        await loadTags();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future<bool> deleteTag(int id) async {
-    try {
-      final response = await ApiService.instance.deleteTag(id);
-      if (response.statusCode == 200 || response.statusCode == 204) {
-        await loadTags();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
-    }
-  }
-}
-
-final tagListProvider = StateNotifierProvider<TagNotifier, TagListState>((ref) {
-  return TagNotifier();
-});
+final tagListProvider = AsyncNotifierProvider<TagListNotifier, List<Tag>>(
+  TagListNotifier.new,
+);

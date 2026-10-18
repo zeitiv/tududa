@@ -5,6 +5,7 @@ import 'dart:io' show HttpDate;
 import 'package:shelf/shelf.dart';
 
 import 'routes/routes.dart';
+import 'routes/tasks_routes.dart';
 
 /// A request as seen by the fake server (paths exclude the `/api` prefix).
 class RecordedRequest {
@@ -129,6 +130,7 @@ const taskStatusNames = <String, int>{
 class FakeTududi {
   FakeTududi() {
     _registerBuiltIns();
+    registerTaskRoutes(this);
     for (final r in registrars) {
       r(this);
     }
@@ -150,6 +152,12 @@ class FakeTududi {
   bool offline = false;
   Duration latency = Duration.zero;
   int loginFailureLimit = 5;
+
+  /// `GET /tasks` answers with a bare list instead of `{tasks, pagination}`.
+  bool tasksListBare = false;
+
+  /// A fresh numeric id (shared by users, sessions and tasks).
+  int nextId() => ++_idCounter;
 
   /// The server's idea of "now", used for the `Date` response header.
   DateTime Function() clock = DateTime.now;
@@ -207,6 +215,8 @@ class FakeTududi {
         for (final t in tags) {'name': t},
       ],
       'subtasks': subtasks,
+      'completed_at': null,
+      'recurrence_type': 'none',
       'created_at': created,
       'updated_at': (updatedAt ?? createdAt ?? DateTime.utc(2025, 1, 1))
           .toIso8601String(),
@@ -401,119 +411,13 @@ class FakeTududi {
         headers: {'set-cookie': '$sessionCookie=; Path=/; Max-Age=0; HttpOnly'},
       );
     }, auth: false);
-
-    route('GET', '/tasks', _listTasks);
-    route('GET', '/task/:uid', (ctx) {
-      final t = tasks[ctx.params['uid']];
-      return t == null ? json(404, {'error': 'Task not found'}) : json(200, t);
-    });
-    route('POST', '/task', (ctx) {
-      final b = ctx.bodyMap;
-      final name = (b['name'] as String?)?.trim() ?? '';
-      if (name.isEmpty) return json(400, {'error': 'Task name is required'});
-      final now = DateTime.now().toUtc();
-      final t = seedTask(
-        name: name,
-        note: b['note'] as String?,
-        status: _statusOf(b['status']) ?? 0,
-        priority: (b['priority'] as int?) ?? 0,
-        dueDate: b['due_date'] as String?,
-        dueTime: b['due_time'] as String?,
-        projectUid: b['project_uid'] as String?,
-        tags: [
-          for (final tag in (b['tags'] as List? ?? const []))
-            tag is Map ? tag['name'] as String : tag as String,
-        ],
-        createdAt: now,
-      );
-      return json(201, t);
-    });
-    route('PATCH', '/task/:uid', (ctx) {
-      final t = tasks[ctx.params['uid']];
-      if (t == null) return json(404, {'error': 'Task not found'});
-      final b = ctx.bodyMap;
-      for (final e in b.entries) {
-        if (e.key == 'uid' || e.key == 'id') continue;
-        if (e.key == 'status') {
-          t['status'] = _statusOf(e.value) ?? t['status'];
-        } else if (e.key == 'tags' && e.value is List) {
-          t['tags'] = [
-            for (final tag in e.value as List)
-              tag is Map ? {'name': tag['name']} : {'name': tag},
-          ];
-        } else {
-          t[e.key] = e.value;
-        }
-      }
-      final prev = DateTime.parse(t['updated_at'] as String);
-      var now = DateTime.now().toUtc();
-      if (!now.isAfter(prev)) now = prev.add(const Duration(milliseconds: 1));
-      t['updated_at'] = now.toIso8601String();
-      return json(200, t);
-    });
-    route('DELETE', '/task/:uid', (ctx) {
-      final t = tasks.remove(ctx.params['uid']);
-      return t == null
-          ? json(404, {'error': 'Task not found'})
-          : json(200, {'message': 'Task successfully deleted'});
-    });
   }
 
-  static int? _statusOf(Object? v) {
+  /// Status as a number, from a number or a name like `done`.
+  static int? statusOf(Object? v) {
     if (v is int) return v;
     if (v is String) return taskStatusNames[v] ?? int.tryParse(v);
     return null;
-  }
-
-  Response _listTasks(RouteContext ctx) {
-    final q = ctx.query;
-    var list = tasks.values.toList();
-
-    final status = _statusOf(q['status']);
-    if (status != null) {
-      list = list.where((t) => t['status'] == status).toList();
-    }
-    final project = q['project_uid'];
-    if (project != null) {
-      list = list.where((t) => t['project_uid'] == project).toList();
-    }
-    if (q['type'] == 'today') {
-      final today = DateTime.now().toIso8601String().substring(0, 10);
-      list = list.where((t) {
-        final d = t['due_date'] as String?;
-        return d != null && d.compareTo(today) <= 0 && t['status'] != 2;
-      }).toList();
-    }
-
-    final order = q['order_by'];
-    if (order != null) {
-      final bits = order.split(':');
-      final field = bits.first;
-      final desc = bits.length > 1 && bits[1] == 'desc';
-      int cmp(Map<String, dynamic> a, Map<String, dynamic> b) {
-        final x = a[field], y = b[field];
-        if (x == null && y == null) return 0;
-        if (x == null) return 1;
-        if (y == null) return -1;
-        return (x as Comparable).compareTo(y);
-      }
-
-      list.sort((a, b) => desc ? cmp(b, a) : cmp(a, b));
-    }
-
-    final total = list.length;
-    final limit = int.tryParse(q['limit'] ?? '') ?? 50;
-    final offset = int.tryParse(q['offset'] ?? '') ?? 0;
-    final page = list.skip(offset).take(limit).toList();
-    return json(200, {
-      'tasks': page,
-      'pagination': {
-        'total': total,
-        'limit': limit,
-        'offset': offset,
-        'hasMore': offset + page.length < total,
-      },
-    });
   }
 }
 

@@ -4,36 +4,26 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../providers/note_provider.dart';
-import '../models/note_model.dart';
+import '../domain/note.dart';
 import '../../common/widgets/glass_container.dart';
 import '../../l10n/strings.dart';
 
 /// Notes list screen with card/grid layout.
-class NotesScreen extends ConsumerStatefulWidget {
+class NotesScreen extends ConsumerWidget {
   const NotesScreen({super.key});
 
   @override
-  ConsumerState<NotesScreen> createState() => _NotesScreenState();
-}
-
-class _NotesScreenState extends ConsumerState<NotesScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() => ref.read(noteListProvider.notifier).loadNotes());
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final noteState = ref.watch(noteListProvider);
+    final notes = noteState.value ?? const <Note>[];
     final strings = context.l10n;
 
     return Scaffold(
       appBar: AppBar(title: Text(strings.notes)),
-      body: noteState.isLoading
+      body: noteState.isLoading && !noteState.hasValue
           ? const Center(child: CircularProgressIndicator())
-          : noteState.notes.isEmpty
+          : notes.isEmpty
           ? Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -55,7 +45,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
               ),
             )
           : RefreshIndicator(
-              onRefresh: () => ref.read(noteListProvider.notifier).loadNotes(),
+              onRefresh: () => ref.read(noteListProvider.notifier).refresh(),
               child: GridView.builder(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -64,14 +54,15 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                   crossAxisSpacing: 12,
                   childAspectRatio: 0.85,
                 ),
-                itemCount: noteState.notes.length,
+                itemCount: notes.length,
                 itemBuilder: (context, index) {
-                  final note = noteState.notes[index];
+                  final note = notes[index];
                   return _NoteCard(
                     note: note,
                     onTap: () {
-                      final id = note.uid ?? note.id?.toString();
-                      if (id != null) context.push('/notes/$id');
+                      context.push(
+                        '/notes/${Uri.encodeComponent(note.uid.value)}',
+                      );
                     },
                   );
                 },

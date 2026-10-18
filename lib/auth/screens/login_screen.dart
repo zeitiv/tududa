@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/api/api_error.dart';
 import '../providers/auth_provider.dart';
+import '../session/auth_messages.dart';
+import '../session/session_controller.dart';
 
 import '../../l10n/strings.dart';
 import '../../common/widgets/glass_container.dart';
@@ -33,6 +36,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     );
     _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeOut);
     _animController.forward();
+    final session = ref.read(sessionControllerProvider);
+    _emailController.text = switch (session) {
+      SessionSignedOut(:final lastEmail) ||
+      SessionExpired(:final lastEmail) => lastEmail ?? '',
+      _ => '',
+    };
   }
 
   @override
@@ -46,16 +55,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final success = await ref
-        .read(authProvider.notifier)
-        .login(_emailController.text.trim(), _passwordController.text);
-
-    if (!success && mounted) {
+    try {
+      await ref
+          .read(sessionControllerProvider.notifier)
+          .login(_emailController.text.trim(), _passwordController.text);
+    } on ApiError catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            ref.read(authProvider).error ?? context.l10n.loginFailed,
-          ),
+          content: Text(describeAuthError(e)),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );

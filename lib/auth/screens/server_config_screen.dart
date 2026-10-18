@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../providers/auth_provider.dart';
+import '../../core/api/api_error.dart';
+import '../session/auth_messages.dart';
+import '../session/server_config.dart';
+import '../session/session_controller.dart';
 import '../../l10n/strings.dart';
 
 /// Server configuration screen - first-time setup.
@@ -16,6 +19,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen>
     with SingleTickerProviderStateMixin {
   final _urlController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _busy = false;
   late AnimationController _animController;
   late Animation<double> _fadeAnim;
 
@@ -39,25 +43,69 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen>
 
   Future<void> _connect() async {
     if (!_formKey.currentState!.validate()) return;
-
-    final success = await ref
-        .read(authProvider.notifier)
-        .configureServer(_urlController.text);
-
-    if (!success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(ref.read(authProvider).error ?? 'Connection failed'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
+    setState(() => _busy = true);
+    try {
+      await _configure(allowInsecure: false);
+    } finally {
+      if (mounted) setState(() => _busy = false);
     }
+  }
+
+  Future<void> _configure({required bool allowInsecure}) async {
+    final controller = ref.read(sessionControllerProvider.notifier);
+    try {
+      await controller.configureServer(
+        _urlController.text,
+        allowInsecure: allowInsecure,
+      );
+    } on InsecureServerError {
+      if (!mounted) return;
+      if (await _confirmInsecure()) await _configure(allowInsecure: true);
+    } on ServerConfigError catch (e) {
+      _showError(describeAuthError(e));
+    } on ApiError catch (e) {
+      _showError(describeAuthError(e));
+    }
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Theme.of(context).colorScheme.error,
+      ),
+    );
+  }
+
+  Future<bool> _confirmInsecure() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Use insecure HTTP?'),
+        content: const Text(
+          'This address does not use HTTPS. Your password and tasks would be '
+          'sent without encryption and could be read on the network. Only '
+          'continue on a network you trust.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Use insecure HTTP'),
+          ),
+        ],
+      ),
+    );
+    return ok ?? false;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final authState = ref.watch(authProvider);
     final strings = context.l10n;
 
     return Scaffold(
@@ -147,10 +195,8 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen>
                       width: double.infinity,
                       height: 56,
                       child: FilledButton.icon(
-                        onPressed: authState.status == AuthStatus.loading
-                            ? null
-                            : _connect,
-                        icon: authState.status == AuthStatus.loading
+                        onPressed: _busy ? null : _connect,
+                        icon: _busy
                             ? SizedBox(
                                 width: 20,
                                 height: 20,
@@ -161,9 +207,7 @@ class _ServerConfigScreenState extends ConsumerState<ServerConfigScreen>
                               )
                             : const Icon(Icons.arrow_forward_rounded),
                         label: Text(
-                          authState.status == AuthStatus.loading
-                              ? 'Connecting...'
-                              : 'Connect',
+                          _busy ? 'Connecting...' : 'Connect',
                           style: const TextStyle(fontSize: 16),
                         ),
                       ),

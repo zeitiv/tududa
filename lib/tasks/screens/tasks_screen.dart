@@ -3,8 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../core/ids.dart';
+import '../../core/time/calendar_date.dart';
+import '../../projects/data/project_tasks_source.dart';
+import '../domain/task.dart';
 import '../providers/task_provider.dart';
-import '../models/task_model.dart';
+import '../widgets/api_error_message.dart';
 import '../../core/theme/app_theme.dart';
 import '../../common/widgets/glass_container.dart';
 import '../../projects/widgets/kanban_board.dart';
@@ -21,17 +25,43 @@ class TasksScreen extends ConsumerStatefulWidget {
 class _TasksScreenState extends ConsumerState<TasksScreen> {
   bool _isKanbanView = false;
 
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() => ref.read(taskListProvider.notifier).loadTasks());
+  void _showError(Object error) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(apiErrorMessage(error))));
+  }
+
+  // The board takes the projects feature's lightweight task view.
+  ProjectTaskRef _boardRef(Task t) => ProjectTaskRef(
+    id: t.serverId,
+    uid: t.uid,
+    name: t.name,
+    status: t.status.code,
+    priority: t.priority.code,
+    dueDate: t.dueDate?.toLocalDateTime(),
+    order: t.order,
+  );
+
+  Task _byUid(List<Task> tasks, TaskUid uid) =>
+      tasks.firstWhere((t) => t.uid == uid);
+
+  void _openTask(Task task) {
+    if (task.uid.value.isNotEmpty) context.push('/tasks/${task.uid.value}');
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final taskState = ref.watch(taskListProvider);
+    final current = ref.watch(selectedTaskFilterProvider);
+    final sortState = ref.watch(taskSortProvider);
+    final async = ref.watch(taskListProvider(current));
+    final tasks = sortTasks(
+      async.value ?? const <Task>[],
+      sortState.sort,
+      ascending: sortState.ascending,
+    );
     final strings = context.l10n;
+    final actions = ref.read(taskActionsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -51,7 +81,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             icon: const Icon(Icons.sort_rounded),
             tooltip: 'Sort',
             onSelected: (sort) {
-              ref.read(taskListProvider.notifier).setSort(sort);
+              ref.read(taskSortProvider.notifier).setSort(sort);
             },
             itemBuilder: (context) => [
               const PopupMenuItem(
@@ -79,14 +109,16 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: TaskFilter.values.map((filter) {
-                final isSelected = taskState.filter == filter;
+                final isSelected = current == filter;
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: FilterChip(
                     label: Text(_filterLabel(filter, strings)),
                     selected: isSelected,
                     onSelected: (_) {
-                      ref.read(taskListProvider.notifier).setFilter(filter);
+                      ref
+                          .read(selectedTaskFilterProvider.notifier)
+                          .select(filter);
                     },
                     showCheckmark: false,
                     avatar: isSelected
@@ -104,53 +136,51 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
           // Task content (list or kanban)
           Expanded(
-            child: taskState.isLoading
+            child: !async.hasValue && async.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : taskState.error != null
+                : !async.hasValue && async.hasError
                 ? _ErrorView(
-                    error: taskState.error!,
+                    error: apiErrorMessage(async.error!),
                     onRetry: () =>
-                        ref.read(taskListProvider.notifier).loadTasks(),
+                        ref.read(taskListProvider(current).notifier).refresh(),
                   )
-                : taskState.tasks.isEmpty
-                ? _EmptyView(filter: taskState.filter)
+                : tasks.isEmpty
+                ? _EmptyView(filter: current)
                 : _isKanbanView
                 ? // Kanban board view
                   KanbanBoard(
-                    tasks: taskState.tasks,
-                    onTaskTap: (task) {
-                      final id = task.uid ?? task.id?.toString();
-                      if (id != null) context.push('/tasks/$id');
-                    },
-                    onTaskStatusChanged: (task, newStatus) async {
-                      final taskId = task.uid ?? task.id?.toString();
-                      if (taskId == null) return;
-                      await ref
-                          .read(taskListProvider.notifier)
-                          .updateTaskStatus(taskId, newStatus);
+                    tasks: [for (final t in tasks) _boardRef(t)],
+                    onTaskTap: (ref) => _openTask(_byUid(tasks, ref.uid)),
+                    onTaskStatusChanged: (ref, newStatus) async {
+                      final result = await actions.setStatus(
+                        _byUid(tasks, ref.uid),
+                        TaskStatus.fromCode(newStatus),
+                      );
+                      if (result.error != null) _showError(result.error!);
                     },
                   )
                 : // List view
                   RefreshIndicator(
-                    onRefresh: () =>
-                        ref.read(taskListProvider.notifier).loadTasks(),
+                    onRefresh: () async {
+                      try {
+                        await ref
+                            .read(taskListProvider(current).notifier)
+                            .refresh();
+                      } catch (e) {
+                        _showError(e);
+                      }
+                    },
                     child: ListView.builder(
                       padding: const EdgeInsets.only(bottom: 88),
-                      itemCount: taskState.tasks.length,
+                      itemCount: tasks.length,
                       itemBuilder: (context, index) {
-                        final task = taskState.tasks[index];
+                        final task = tasks[index];
                         return _TaskListItem(
                           task: task,
-                          onTap: () {
-                            final id = task.uid ?? task.id?.toString();
-                            if (id != null) {
-                              context.push('/tasks/$id');
-                            }
-                          },
-                          onToggle: () {
-                            ref
-                                .read(taskListProvider.notifier)
-                                .toggleTaskComplete(taskState.tasks[index]);
+                          onTap: () => _openTask(task),
+                          onToggle: () async {
+                            final result = await actions.toggleComplete(task);
+                            if (result.error != null) _showError(result.error!);
                           },
                         );
                       },
@@ -213,7 +243,7 @@ class _TaskListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final priorityColor = AppTheme.getPriorityColor(
-      task.priority,
+      task.priority.code,
       theme.colorScheme,
     );
 
@@ -300,8 +330,9 @@ class _TaskListItem extends StatelessWidget {
     }
 
     if (task.dueDate != null) {
-      final isOverdue =
-          task.dueDate!.isBefore(DateTime.now()) && !task.isCompleted;
+      final isOverdue = task.isOverdue(
+        CalendarDate.fromDateTime(DateTime.now()),
+      );
       parts.add(
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -315,7 +346,7 @@ class _TaskListItem extends StatelessWidget {
             ),
             const SizedBox(width: 3),
             Text(
-              DateFormat.MMMd().format(task.dueDate!),
+              DateFormat.MMMd().format(task.dueDate!.toLocalDateTime()),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: isOverdue ? theme.colorScheme.error : null,
                 fontWeight: isOverdue ? FontWeight.w600 : null,
@@ -342,8 +373,11 @@ class _TaskListItem extends StatelessWidget {
 
   Widget? _buildTrailing(BuildContext context) {
     final theme = Theme.of(context);
-    if (task.priority >= 1) {
-      final color = AppTheme.getPriorityColor(task.priority, theme.colorScheme);
+    if (task.priority != Priority.low) {
+      final color = AppTheme.getPriorityColor(
+        task.priority.code,
+        theme.colorScheme,
+      );
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         decoration: BoxDecoration(
@@ -351,7 +385,7 @@ class _TaskListItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(6),
         ),
         child: Text(
-          task.priority == 2 ? '!!!' : '!!',
+          task.priority == Priority.high ? '!!!' : '!!',
           style: TextStyle(
             color: color,
             fontWeight: FontWeight.w700,

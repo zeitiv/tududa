@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../models/note_model.dart';
+import '../../core/api/api_error.dart';
+import '../../core/api/patch.dart' show Patch;
+import '../../core/ids.dart';
+import '../data/note_patch.dart';
+import '../domain/note.dart';
 import '../providers/note_provider.dart';
 import '../../projects/providers/project_provider.dart';
 import '../../l10n/strings.dart';
-import '../../core/services/api_service.dart';
 
 /// Note editor screen (create/edit) with Markdown support.
 class NoteEditorScreen extends ConsumerStatefulWidget {
-  final dynamic noteId;
+  /// The note's uid (as in the `/notes/:id` route); null creates a note.
+  final String? noteId;
   const NoteEditorScreen({super.key, this.noteId});
 
   @override
@@ -20,7 +24,7 @@ class NoteEditorScreen extends ConsumerStatefulWidget {
 class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
-  int? _projectId;
+  String? _projectUid;
   String? _color;
   bool _isLoading = false;
   bool _isEdit = false;
@@ -43,31 +47,23 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
       _isEdit = true;
       _loadNote();
     }
-    Future.microtask(
-      () => ref.read(projectListProvider.notifier).loadProjects(),
-    );
   }
+
+  NoteUid get _uid => NoteUid(widget.noteId!);
 
   Future<void> _loadNote() async {
     setState(() => _isLoading = true);
     try {
-      final response = await ApiService.instance.getNote(widget.noteId!);
-      if (response.statusCode == 200 && mounted) {
-        final data = response.data is Map<String, dynamic>
-            ? response.data
-            : response.data['note'];
-        if (data != null) {
-          final note = Note.fromJson(data as Map<String, dynamic>);
-          _titleController.text = note.title ?? '';
-          _contentController.text = note.content ?? '';
-          setState(() {
-            _projectId = note.projectId;
-            _color = note.color;
-            _isLoading = false;
-          });
-        }
-      }
-    } catch (e) {
+      final note = await ref.read(noteRepositoryProvider).get(_uid);
+      if (!mounted) return;
+      _titleController.text = note.title ?? '';
+      _contentController.text = note.content ?? '';
+      setState(() {
+        _projectUid = note.projectUid?.value;
+        _color = note.color;
+        _isLoading = false;
+      });
+    } on ApiError {
       if (mounted) setState(() => _isLoading = false);
     }
   }
@@ -75,22 +71,38 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
   Future<void> _save() async {
     setState(() => _isLoading = true);
 
-    final note = Note(
-      uid: widget.noteId is String ? widget.noteId : null,
-      id: widget.noteId is int ? widget.noteId : null,
-      title: _titleController.text.trim().isEmpty
-          ? null
-          : _titleController.text.trim(),
-      content: _contentController.text.trim(),
-      projectId: _projectId,
-      color: _color,
-    );
+    final title = _titleController.text.trim();
+    final content = _contentController.text.trim();
+    final notifier = ref.read(noteListProvider.notifier);
+    final projectUid = _projectUid == null ? null : ProjectUid(_projectUid!);
 
     bool success;
-    if (_isEdit) {
-      success = await ref.read(noteListProvider.notifier).updateNote(note);
-    } else {
-      success = await ref.read(noteListProvider.notifier).createNote(note);
+    try {
+      if (_isEdit) {
+        await notifier.updateNote(
+          _uid,
+          NotePatch(
+            title: title.isEmpty ? const Patch.clear() : Patch.set(title),
+            content: Patch.set(content),
+            color: _color == null ? const Patch.clear() : Patch.set(_color!),
+            projectUid: projectUid == null
+                ? const Patch.clear()
+                : Patch.set(projectUid),
+          ),
+        );
+      } else {
+        await notifier.create(
+          NoteDraft(
+            title: title.isEmpty ? null : title,
+            content: content,
+            color: _color,
+            projectUid: projectUid,
+          ),
+        );
+      }
+      success = true;
+    } on ApiError {
+      success = false;
     }
 
     if (mounted) {
@@ -124,7 +136,12 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
       ),
     );
     if (confirm == true && mounted) {
-      await ref.read(noteListProvider.notifier).deleteNote(widget.noteId!);
+      try {
+        await ref.read(noteListProvider.notifier).deleteNote(_uid);
+      } on ApiError {
+        // Stay on the screen so the user can retry.
+        return;
+      }
       if (mounted) context.pop();
     }
   }
@@ -139,7 +156,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final projectState = ref.watch(projectListProvider);
+    final projects = ref.watch(projectListProvider).value ?? const [];
     final strings = context.l10n;
 
     return Scaffold(
@@ -260,19 +277,22 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
                 const SizedBox(height: 16),
 
                 // Project
-                DropdownButtonFormField<int?>(
-                  initialValue: _projectId,
+                DropdownButtonFormField<String?>(
+                  initialValue: _projectUid,
                   decoration: InputDecoration(
                     labelText: strings.project,
                     prefixIcon: const Icon(Icons.folder_outlined),
                   ),
                   items: [
                     DropdownMenuItem(value: null, child: Text(strings.none)),
-                    ...projectState.projects.map(
-                      (p) => DropdownMenuItem(value: p.id, child: Text(p.name)),
+                    ...projects.map(
+                      (p) => DropdownMenuItem(
+                        value: p.uid.value,
+                        child: Text(p.name),
+                      ),
                     ),
                   ],
-                  onChanged: (v) => setState(() => _projectId = v),
+                  onChanged: (v) => setState(() => _projectUid = v),
                 ),
                 const SizedBox(height: 80),
               ],

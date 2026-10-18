@@ -1,104 +1,66 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/note_model.dart';
-import '../../core/services/api_service.dart';
+import '../../core/api/api_providers.dart';
+import '../../core/ids.dart';
+import '../data/note_patch.dart';
+import '../data/note_repository.dart';
+import '../data/notes_api.dart';
+import '../data/remote_note_repository.dart';
+import '../domain/note.dart';
 
-class NoteListState {
-  final List<Note> notes;
-  final bool isLoading;
-  final String? error;
+final noteRepositoryProvider = Provider<NoteRepository>(
+  (ref) => RemoteNoteRepository(NotesApi(ref.watch(dioProvider))),
+);
 
-  const NoteListState({
-    this.notes = const [],
-    this.isLoading = false,
-    this.error,
-  });
+/// All notes. Mutations rethrow the repository's `ApiError`.
+class NoteListNotifier extends AsyncNotifier<List<Note>> {
+  NoteRepository get _repo => ref.read(noteRepositoryProvider);
 
-  NoteListState copyWith({List<Note>? notes, bool? isLoading, String? error}) {
-    return NoteListState(
-      notes: notes ?? this.notes,
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
-    );
+  @override
+  Future<List<Note>> build() => ref.watch(noteRepositoryProvider).list();
+
+  Future<void> refresh() async {
+    state = await AsyncValue.guard(_repo.list);
+  }
+
+  List<Note> get _current => state.value ?? const [];
+
+  Future<Note> create(NoteDraft draft) async {
+    final note = await _repo.create(draft);
+    state = AsyncData([note, ..._current]);
+    return note;
+  }
+
+  Future<Note> updateNote(NoteUid uid, NotePatch patch) async {
+    final updated = await _repo.update(uid, patch);
+    state = AsyncData([
+      for (final n in _current)
+        if (n.uid == uid) updated else n,
+    ]);
+    ref.invalidate(noteByUidProvider(uid));
+    return updated;
+  }
+
+  Future<void> deleteNote(NoteUid uid) async {
+    await _repo.delete(uid);
+    state = AsyncData([
+      for (final n in _current)
+        if (n.uid != uid) n,
+    ]);
+    ref.invalidate(noteByUidProvider(uid));
   }
 }
 
-class NoteNotifier extends StateNotifier<NoteListState> {
-  NoteNotifier() : super(const NoteListState());
+final noteListProvider = AsyncNotifierProvider<NoteListNotifier, List<Note>>(
+  NoteListNotifier.new,
+);
 
-  Future<void> loadNotes({dynamic projectId}) async {
-    state = state.copyWith(isLoading: true);
-    try {
-      final queryParams = <String, dynamic>{};
-      if (projectId != null) queryParams['project_id'] = projectId;
+/// One note, loaded by uid (what the editor needs when opened from a link).
+final noteByUidProvider = FutureProvider.family<Note, NoteUid>(
+  (ref, uid) => ref.watch(noteRepositoryProvider).get(uid),
+);
 
-      final response = await ApiService.instance.getNotes(
-        queryParams: queryParams,
-      );
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data is List
-            ? response.data
-            : (response.data['notes'] ?? []);
-        final notes = data
-            .map((e) => Note.fromJson(e as Map<String, dynamic>))
-            .toList();
-        state = state.copyWith(notes: notes, isLoading: false);
-      } else {
-        state = state.copyWith(isLoading: false, error: 'Failed to load notes');
-      }
-    } catch (e) {
-      debugPrint('Load notes error: $e');
-      state = state.copyWith(isLoading: false, error: 'Error: $e');
-    }
-  }
-
-  Future<bool> createNote(Note note) async {
-    try {
-      final response = await ApiService.instance.createNote(note.toJson());
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        await loadNotes();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future<bool> updateNote(Note note) async {
-    try {
-      if (note.id == null) return false;
-      final response = await ApiService.instance.updateNote(
-        note.id!,
-        note.toJson(),
-      );
-      if (response.statusCode == 200) {
-        await loadNotes();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future<bool> deleteNote(dynamic id) async {
-    try {
-      final response = await ApiService.instance.deleteNote(id);
-      if (response.statusCode == 200 || response.statusCode == 204) {
-        await loadNotes();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
-    }
-  }
-}
-
-final noteListProvider = StateNotifierProvider<NoteNotifier, NoteListState>((
-  ref,
-) {
-  return NoteNotifier();
-});
+/// Notes of one project.
+final projectNotesProvider = FutureProvider.family<List<Note>, ProjectUid>(
+  (ref, uid) => ref.watch(noteRepositoryProvider).list(projectUid: uid),
+);

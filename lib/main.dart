@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
 import 'auth/providers/auth_provider.dart';
-import 'core/services/api_service.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,9 +10,6 @@ import 'settings/providers/settings_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize API service
-  await ApiService.instance.init();
 
   // Initialize SharedPreferences
   final sharedPrefs = await SharedPreferences.getInstance();

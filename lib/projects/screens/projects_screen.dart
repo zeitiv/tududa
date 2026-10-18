@@ -18,39 +18,32 @@ class ProjectsScreen extends ConsumerStatefulWidget {
 
 class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
   @override
-  void initState() {
-    super.initState();
-    Future.microtask(
-      () => ref.read(projectListProvider.notifier).loadProjects(),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final projectState = ref.watch(projectListProvider);
+    final projects = projectState.value ?? const <Project>[];
     final strings = context.l10n;
 
     return Scaffold(
       appBar: AppBar(title: Text(strings.projects)),
-      body: projectState.isLoading
+      body: projectState.isLoading && !projectState.hasValue
           ? const Center(child: CircularProgressIndicator())
-          : projectState.error != null
+          : projectState.hasError && !projectState.hasValue
           ? Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(projectState.error!),
+                  Text('Error: ${projectState.error}'),
                   const SizedBox(height: 8),
                   FilledButton.tonal(
                     onPressed: () =>
-                        ref.read(projectListProvider.notifier).loadProjects(),
+                        ref.read(projectListProvider.notifier).refresh(),
                     child: Text(strings.retry),
                   ),
                 ],
               ),
             )
-          : projectState.projects.isEmpty
+          : projects.isEmpty
           ? Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -72,20 +65,15 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
               ),
             )
           : RefreshIndicator(
-              onRefresh: () =>
-                  ref.read(projectListProvider.notifier).loadProjects(),
+              onRefresh: () => ref.read(projectListProvider.notifier).refresh(),
               child: ListView.builder(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
-                itemCount: projectState.projects.length,
+                itemCount: projects.length,
                 itemBuilder: (context, index) {
                   return _ProjectCard(
-                    project: projectState.projects[index],
-                    onTap: () {
-                      final id =
-                          projectState.projects[index].uid ??
-                          projectState.projects[index].id?.toString();
-                      if (id != null) context.push('/projects/$id');
-                    },
+                    project: projects[index],
+                    onTap: () =>
+                        context.push('/projects/${projects[index].uid.value}'),
                   );
                 },
               ),
@@ -149,14 +137,14 @@ class _ProjectCard extends StatelessWidget {
                       size: 16,
                       color: theme.colorScheme.primary,
                     ),
-                  if (project.priority != null && project.priority != 'none')
+                  if (project.priorityName != null)
                     Padding(
                       padding: const EdgeInsets.only(left: 8),
                       child: Icon(
                         Icons.flag_rounded,
                         size: 16,
                         color: AppTheme.getStringPriorityColor(
-                          project.priority,
+                          project.priorityName,
                           theme.colorScheme,
                         ),
                       ),

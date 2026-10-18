@@ -1,136 +1,165 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 
+import '../../core/api/patch.dart' as pt;
+import '../../core/ids.dart';
+import '../data/project_api.dart';
+import '../data/project_repository.dart';
+import '../data/project_tasks_source.dart';
 import '../models/project_model.dart';
-import '../../core/services/api_service.dart';
 
-class ProjectListState {
-  final List<Project> projects;
-  final bool isLoading;
-  final String? error;
+/// The HTTP stack already retries transient failures; Riverpod must not
+/// retry again (and a 404 must surface at once).
+Duration? noRetry(int retryCount, Object error) => null;
 
-  const ProjectListState({
-    this.projects = const [],
-    this.isLoading = false,
-    this.error,
-  });
+/// Projects of the signed-in user. Update and delete are optimistic and roll
+/// back on failure, rethrowing the `ApiError`.
+class ProjectList extends AsyncNotifier<List<Project>> {
+  ProjectRepository get _repo => ref.read(projectRepositoryProvider);
 
-  ProjectListState copyWith({
-    List<Project>? projects,
-    bool? isLoading,
-    String? error,
-  }) {
-    return ProjectListState(
-      projects: projects ?? this.projects,
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
+  @override
+  Future<List<Project>> build() => ref.watch(projectRepositoryProvider).list();
+
+  Future<void> refresh() async {
+    state = await AsyncValue.guard(_repo.list);
+  }
+
+  Future<Project> create(NewProject project) async {
+    final created = await _repo.create(project);
+    state = AsyncData([...?state.value, created]);
+    return created;
+  }
+
+  Future<Project> edit(ProjectUid uid, ProjectPatch patch) async {
+    final before = state.value;
+    if (before != null) {
+      state = AsyncData([
+        for (final p in before)
+          if (p.uid == uid) applyProjectPatch(p, patch) else p,
+      ]);
+    }
+    try {
+      final saved = await _repo.update(uid, patch);
+      state = AsyncData([
+        for (final p in state.value ?? const <Project>[])
+          if (p.uid == uid) saved else p,
+      ]);
+      ref.invalidate(projectDetailProvider(uid));
+      return saved;
+    } catch (_) {
+      if (before != null) state = AsyncData(before);
+      rethrow;
+    }
+  }
+
+  Future<void> delete(ProjectUid uid) async {
+    final before = state.value;
+    if (before != null) {
+      state = AsyncData([
+        for (final p in before)
+          if (p.uid != uid) p,
+      ]);
+    }
+    try {
+      await _repo.delete(uid);
+    } catch (_) {
+      if (before != null) state = AsyncData(before);
+      rethrow;
+    }
+  }
+}
+
+final projectListProvider = AsyncNotifierProvider<ProjectList, List<Project>>(
+  ProjectList.new,
+  retry: noRetry,
+);
+
+/// One project by uid. A missing project surfaces as `NotFoundError`.
+class ProjectDetail extends AsyncNotifier<Project> {
+  ProjectDetail(this.uid);
+  final ProjectUid uid;
+
+  @override
+  Future<Project> build() => ref.watch(projectRepositoryProvider).get(uid);
+
+  Future<Project> edit(ProjectPatch patch) async {
+    final before = state.value;
+    if (before != null) state = AsyncData(applyProjectPatch(before, patch));
+    try {
+      final saved = await ref
+          .read(projectRepositoryProvider)
+          .update(uid, patch);
+      state = AsyncData(saved);
+      return saved;
+    } catch (_) {
+      if (before != null) state = AsyncData(before);
+      rethrow;
+    }
+  }
+}
+
+final projectDetailProvider =
+    AsyncNotifierProvider.family<ProjectDetail, Project, ProjectUid>(
+      ProjectDetail.new,
+      retry: noRetry,
+    );
+
+/// Tasks shown on a project's board, with optimistic status moves.
+class ProjectTasks extends AsyncNotifier<List<ProjectTaskRef>> {
+  ProjectTasks(this.project);
+  final ProjectUid project;
+
+  @override
+  Future<List<ProjectTaskRef>> build() =>
+      ref.watch(projectTasksSourceProvider).tasksFor(project);
+
+  Future<void> refresh() async {
+    state = await AsyncValue.guard(
+      () => ref.read(projectTasksSourceProvider).tasksFor(project),
     );
   }
-}
 
-class ProjectNotifier extends StateNotifier<ProjectListState> {
-  ProjectNotifier() : super(const ProjectListState());
-
-  Future<void> loadProjects() async {
-    state = state.copyWith(isLoading: true);
-
-    try {
-      final response = await ApiService.instance.getProjects();
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data is List
-            ? response.data
-            : (response.data['projects'] ?? []);
-        final projects = data
-            .map((e) => Project.fromJson(e as Map<String, dynamic>))
-            .toList();
-        state = state.copyWith(projects: projects, isLoading: false);
-      } else {
-        state = state.copyWith(
-          isLoading: false,
-          error: 'Failed to load projects',
-        );
-      }
-    } catch (e) {
-      debugPrint('Load projects error: $e');
-      state = state.copyWith(isLoading: false, error: 'Error: $e');
+  Future<void> setStatus(ProjectTaskRef task, int status) async {
+    final before = state.value;
+    if (before != null) {
+      state = AsyncData([
+        for (final t in before)
+          if (t.uid == task.uid) t.copyWith(status: status) else t,
+      ]);
     }
-  }
-
-  Future<bool> createProject(Project project) async {
     try {
-      final response = await ApiService.instance.createProject(
-        project.toJson(),
-      );
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        await loadProjects();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future<bool> updateProject(Project project) async {
-    try {
-      // Server PATCH route uses uid
-      final projectId = project.uid ?? project.id?.toString();
-      if (projectId == null) return false;
-      final response = await ApiService.instance.updateProject(
-        projectId,
-        project.toJson(),
-      );
-      if (response.statusCode == 200 ||
-          response.statusCode == 201 ||
-          response.statusCode == 302) {
-        await loadProjects();
-        return true;
-      }
-      debugPrint('Update project failed: status=${response.statusCode}');
-      return false;
-    } catch (e) {
-      debugPrint('Update project error: $e');
-      return false;
-    }
-  }
-
-  Future<bool> deleteProject(dynamic id) async {
-    try {
-      final response = await ApiService.instance.deleteProject(id);
-      if (response.statusCode == 200 || response.statusCode == 204) {
-        await loadProjects();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
+      await ref.read(projectTasksSourceProvider).setStatus(task.uid, status);
+    } catch (_) {
+      if (before != null) state = AsyncData(before);
+      rethrow;
     }
   }
 }
 
-final projectListProvider =
-    StateNotifierProvider<ProjectNotifier, ProjectListState>((ref) {
-      return ProjectNotifier();
-    });
+final projectTasksProvider =
+    AsyncNotifierProvider.family<
+      ProjectTasks,
+      List<ProjectTaskRef>,
+      ProjectUid
+    >(ProjectTasks.new, retry: noRetry);
 
-final projectDetailProvider = FutureProvider.family<Project?, dynamic>((
-  ref,
-  id,
-) async {
-  try {
-    final response = await ApiService.instance.getProject(id);
-    if (response.statusCode == 200 && response.data != null) {
-      final data = response.data is Map<String, dynamic>
-          ? response.data
-          : response.data['project'];
-      if (data != null) {
-        return Project.fromJson(data as Map<String, dynamic>);
-      }
-    }
-  } catch (e) {
-    debugPrint('Project detail error: $e');
-  }
-  return null;
-});
+/// Applies [patch] to [p] locally (for optimistic updates).
+Project applyProjectPatch(Project p, ProjectPatch patch) {
+  T? v<T>(pt.Patch<T> x, T? current) => switch (x) {
+    pt.Set<T>(:final value) => value,
+    _ => current,
+  };
+  return p.copyWith(
+    name: v(patch.name, p.name) ?? p.name,
+    description: v(patch.description, p.description),
+    status: v(patch.status, p.status) ?? p.status,
+    priority: v(patch.priority, p.priority),
+    areaUid: v(patch.areaUid, p.areaUid),
+    // The area name is refreshed from the server response.
+    areaName: patch.areaUid.isSet ? null : p.areaName,
+    pinToSidebar: v(patch.pinToSidebar, p.pinToSidebar) ?? p.pinToSidebar,
+    taskShowCompleted:
+        v(patch.taskShowCompleted, p.taskShowCompleted) ?? p.taskShowCompleted,
+    taskSortOrder: v(patch.taskSortOrder, p.taskSortOrder) ?? p.taskSortOrder,
+    dueDateAt: v(patch.dueDateAt, p.dueDateAt),
+  );
+}

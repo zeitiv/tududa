@@ -3,15 +3,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../models/task_model.dart';
+import '../../core/api/patch.dart' show Patch;
+import '../../core/ids.dart';
+import '../../core/time/calendar_date.dart';
+import '../data/task_patch.dart';
+import '../domain/new_task.dart';
+import '../domain/task.dart';
+import '../providers/project_options_provider.dart';
 import '../providers/task_provider.dart';
-import '../../projects/providers/project_provider.dart';
+import '../widgets/api_error_message.dart';
 import '../../l10n/strings.dart';
 
 /// Task create/edit form screen.
 class TaskFormScreen extends ConsumerStatefulWidget {
-  final dynamic taskId;
-  final int? defaultProjectId;
+  /// The task's uid when editing.
+  final String? taskId;
+
+  /// Project to file a new task under: a project uid (`String`). Other types
+  /// (the router used to pass a numeric id) are ignored.
+  final Object? defaultProjectId;
   const TaskFormScreen({super.key, this.taskId, this.defaultProjectId});
 
   @override
@@ -23,17 +33,19 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
   final _nameController = TextEditingController();
   final _noteController = TextEditingController();
 
-  int _priority = 0;
-  int _status = 0;
+  Priority _priority = Priority.low;
+  TaskStatus _status = TaskStatus.notStarted;
   DateTime? _dueDate;
   DateTime? _deferUntil;
-  int? _projectId;
+  ProjectUid? _projectUid;
   String _recurrenceType = 'none';
   int _recurrenceInterval = 1;
-  DateTime? _recurrenceEndDate;
   bool _completionBased = false;
   bool _isLoading = false;
   bool _isEdit = false;
+
+  /// The task as loaded, to send only what the user changed.
+  Task? _original;
 
   @override
   void initState() {
@@ -41,87 +53,134 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
     if (widget.taskId != null) {
       _isEdit = true;
       _loadTask();
-    } else if (widget.defaultProjectId != null) {
-      _projectId = widget.defaultProjectId;
+    } else if (widget.defaultProjectId case final String uid
+        when uid.isNotEmpty) {
+      _projectUid = ProjectUid(uid);
     }
-    // Ensure projects are loaded for the picker
-    Future.microtask(
-      () => ref.read(projectListProvider.notifier).loadProjects(),
-    );
   }
 
-  // Store the actual numeric id and uid from the loaded task
-  int? _loadedTaskId;
-  String? _loadedTaskUid;
+  void _showError(Object error) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(apiErrorMessage(error))));
+  }
 
   Future<void> _loadTask() async {
     setState(() => _isLoading = true);
-    final task = await ref.read(taskDetailProvider(widget.taskId!).future);
-    if (task != null && mounted) {
+    try {
+      final task = await ref.read(
+        taskDetailProvider(TaskUid(widget.taskId!)).future,
+      );
+      if (!mounted) return;
       _nameController.text = task.name;
       _noteController.text = task.note ?? '';
       setState(() {
-        _loadedTaskId = task.id;
-        _loadedTaskUid = task.uid;
+        _original = task;
         _priority = task.priority;
         _status = task.status;
-        _dueDate = task.dueDate;
-        _deferUntil = task.deferUntil;
-        _projectId = task.projectId;
+        _dueDate = task.dueDate?.toLocalDateTime();
+        _deferUntil = task.deferUntil?.toLocal();
+        _projectUid = task.projectUid;
         _recurrenceType = task.recurrenceType;
         _recurrenceInterval = task.recurrenceInterval ?? 1;
-        _recurrenceEndDate = task.recurrenceEndDate;
         _completionBased = task.completionBased;
         _isLoading = false;
       });
-    } else {
+    } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
+      _showError(e);
     }
+  }
+
+  CalendarDate? get _dueCalendarDate =>
+      _dueDate == null ? null : CalendarDate.fromDateTime(_dueDate!);
+
+  TaskPatch _buildPatch(Task o) {
+    final name = _nameController.text.trim();
+    final note = _noteController.text.trim();
+    final due = _dueCalendarDate;
+    final dueChanged = due != o.dueDate;
+    final recurring = _recurrenceType != 'none';
+    return TaskPatch(
+      name: name != o.name ? Patch.set(name) : const Patch.unset(),
+      note: note == (o.note ?? '')
+          ? const Patch.unset()
+          : (note.isEmpty ? const Patch.clear() : Patch.set(note)),
+      status: _status != o.status ? Patch.set(_status) : const Patch.unset(),
+      priority: _priority != o.priority
+          ? Patch.set(_priority)
+          : const Patch.unset(),
+      // Tududi drops the due time when only the date is sent, so resend the
+      // existing time with a changed date (and clear it with the date).
+      dueDate: !dueChanged
+          ? const Patch.unset()
+          : (due == null ? const Patch.clear() : Patch.set(due)),
+      dueTime: dueChanged && due != null && o.dueTime != null
+          ? Patch.set(o.dueTime!)
+          : const Patch.unset(),
+      deferUntil: _deferUntil == o.deferUntil?.toLocal()
+          ? const Patch.unset()
+          : (_deferUntil == null
+                ? const Patch.clear()
+                : Patch.set(_deferUntil!)),
+      projectUid: _projectUid == o.projectUid
+          ? const Patch.unset()
+          : (_projectUid == null
+                ? const Patch.clear()
+                : Patch.set(_projectUid!)),
+      recurrenceType: _recurrenceType != o.recurrenceType
+          ? Patch.set(_recurrenceType)
+          : const Patch.unset(),
+      recurrenceInterval: !recurring
+          ? (o.recurrenceInterval == null
+                ? const Patch.unset()
+                : const Patch.clear())
+          : (_recurrenceInterval != o.recurrenceInterval
+                ? Patch.set(_recurrenceInterval)
+                : const Patch.unset()),
+      completionBased: _completionBased != o.completionBased
+          ? Patch.set(_completionBased)
+          : const Patch.unset(),
+    );
   }
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isLoading = true);
-
-    final task = Task(
-      id: _loadedTaskId,
-      uid: _loadedTaskUid,
-      name: _nameController.text.trim(),
-      note: _noteController.text.trim().isEmpty
-          ? null
-          : _noteController.text.trim(),
-      priority: _priority,
-      status: _status,
-      dueDate: _dueDate,
-      deferUntil: _deferUntil,
-      projectId: _projectId,
-      recurrenceType: _recurrenceType,
-      recurrenceInterval: _recurrenceType != 'none'
-          ? _recurrenceInterval
-          : null,
-      recurrenceEndDate: _recurrenceEndDate,
-      completionBased: _completionBased,
-    );
-
-    bool success;
+    final actions = ref.read(taskActionsProvider);
+    final TaskResult<Task> result;
     if (_isEdit) {
-      success = await ref.read(taskListProvider.notifier).updateTask(task);
+      final original = _original;
+      if (original == null) return;
+      setState(() => _isLoading = true);
+      result = await actions.update(original.uid, _buildPatch(original));
     } else {
-      success = await ref.read(taskListProvider.notifier).createTask(task);
+      setState(() => _isLoading = true);
+      final note = _noteController.text.trim();
+      final recurring = _recurrenceType != 'none';
+      result = await actions.create(
+        NewTask(
+          name: _nameController.text.trim(),
+          note: note.isEmpty ? null : note,
+          priority: _priority,
+          status: _status,
+          dueDate: _dueCalendarDate,
+          deferUntil: _deferUntil,
+          projectUid: _projectUid,
+          recurrenceType: recurring ? _recurrenceType : null,
+          recurrenceInterval: recurring ? _recurrenceInterval : null,
+          completionBased: recurring ? _completionBased : null,
+        ),
+      );
     }
 
-    if (mounted) {
-      setState(() => _isLoading = false);
-      if (success) {
-        if (_isEdit && widget.taskId != null) {
-          ref.invalidate(taskDetailProvider(widget.taskId!));
-        }
-        context.pop();
-      } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Failed to save task')));
-      }
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+    if (result.ok) {
+      context.pop();
+    } else {
+      _showError(result.error!);
     }
   }
 
@@ -154,7 +213,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final projectState = ref.watch(projectListProvider);
+    final projects = ref.watch(projectOptionsProvider).value ?? const [];
     final strings = context.l10n;
 
     return Scaffold(
@@ -198,20 +257,20 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                   // Priority
                   Text(strings.priority, style: theme.textTheme.labelLarge),
                   const SizedBox(height: 8),
-                  SegmentedButton<int>(
+                  SegmentedButton<Priority>(
                     segments: [
                       ButtonSegment(
-                        value: 0,
+                        value: Priority.low,
                         label: Text(strings.low),
                         icon: const Icon(Icons.arrow_downward, size: 16),
                       ),
                       ButtonSegment(
-                        value: 1,
+                        value: Priority.medium,
                         label: Text(strings.medium),
                         icon: const Icon(Icons.remove, size: 16),
                       ),
                       ButtonSegment(
-                        value: 2,
+                        value: Priority.high,
                         label: Text(strings.high),
                         icon: const Icon(Icons.arrow_upward, size: 16),
                       ),
@@ -225,15 +284,18 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                   // Status
                   Text(strings.status, style: theme.textTheme.labelLarge),
                   const SizedBox(height: 8),
-                  DropdownButtonFormField<int>(
+                  DropdownButtonFormField<TaskStatus>(
                     key: ValueKey(_status),
-                    initialValue: _status,
+                    initialValue:
+                        _statusOptions(strings).any((o) => o.value == _status)
+                        ? _status
+                        : null,
                     decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.radio_button_checked_outlined),
                     ),
                     items: _statusOptions(strings)
                         .map(
-                          (option) => DropdownMenuItem<int>(
+                          (option) => DropdownMenuItem<TaskStatus>(
                             value: option.value,
                             child: Text(option.label),
                           ),
@@ -293,11 +355,12 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                     leading: const Icon(Icons.folder_outlined),
                     title: Text(strings.project),
                     subtitle: Text(
-                      _projectId != null
-                          ? projectState.projects
-                                    .where((p) => p.id == _projectId)
+                      _projectUid != null
+                          ? projects
+                                    .where((p) => p.uid == _projectUid)
                                     .firstOrNull
                                     ?.name ??
+                                _original?.projectName ??
                                 'Selected'
                           : strings.none,
                     ),
@@ -420,19 +483,19 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
     }
   }
 
-  List<({int value, String label})> _statusOptions(AppStrings strings) {
+  List<({TaskStatus value, String label})> _statusOptions(AppStrings strings) {
     return [
-      (value: 0, label: strings.notStarted),
-      (value: 6, label: strings.planned),
-      (value: 1, label: strings.inProgress),
-      (value: 4, label: strings.waiting),
-      (value: 5, label: strings.cancelled),
-      (value: 2, label: strings.done),
+      (value: TaskStatus.notStarted, label: strings.notStarted),
+      (value: TaskStatus.planned, label: strings.planned),
+      (value: TaskStatus.inProgress, label: strings.inProgress),
+      (value: TaskStatus.waiting, label: strings.waiting),
+      (value: TaskStatus.cancelled, label: strings.cancelled),
+      (value: TaskStatus.done, label: strings.done),
     ];
   }
 
   void _showProjectPicker(AppStrings strings) {
-    final projectState = ref.read(projectListProvider);
+    final projects = ref.read(projectOptionsProvider).value ?? const [];
     showModalBottomSheet(
       context: context,
       builder: (context) => Column(
@@ -442,20 +505,20 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
             leading: const Icon(Icons.clear),
             title: Text(strings.none),
             onTap: () {
-              setState(() => _projectId = null);
+              setState(() => _projectUid = null);
               Navigator.pop(context);
             },
           ),
           const Divider(),
-          ...projectState.projects.map(
+          ...projects.map(
             (p) => ListTile(
               leading: const Icon(Icons.folder_outlined),
               title: Text(p.name),
-              trailing: p.id == _projectId
+              trailing: p.uid == _projectUid
                   ? const Icon(Icons.check, color: Colors.green)
                   : null,
               onTap: () {
-                setState(() => _projectId = p.id);
+                setState(() => _projectUid = p.uid);
                 Navigator.pop(context);
               },
             ),

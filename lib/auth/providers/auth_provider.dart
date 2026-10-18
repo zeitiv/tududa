@@ -1,12 +1,10 @@
-import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/user_model.dart';
-import '../../core/services/api_service.dart';
-import '../../core/utils/constants.dart';
+import '../domain/user.dart';
+import '../session/auth_messages.dart';
+import '../session/server_config.dart';
+import '../session/session_controller.dart';
 
 /// Authentication state
 enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
@@ -39,178 +37,106 @@ class AuthState {
   }
 }
 
-class AuthNotifier extends StateNotifier<AuthState> {
-  AuthNotifier() : super(const AuthState());
-
-  /// Check if server is configured and user is logged in
-  Future<void> checkAuth() async {
-    state = state.copyWith(status: AuthStatus.loading);
-
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final serverUrl = prefs.getString(AppConstants.serverUrlKey);
-
-      if (serverUrl == null || serverUrl.isEmpty) {
-        state = state.copyWith(status: AuthStatus.unauthenticated);
-        return;
-      }
-
-      state = state.copyWith(serverUrl: serverUrl);
-
-      // Initialize API service
-      await ApiService.instance.init(serverUrl: serverUrl);
-
-      // Check if we have a valid session
-      final isLoggedIn = prefs.getBool(AppConstants.isLoggedInKey) ?? false;
-      if (!isLoggedIn) {
-        state = state.copyWith(status: AuthStatus.unauthenticated);
-        return;
-      }
-
-      // Verify session with server
-      final response = await ApiService.instance.getCurrentUser();
-      if (response.statusCode == 200 && response.data != null) {
-        final data = response.data as Map<String, dynamic>;
-        final userData = data['user'] as Map<String, dynamic>?;
-        if (userData != null) {
-          final user = User.fromJson(userData);
-          await _saveUserData(prefs, user);
-          state = state.copyWith(status: AuthStatus.authenticated, user: user);
-          return;
-        }
-      }
-
-      // Session invalid, try to use cached user data
-      state = state.copyWith(status: AuthStatus.unauthenticated);
-    } catch (e) {
-      debugPrint('Auth check error: $e');
-      // Try offline mode with cached data
-      final prefs = await SharedPreferences.getInstance();
-      final cachedData = prefs.getString(AppConstants.userDataKey);
-      if (cachedData != null) {
-        try {
-          final user = User.fromJson(jsonDecode(cachedData));
-          state = state.copyWith(status: AuthStatus.authenticated, user: user);
-          return;
-        } catch (_) {}
-      }
-      state = state.copyWith(
-        status: AuthStatus.unauthenticated,
-        error: 'Unable to verify session',
-      );
-    }
-  }
-
-  /// Configure server URL
-  Future<bool> configureServer(String url) async {
-    try {
-      state = state.copyWith(status: AuthStatus.loading);
-
-      // Normalize URL
-      String serverUrl = url.trim();
-      if (serverUrl.endsWith('/')) {
-        serverUrl = serverUrl.substring(0, serverUrl.length - 1);
-      }
-      if (!serverUrl.startsWith('http://') &&
-          !serverUrl.startsWith('https://')) {
-        serverUrl = 'https://$serverUrl';
-      }
-
-      // Save and initialize
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(AppConstants.serverUrlKey, serverUrl);
-      await ApiService.instance.init(serverUrl: serverUrl);
-
-      state = state.copyWith(
-        status: AuthStatus.unauthenticated,
-        serverUrl: serverUrl,
-      );
-      return true;
-    } catch (e) {
-      state = state.copyWith(
-        status: AuthStatus.error,
-        error: 'Failed to connect to server: $e',
-      );
-      return false;
-    }
-  }
-
-  /// Login with email and password
-  Future<bool> login(String email, String password) async {
-    try {
-      state = state.copyWith(status: AuthStatus.loading);
-
-      final response = await ApiService.instance.login(email, password);
-
-      if (response.statusCode == 200 && response.data != null) {
-        // Login response directly includes user data: {"user": {...}}
-        final data = response.data as Map<String, dynamic>;
-        final userData = data['user'] as Map<String, dynamic>?;
-        if (userData != null) {
-          final user = User.fromJson(userData);
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setBool(AppConstants.isLoggedInKey, true);
-          await _saveUserData(prefs, user);
-          state = state.copyWith(status: AuthStatus.authenticated, user: user);
-          return true;
-        }
-      }
-
-      // Handle error response
-      final data = response.data;
-      String errorMsg = 'Invalid credentials';
-      if (data is Map<String, dynamic>) {
-        errorMsg =
-            data['error']?.toString() ??
-            (data['errors'] is List
-                ? (data['errors'] as List).join(', ')
-                : errorMsg);
-      }
-      state = state.copyWith(
-        status: AuthStatus.unauthenticated,
-        error: errorMsg,
-      );
-      return false;
-    } catch (e) {
-      state = state.copyWith(
-        status: AuthStatus.unauthenticated,
-        error: 'Login failed: $e',
-      );
-      return false;
-    }
-  }
-
-  /// Logout
-  Future<void> logout() async {
-    try {
-      await ApiService.instance.logout();
-    } catch (_) {}
-
-    await ApiService.instance.clearCookies();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(AppConstants.isLoggedInKey, false);
-    await prefs.remove(AppConstants.userDataKey);
-
-    state = const AuthState(status: AuthStatus.unauthenticated);
-  }
-
-  /// Clear server config (go back to server setup)
-  Future<void> clearServerConfig() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(AppConstants.serverUrlKey);
-    await prefs.remove(AppConstants.isLoggedInKey);
-    await prefs.remove(AppConstants.userDataKey);
-    await ApiService.instance.clearCookies();
-
-    state = const AuthState(status: AuthStatus.unauthenticated);
-  }
-
-  Future<void> _saveUserData(SharedPreferences prefs, User user) async {
-    await prefs.setString(AppConstants.userDataKey, jsonEncode(user.toJson()));
-  }
+AuthState _fromSession(SessionState session, String? serverUrl) {
+  return switch (session) {
+    SessionUnknown() => AuthState(serverUrl: serverUrl),
+    SessionNoServer() => AuthState(
+      status: AuthStatus.unauthenticated,
+      serverUrl: serverUrl,
+    ),
+    SessionSignedOut() || SessionExpired() => AuthState(
+      status: AuthStatus.unauthenticated,
+      serverUrl: serverUrl,
+    ),
+    SessionAuthenticating() => AuthState(
+      status: AuthStatus.loading,
+      serverUrl: serverUrl,
+    ),
+    SessionSignedIn(:final user) => AuthState(
+      status: AuthStatus.authenticated,
+      user: user,
+      serverUrl: serverUrl,
+    ),
+  };
 }
 
-/// Auth provider
+/// Thin adapter that exposes [SessionController] in the old [AuthState]
+/// shape for the router, settings and startup code. New code should use
+/// [sessionControllerProvider] directly.
+class AuthNotifier extends StateNotifier<AuthState> {
+  /// Without a [ref] the notifier is a plain state holder (used by tests).
+  AuthNotifier([this._ref]) : super(const AuthState()) {
+    final ref = _ref;
+    if (ref == null) return;
+    state = _fromSession(
+      ref.read(sessionControllerProvider),
+      ref.read(serverConfigProvider)?.url,
+    );
+    ref.listen(sessionControllerProvider, (_, _) => _sync());
+    ref.listen(serverConfigProvider, (_, _) => _sync());
+  }
+
+  final Ref? _ref;
+
+  void _sync() {
+    final ref = _ref!;
+    final next = _fromSession(
+      ref.read(sessionControllerProvider),
+      ref.read(serverConfigProvider)?.url,
+    );
+    // Keep a failure message across the state change it caused.
+    state = next.status == AuthStatus.unauthenticated && state.error != null
+        ? AuthState(
+            status: next.status,
+            serverUrl: next.serverUrl,
+            error: state.error,
+          )
+        : next;
+  }
+
+  SessionController get _session =>
+      _ref!.read(sessionControllerProvider.notifier);
+
+  /// Loads the stored server and session.
+  Future<void> checkAuth() => _session.bootstrap();
+
+  /// Returns false and sets [AuthState.error] on failure.
+  Future<bool> configureServer(String url, {bool allowInsecure = false}) async {
+    try {
+      await _session.configureServer(url, allowInsecure: allowInsecure);
+      return true;
+    } catch (e) {
+      state = AuthState(
+        status: AuthStatus.error,
+        serverUrl: state.serverUrl,
+        error: describeAuthError(e),
+      );
+      return false;
+    }
+  }
+
+  /// Returns false and sets [AuthState.error] on failure.
+  Future<bool> login(String email, String password) async {
+    try {
+      await _session.login(email, password);
+      return true;
+    } catch (e) {
+      state = AuthState(
+        status: AuthStatus.unauthenticated,
+        serverUrl: state.serverUrl,
+        error: describeAuthError(e),
+      );
+      return false;
+    }
+  }
+
+  Future<void> logout() => _session.logout();
+
+  /// Go back to server setup.
+  Future<void> clearServerConfig() => _session.clearServer();
+}
+
+/// Auth provider (adapter over [sessionControllerProvider]).
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  return AuthNotifier();
+  return AuthNotifier(ref);
 });

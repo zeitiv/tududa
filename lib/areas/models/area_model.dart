@@ -1,61 +1,30 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-/// Area model matching the tududi backend Area schema.
-class Area extends Equatable {
-  final int? id;
-  final String? uid;
-  final String name;
-  final String? description;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  final int? projectCount;
+import '../../core/ids.dart';
+import '../data/area_dto.dart';
 
-  const Area({
-    this.id,
-    this.uid,
-    required this.name,
-    this.description,
-    this.createdAt,
-    this.updatedAt,
-    this.projectCount,
-  });
+part 'area_model.freezed.dart';
 
-  factory Area.fromJson(Map<String, dynamic> json) {
-    return Area(
-      id: json['id'] as int?,
-      uid: json['uid'] as String?,
-      name: json['name'] as String? ?? '',
-      description: json['description'] as String?,
-      createdAt: json['created_at'] != null
-          ? DateTime.tryParse(json['created_at'].toString())
-          : (json['createdAt'] != null
-                ? DateTime.tryParse(json['createdAt'].toString())
-                : null),
-      updatedAt: json['updated_at'] != null
-          ? DateTime.tryParse(json['updated_at'].toString())
-          : (json['updatedAt'] != null
-                ? DateTime.tryParse(json['updatedAt'].toString())
-                : null),
-      projectCount: json['projectCount'] as int?,
-    );
-  }
+/// Domain area, identified by [uid].
+@freezed
+abstract class Area with _$Area {
+  const factory Area({
+    required AreaUid uid,
+    int? id,
+    required String name,
+    String? description,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    int? projectCount,
+  }) = _Area;
 
-  Map<String, dynamic> toJson() {
-    return {if (id != null) 'id': id, 'name': name, 'description': description};
-  }
-
-  Area copyWith({String? name, String? description}) {
-    return Area(
-      id: id,
-      uid: uid,
-      name: name ?? this.name,
-      description: description ?? this.description,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-      projectCount: projectCount,
-    );
-  }
-
-  @override
-  List<Object?> get props => [id, uid];
+  factory Area.fromDto(AreaDto dto) => Area(
+    uid: AreaUid(dto.uid),
+    id: dto.id,
+    name: dto.name,
+    description: dto.description,
+    createdAt: dto.createdAtDate,
+    updatedAt: dto.updatedAtDate,
+    projectCount: dto.projectCount,
+  );
 }

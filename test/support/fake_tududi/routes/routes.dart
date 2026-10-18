@@ -1,4 +1,8 @@
 import '../fake_tududi.dart';
+import 'inbox_routes.dart';
+import 'notes_routes.dart';
+import 'projects_routes.dart';
+import 'search_routes.dart';
 
 /// Extension point for milestone lanes.
 ///
@@ -15,4 +19,9 @@ import '../fake_tududi.dart';
 /// all registrars after the built-in routes (later registrations win).
 typedef RouteRegistrar = void Function(FakeTududi server);
 
-final List<RouteRegistrar> registrars = <RouteRegistrar>[];
+final List<RouteRegistrar> registrars = <RouteRegistrar>[
+  registerProjectRoutes,
+  registerInboxRoutes,
+  registerSearchRoutes,
+  registerNoteRoutes,
+];

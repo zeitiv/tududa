@@ -69,11 +69,8 @@ final routerProvider = Provider<GoRouter>((ref) {
                 parentNavigatorKey: rootNavigatorKey,
                 builder: (context, state) {
                   final projectId = state.uri.queryParameters['projectId'];
-                  return TaskFormScreen(
-                    defaultProjectId: projectId != null
-                        ? int.tryParse(projectId)
-                        : null,
-                  );
+                  // Project ids are uid strings; never parse them as ints.
+                  return TaskFormScreen(defaultProjectId: projectId);
                 },
               ),
               GoRoute(

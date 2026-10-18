@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../tasks/models/task_model.dart';
+import '../data/project_tasks_source.dart';
 import '../../core/theme/app_theme.dart';
 import '../../common/widgets/glass_container.dart';
 
@@ -9,9 +9,9 @@ import 'package:intl/intl.dart';
 import '../../l10n/strings.dart';
 
 class KanbanBoard extends StatefulWidget {
-  final List<Task> tasks;
-  final Function(Task, int) onTaskStatusChanged;
-  final Function(Task)? onTaskTap;
+  final List<ProjectTaskRef> tasks;
+  final Function(ProjectTaskRef, int) onTaskStatusChanged;
+  final Function(ProjectTaskRef)? onTaskTap;
 
   const KanbanBoard({
     super.key,
@@ -89,7 +89,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
     BuildContext context,
     int status,
     String title,
-    List<Task> tasks,
+    List<ProjectTaskRef> tasks,
   ) {
     final theme = Theme.of(context);
 
@@ -132,7 +132,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
             ),
           ),
           Expanded(
-            child: DragTarget<Task>(
+            child: DragTarget<ProjectTaskRef>(
               onWillAcceptWithDetails: (details) {
                 // Return true if dropping inside a different column
                 return details.data.status != status;
@@ -161,7 +161,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
                     itemCount: tasks.length,
                     itemBuilder: (context, index) {
                       final task = tasks[index];
-                      return LongPressDraggable<Task>(
+                      return LongPressDraggable<ProjectTaskRef>(
                         data: task,
                         feedback: Material(
                           color: Colors.transparent,
@@ -197,7 +197,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
 }
 
 class _KanbanCard extends StatelessWidget {
-  final Task task;
+  final ProjectTaskRef task;
   final VoidCallback? onTap;
 
   const _KanbanCard({required this.task, this.onTap});

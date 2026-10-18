@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/api/api_error.dart';
+import '../../core/api/patch.dart' as pt;
+import '../../core/ids.dart';
+import '../data/project_api.dart';
 import '../models/project_model.dart';
 import '../providers/project_provider.dart';
+import '../../areas/models/area_model.dart';
 import '../../areas/providers/area_provider.dart';
 import '../../l10n/strings.dart';
 
@@ -23,14 +28,13 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
 
   String _status = 'not_started';
   String? _priority;
-  int? _areaId;
+  AreaUid? _areaUid;
   bool _pinToSidebar = false;
   bool _isLoading = false;
   bool _isEdit = false;
 
-  // Store the actual numeric id and uid from the loaded project
-  int? _loadedProjectId;
-  String? _loadedProjectUid;
+  ProjectUid? get _uid =>
+      widget.projectId == null ? null : ProjectUid(widget.projectId.toString());
 
   @override
   void initState() {
@@ -39,28 +43,24 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
       _isEdit = true;
       _loadProject();
     }
-    Future.microtask(() => ref.read(areaListProvider.notifier).loadAreas());
   }
 
   Future<void> _loadProject() async {
     setState(() => _isLoading = true);
-    final project = await ref.read(
-      projectDetailProvider(widget.projectId!).future,
-    );
-    if (project != null && mounted) {
+    try {
+      final project = await ref.read(projectDetailProvider(_uid!).future);
+      if (!mounted) return;
       _nameController.text = project.name;
       _descController.text = project.description ?? '';
       setState(() {
-        _loadedProjectId = project.id;
-        _loadedProjectUid = project.uid;
         _status = project.status;
-        _priority = project.priority;
-        _areaId = project.areaId;
+        _priority = project.priorityName;
+        _areaUid = project.areaUid;
         _pinToSidebar = project.pinToSidebar;
         _isLoading = false;
       });
-    } else {
-      setState(() => _isLoading = false);
+    } on ApiError {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -68,38 +68,55 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
 
-    final project = Project(
-      id: _loadedProjectId,
-      uid: _loadedProjectUid,
-      name: _nameController.text.trim(),
-      description: _descController.text.trim().isEmpty
-          ? null
-          : _descController.text.trim(),
-      status: _status,
-      priority: _priority,
-      areaId: _areaId,
-      pinToSidebar: _pinToSidebar,
-    );
+    final name = _nameController.text.trim();
+    final description = _descController.text.trim();
+    final priority = projectPriorityFromName(_priority);
+    final list = ref.read(projectListProvider.notifier);
 
-    bool success;
-    if (_isEdit) {
-      success = await ref
-          .read(projectListProvider.notifier)
-          .updateProject(project);
-    } else {
-      success = await ref
-          .read(projectListProvider.notifier)
-          .createProject(project);
+    String? error;
+    try {
+      if (_isEdit) {
+        await list.edit(
+          _uid!,
+          ProjectPatch(
+            name: pt.Patch.set(name),
+            description: description.isEmpty
+                ? const pt.Patch.clear()
+                : pt.Patch.set(description),
+            status: pt.Patch.set(_status),
+            priority: priority == null
+                ? const pt.Patch.clear()
+                : pt.Patch.set(priority),
+            areaUid: _areaUid == null
+                ? const pt.Patch.clear()
+                : pt.Patch.set(_areaUid!),
+            pinToSidebar: pt.Patch.set(_pinToSidebar),
+          ),
+        );
+      } else {
+        await list.create(
+          NewProject(
+            name: name,
+            description: description.isEmpty ? null : description,
+            status: _status,
+            priority: priority,
+            areaUid: _areaUid,
+            pinToSidebar: _pinToSidebar,
+          ),
+        );
+      }
+    } on ApiError catch (e) {
+      error = e.message;
     }
 
     if (mounted) {
       setState(() => _isLoading = false);
-      if (success) {
+      if (error == null) {
         context.pop();
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Failed to save project')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save project: $error')),
+        );
       }
     }
   }
@@ -114,7 +131,7 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final areaState = ref.watch(areaListProvider);
+    final areas = ref.watch(areaListProvider).value ?? const <Area>[];
     final strings = context.l10n;
 
     return Scaffold(
@@ -230,8 +247,10 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
                   const SizedBox(height: 16),
 
                   // Area
-                  DropdownButtonFormField<int?>(
-                    initialValue: _areaId,
+                  DropdownButtonFormField<AreaUid?>(
+                    initialValue: areas.any((a) => a.uid == _areaUid)
+                        ? _areaUid
+                        : null,
                     decoration: InputDecoration(
                       labelText: strings.area,
                       prefixIcon: const Icon(Icons.layers_outlined),
@@ -241,12 +260,12 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
                         value: null,
                         child: Text(strings.noArea),
                       ),
-                      ...areaState.areas.map(
+                      ...areas.map(
                         (a) =>
-                            DropdownMenuItem(value: a.id, child: Text(a.name)),
+                            DropdownMenuItem(value: a.uid, child: Text(a.name)),
                       ),
                     ],
-                    onChanged: (v) => setState(() => _areaId = v),
+                    onChanged: (v) => setState(() => _areaUid = v),
                   ),
                   const SizedBox(height: 16),
 

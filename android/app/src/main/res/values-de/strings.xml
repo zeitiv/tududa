@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Tududa Heute</string>
+    <string name="widget_description">Heutige Aufgaben mit Fortschritt, Abhaken und Schnell-Hinzufügen</string>
+
+    <string name="page_today">Heute</string>
+    <string name="page_overdue">Überfällig</string>
+    <string name="page_done">Erledigt</string>
+    <string name="due_today">Heute</string>
+
+    <string name="empty_today">Für heute ist alles erledigt</string>
+    <string name="empty_overdue">Nichts überfällig</string>
+    <string name="empty_done">Noch nichts erledigt</string>
+
+    <string name="state_loading">Lädt…</string>
+    <string name="state_signed_out">Nicht angemeldet</string>
+    <string name="state_signed_out_hint">Öffne Tududa und melde dich an, um hier deine Aufgaben zu sehen.</string>
+    <string name="state_login_failed">Anmeldung fehlgeschlagen</string>
+    <string name="state_login_failed_hint">Die gespeicherten Zugangsdaten wurden abgelehnt. Öffne Tududa und melde dich neu an.</string>
+    <string name="state_offline">Offline · gespeicherte Aufgaben</string>
+    <string name="state_offline_empty">Server nicht erreichbar</string>
+    <string name="state_offline_empty_hint">WLAN oder Tailscale prüfen, dann aktualisieren.</string>
+    <string name="state_error">Aufgaben konnten nicht geladen werden</string>
+    <string name="state_error_hint">Etwas ist schiefgelaufen. Aktualisiere oder öffne Tududa.</string>
+
+    <string name="action_open_app">Tududa öffnen</string>
+    <string name="action_add_task">Neue Aufgabe</string>
+    <string name="action_refresh">Aktualisieren</string>
+    <string name="action_switch_list">Liste wechseln</string>
+    <string name="action_mark_done">Als erledigt markieren</string>
+    <string name="action_mark_open">Als offen markieren</string>
+    <string name="action_undo">Rückgängig</string>
+    <string name="widget_completed">Erledigt!</string>
+    <string name="widget_completed_task">„%1$s“ erledigt</string>
+    <string name="widget_progress">%1$d von %2$d erledigt</string>
+    <string name="widget_progress_all">Alles erledigt</string>
+    <string name="widget_progress_none">Keine Aufgaben heute</string>
+    <string name="widget_progress_description">%1$d von %2$d Aufgaben heute erledigt</string>
+</resources>

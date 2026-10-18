@@ -32,6 +32,26 @@
   "areasEmpty": "No areas yet",
   "areasEmptyHint": "Areas help organize your projects",
   "areasTitle": "Areas",
+  "asyncStateErrorTitle": "Something went wrong",
+  "@asyncStateErrorTitle": {
+    "description": "Error state title"
+  },
+  "asyncStateLoading": "Loading",
+  "@asyncStateLoading": {
+    "description": "Accessibility label of the loading placeholder"
+  },
+  "asyncStateOfflineHint": "Nothing is saved on this device yet. Connect to load your data.",
+  "@asyncStateOfflineHint": {
+    "description": "Offline state hint"
+  },
+  "asyncStateOfflineTitle": "You are offline",
+  "@asyncStateOfflineTitle": {
+    "description": "Offline state title"
+  },
+  "asyncStateRetry": "Try again",
+  "@asyncStateRetry": {
+    "description": "Retry button of the error and offline states"
+  },
   "authCancel": "Cancel",
   "authChangeServer": "Change Server",
   "authConnect": "Connect",
@@ -83,6 +103,47 @@
   },
   "authSignIn": "Sign In",
   "authWelcome": "Welcome to Tududa",
+  "bulkClear": "Clear selection",
+  "@bulkClear": {
+    "description": "Bulk bar: leave selection mode"
+  },
+  "bulkComplete": "Complete",
+  "@bulkComplete": {
+    "description": "Bulk bar action"
+  },
+  "bulkDelete": "Delete",
+  "@bulkDelete": {
+    "description": "Bulk bar action"
+  },
+  "bulkMoveProject": "Move to project",
+  "@bulkMoveProject": {
+    "description": "Bulk bar action"
+  },
+  "bulkNoProject": "No project",
+  "@bulkNoProject": {
+    "description": "Bulk move: remove from project"
+  },
+  "bulkPostpone": "Postpone",
+  "@bulkPostpone": {
+    "description": "Bulk bar action"
+  },
+  "bulkPriority": "Priority",
+  "@bulkPriority": {
+    "description": "Bulk bar action"
+  },
+  "bulkSelectedCount": "{count} selected",
+  "@bulkSelectedCount": {
+    "description": "Bulk bar: number of selected tasks",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bulkTag": "Set tag",
+  "@bulkTag": {
+    "description": "Bulk bar action: add a tag to all selected tasks"
+  },
   "commonAdd": "Add",
   "commonCancel": "Cancel",
   "commonClose": "Close",
@@ -125,10 +186,101 @@
   "@coreYesterday": {
     "description": "Relative day label for the previous date"
   },
+  "focusBack": "Back to Today",
+  "@focusBack": {
+    "description": "Focus empty state button"
+  },
+  "focusDone": "Done",
+  "@focusDone": {
+    "description": "Focus button"
+  },
+  "focusEmptyBody": "You have no tasks left for today.",
+  "@focusEmptyBody": {
+    "description": "Focus empty state text"
+  },
+  "focusEmptyTitle": "Nothing to focus on",
+  "@focusEmptyTitle": {
+    "description": "Focus empty state title"
+  },
+  "focusPosition": "{index} of {total}",
+  "@focusPosition": {
+    "description": "Position in the focus queue",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "focusPostpone": "Postpone",
+  "@focusPostpone": {
+    "description": "Focus button"
+  },
+  "focusSkip": "Skip",
+  "@focusSkip": {
+    "description": "Focus button: show the next task"
+  },
+  "focusSubtasks": "Subtasks",
+  "@focusSubtasks": {
+    "description": "Heading of the subtask list"
+  },
+  "focusTitle": "Focus",
+  "@focusTitle": {
+    "description": "Title of the focus screen"
+  },
   "inboxEmpty": "Inbox is empty",
   "inboxIgnore": "Ignore",
   "inboxMarkProcessed": "Mark as Processed",
   "inboxTelegramHint": "Items from Telegram will appear here",
+  "inboxV2AgeDays": "{count} d ago",
+  "@inboxV2AgeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inboxV2AgeHours": "{count} h ago",
+  "@inboxV2AgeHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inboxV2AgeMinutes": "{count} min ago",
+  "@inboxV2AgeMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inboxV2AgeNow": "Just now",
+  "inboxV2CaptureFailed": "Could not save the item",
+  "inboxV2CaptureHint": "Capture a thought, link or idea…",
+  "@inboxV2CaptureHint": {
+    "description": "Hint of the inbox capture field"
+  },
+  "inboxV2CaptureSend": "Add to inbox",
+  "@inboxV2CaptureSend": {
+    "description": "Tooltip of the capture send button"
+  },
+  "inboxV2ConvertNote": "Convert to note",
+  "inboxV2ConvertTask": "Convert to task",
+  "inboxV2Deleted": "Item deleted",
+  "inboxV2EmptyHint": "Capture something above or send it from Telegram",
+  "inboxV2Ignored": "Ignored",
+  "inboxV2ItemActions": "More actions",
+  "inboxV2LoadFailed": "Could not load the inbox",
+  "inboxV2MarkedProcessed": "Marked as processed",
+  "inboxV2OpenNote": "Open",
+  "inboxV2SavedAsNote": "Saved as note",
+  "inboxV2Undo": "Undo",
+  "inboxV2UnsortedHint": "Give these a home or a due date",
+  "inboxV2UnsortedTasks": "Tasks without project or date",
   "kanbanNoTasks": "No tasks found.\nTap + to create one.",
   "kanbanStatusArchived": "Archived",
   "@kanbanStatusArchived": {
@@ -161,6 +313,113 @@
   "kanbanStatusWaiting": "Waiting",
   "@kanbanStatusWaiting": {
     "description": "Kanban column title"
+  },
+  "kanbanV2ColumnSummary": "{status}, {count, plural, =1{1 task} other{{count} tasks}}",
+  "@kanbanV2ColumnSummary": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "kanbanV2CurrentColumn": "Current",
+  "kanbanV2DropHere": "Drop here",
+  "kanbanV2EmptyColumn": "Nothing here",
+  "kanbanV2MoveTo": "Move to…",
+  "@kanbanV2MoveTo": {
+    "description": "Title of the move menu and accessibility action of a kanban card"
+  },
+  "kanbanV2MoveToStatus": "Move to {status}",
+  "@kanbanV2MoveToStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "kanbanV2Moved": "Moved to {status}",
+  "@kanbanV2Moved": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "listAllTasks": "All tasks",
+  "@listAllTasks": {
+    "description": "Link to the all tasks screen"
+  },
+  "listComingSoon": "Coming soon",
+  "@listComingSoon": {
+    "description": "Subtitle of a disabled link"
+  },
+  "listEmptyCompletedHint": "Finished tasks are kept here for 30 days.",
+  "@listEmptyCompletedHint": {
+    "description": "Empty Completed list hint"
+  },
+  "listEmptyCompletedTitle": "Nothing completed yet",
+  "@listEmptyCompletedTitle": {
+    "description": "Empty Completed list title"
+  },
+  "listEmptyOverdueHint": "No task is past its due date.",
+  "@listEmptyOverdueHint": {
+    "description": "Empty Overdue list hint"
+  },
+  "listEmptyOverdueTitle": "All caught up",
+  "@listEmptyOverdueTitle": {
+    "description": "Empty Overdue list title"
+  },
+  "listEmptySomedayHint": "Tasks without a due date live here.",
+  "@listEmptySomedayHint": {
+    "description": "Empty Someday list hint"
+  },
+  "listEmptySomedayTitle": "No someday tasks",
+  "@listEmptySomedayTitle": {
+    "description": "Empty Someday list title"
+  },
+  "listEmptyUpcomingHint": "Tasks due in the next 7 days show up here.",
+  "@listEmptyUpcomingHint": {
+    "description": "Empty Upcoming list hint"
+  },
+  "listEmptyUpcomingTitle": "Nothing coming up",
+  "@listEmptyUpcomingTitle": {
+    "description": "Empty Upcoming list title"
+  },
+  "listLoadMore": "Load more",
+  "@listLoadMore": {
+    "description": "Button that shows older completed tasks"
+  },
+  "listMoreSection": "Lists & more",
+  "@listMoreSection": {
+    "description": "Section of the More screen linking to lists"
+  },
+  "listNoDate": "No date",
+  "@listNoDate": {
+    "description": "Group header in Upcoming for tasks without a due day"
+  },
+  "listOverdue": "Overdue",
+  "@listOverdue": {
+    "description": "Title of the overdue tasks list"
+  },
+  "listRescheduleAll": "Reschedule all to today",
+  "@listRescheduleAll": {
+    "description": "Button that moves every overdue task to today"
+  },
+  "listRescheduled": "{count, plural, =1{1 task moved to today} other{{count} tasks moved to today}}",
+  "@listRescheduled": {
+    "description": "Snackbar after rescheduling overdue tasks",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "listTags": "Tags",
+  "@listTags": {
+    "description": "Link to the tags screen"
   },
   "navInbox": "Inbox",
   "@navInbox": {
@@ -200,6 +459,54 @@
   "noteProject": "Project",
   "noteSaveFailed": "Failed to save note",
   "noteTitleHint": "Note Title",
+  "noteV2ClearSearch": "Clear search",
+  "noteV2Discard": "Discard",
+  "noteV2DiscardBody": "You have unsaved changes that will be lost.",
+  "noteV2DiscardTitle": "Discard changes?",
+  "noteV2KeepEditing": "Keep editing",
+  "noteV2ModeEdit": "Edit",
+  "@noteV2ModeEdit": {
+    "description": "Markdown editor mode"
+  },
+  "noteV2ModePreview": "Preview",
+  "@noteV2ModePreview": {
+    "description": "Markdown preview mode"
+  },
+  "noteV2NoResults": "No notes match your search",
+  "noteV2PreviewEmpty": "Nothing to preview yet",
+  "noteV2Search": "Search notes",
+  "noteV2Tags": "Tags",
+  "noteV2Untitled": "Untitled",
+  "noteV2ViewGrid": "Grid view",
+  "noteV2ViewList": "List view",
+  "postponeNextWeek": "Next week",
+  "@postponeNextWeek": {
+    "description": "Postpone option: first day of next week"
+  },
+  "postponePickDate": "Pick a date…",
+  "@postponePickDate": {
+    "description": "Postpone option: open a date picker"
+  },
+  "postponeSkipOccurrence": "Skip this occurrence",
+  "@postponeSkipOccurrence": {
+    "description": "Postpone option for recurring tasks"
+  },
+  "postponeSomeday": "Someday (no date)",
+  "@postponeSomeday": {
+    "description": "Postpone option: clear the due date"
+  },
+  "postponeTitle": "Postpone",
+  "@postponeTitle": {
+    "description": "Title of the postpone sheet and action"
+  },
+  "postponeTomorrow": "Tomorrow",
+  "@postponeTomorrow": {
+    "description": "Postpone option"
+  },
+  "postponeWeekend": "This weekend",
+  "@postponeWeekend": {
+    "description": "Postpone option: next Saturday"
+  },
   "projectAddTask": "Add Task",
   "projectArea": "Area",
   "projectAreaLabel": "Area: {name}",
@@ -272,6 +579,284 @@
   "projectsTitle": "Projects",
   "@projectsTitle": {
     "description": "Projects list app bar title"
+  },
+  "quickAddAddAnother": "Add another",
+  "@quickAddAddAnother": {
+    "description": "Switch that keeps quick add open after saving"
+  },
+  "quickAddAdded": "Added {name}",
+  "@quickAddAdded": {
+    "description": "Snackbar after saving a task",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "quickAddApply": "Apply",
+  "@quickAddApply": {
+    "description": "Confirms a quick-add picker dialog"
+  },
+  "quickAddClose": "Close",
+  "@quickAddClose": {
+    "description": "Closes the quick-add sheet"
+  },
+  "quickAddHint": "Task, e.g. Pay rent every month !!",
+  "@quickAddHint": {
+    "description": "Hint of the quick-add text field"
+  },
+  "quickAddInlineHint": "Add a task",
+  "@quickAddInlineHint": {
+    "description": "Hint of the inline add row at the end of lists"
+  },
+  "quickAddKeepAsText": "Tap to keep as plain text",
+  "@quickAddKeepAsText": {
+    "description": "Tooltip of a recognised-token chip"
+  },
+  "quickAddMoreOptions": "More options",
+  "@quickAddMoreOptions": {
+    "description": "Opens the full task form"
+  },
+  "quickAddNextOccurrences": "Next: {dates}",
+  "@quickAddNextOccurrences": {
+    "description": "Preview of the next occurrences of a repeating task",
+    "placeholders": {
+      "dates": {
+        "type": "String"
+      }
+    }
+  },
+  "quickAddNone": "None",
+  "@quickAddNone": {
+    "description": "Choice meaning no project, area or priority"
+  },
+  "quickAddNoteHint": "Add a note",
+  "@quickAddNoteHint": {
+    "description": "Hint of the note field in quick add"
+  },
+  "quickAddPickArea": "Area",
+  "@quickAddPickArea": {
+    "description": "Quick-add picker"
+  },
+  "quickAddPickDate": "Due date",
+  "@quickAddPickDate": {
+    "description": "Quick-add picker"
+  },
+  "quickAddPickNote": "Note",
+  "@quickAddPickNote": {
+    "description": "Quick-add picker"
+  },
+  "quickAddPickPriority": "Priority",
+  "@quickAddPickPriority": {
+    "description": "Quick-add picker"
+  },
+  "quickAddPickProject": "Project",
+  "@quickAddPickProject": {
+    "description": "Quick-add picker"
+  },
+  "quickAddPickRepeat": "Repeat",
+  "@quickAddPickRepeat": {
+    "description": "Quick-add picker"
+  },
+  "quickAddPickTags": "Tags",
+  "@quickAddPickTags": {
+    "description": "Quick-add picker"
+  },
+  "quickAddPickTime": "Time",
+  "@quickAddPickTime": {
+    "description": "Quick-add picker"
+  },
+  "quickAddRecurAfterCompletion": "after completion",
+  "@quickAddRecurAfterCompletion": {
+    "description": "Recurrence suffix for completion-based rules"
+  },
+  "quickAddRecurDaily": "{count, plural, =1{Every day} other{Every {count} days}}",
+  "@quickAddRecurDaily": {
+    "description": "Recurrence summary",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quickAddRecurMonthly": "{count, plural, =1{Every month} other{Every {count} months}}",
+  "@quickAddRecurMonthly": {
+    "description": "Recurrence summary",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quickAddRecurMonthlyLastDay": "Last day of every month",
+  "@quickAddRecurMonthlyLastDay": {
+    "description": "Recurrence summary"
+  },
+  "quickAddRecurMonthlyOnDay": "{count, plural, =1{Monthly on day {day}} other{Every {count} months on day {day}}}",
+  "@quickAddRecurMonthlyOnDay": {
+    "description": "Recurrence summary with day of month",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "quickAddRecurMonthlyWeekday": "Every {week, select, 1{first} 2{second} 3{third} 4{fourth} other{last}} {weekday} of the month",
+  "@quickAddRecurMonthlyWeekday": {
+    "description": "Recurrence summary for the n-th weekday of a month",
+    "placeholders": {
+      "week": {
+        "type": "String"
+      },
+      "weekday": {
+        "type": "String"
+      }
+    }
+  },
+  "quickAddRecurUntil": "until {date}",
+  "@quickAddRecurUntil": {
+    "description": "Recurrence end date suffix",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "quickAddRecurWeekdays": "Every weekday",
+  "@quickAddRecurWeekdays": {
+    "description": "Recurrence summary for Monday to Friday"
+  },
+  "quickAddRecurWeekly": "{count, plural, =1{Every week} other{Every {count} weeks}}",
+  "@quickAddRecurWeekly": {
+    "description": "Recurrence summary",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quickAddRecurWeeklyOn": "{count, plural, =1{Every week on {days}} other{Every {count} weeks on {days}}}",
+  "@quickAddRecurWeeklyOn": {
+    "description": "Recurrence summary with weekday names",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "quickAddRepeatNone": "Does not repeat",
+  "@quickAddRepeatNone": {
+    "description": "Recurrence option"
+  },
+  "quickAddSubmit": "Add task",
+  "@quickAddSubmit": {
+    "description": "Submit button of the quick-add sheet"
+  },
+  "quickAddTagHint": "Add tag",
+  "@quickAddTagHint": {
+    "description": "Hint of the tag name field"
+  },
+  "quickAddTitle": "Quick add",
+  "@quickAddTitle": {
+    "description": "Title of the quick-add sheet"
+  },
+  "quickAddUndo": "Undo",
+  "@quickAddUndo": {
+    "description": "Snackbar action that removes the task just added"
+  },
+  "quickAddYearlyUnsupported": "Yearly repeats are not supported by Tududi.",
+  "@quickAddYearlyUnsupported": {
+    "description": "Hint shown when a yearly phrase is recognised"
+  },
+  "reviewClose": "Back to Today",
+  "@reviewClose": {
+    "description": "Summary button"
+  },
+  "reviewDone": "Done",
+  "@reviewDone": {
+    "description": "Review button"
+  },
+  "reviewKeep": "Keep",
+  "@reviewKeep": {
+    "description": "Review button: leave the task as it is"
+  },
+  "reviewPickDate": "Pick date",
+  "@reviewPickDate": {
+    "description": "Review button"
+  },
+  "reviewProgress": "Task {index} of {total}",
+  "@reviewProgress": {
+    "description": "Progress in the review",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewSomeday": "Someday",
+  "@reviewSomeday": {
+    "description": "Review button"
+  },
+  "reviewSummaryDone": "{count, plural, one{{count} task completed} other{{count} tasks completed}}",
+  "@reviewSummaryDone": {
+    "description": "Summary line",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewSummaryEmpty": "No open tasks to review.",
+  "@reviewSummaryEmpty": {
+    "description": "Summary when nothing was reviewed"
+  },
+  "reviewSummaryKept": "{count, plural, one{{count} task kept} other{{count} tasks kept}}",
+  "@reviewSummaryKept": {
+    "description": "Summary line",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewSummaryMoved": "{count, plural, one{{count} task rescheduled} other{{count} tasks rescheduled}}",
+  "@reviewSummaryMoved": {
+    "description": "Summary line",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewSummarySomeday": "{count, plural, one{{count} task moved to Someday} other{{count} tasks moved to Someday}}",
+  "@reviewSummarySomeday": {
+    "description": "Summary line",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewSummaryTitle": "Review complete",
+  "@reviewSummaryTitle": {
+    "description": "Summary title"
+  },
+  "reviewTitle": "Daily review",
+  "@reviewTitle": {
+    "description": "Title of the review screen"
+  },
+  "reviewTomorrow": "Tomorrow",
+  "@reviewTomorrow": {
+    "description": "Review button"
   },
   "settingsAbout": "About Tududa",
   "settingsAboutSubtitle": "v1.0.1 • Open Source",
@@ -658,5 +1243,279 @@
   "taskViewList": "List",
   "@taskViewList": {
     "description": "Tooltip: switch to list view"
+  },
+  "tileBlocked": "Blocked",
+  "@tileBlocked": {
+    "description": "Chip: task is blocked by another task"
+  },
+  "tileComplete": "Complete",
+  "@tileComplete": {
+    "description": "Action: mark a task done"
+  },
+  "tileDueOn": "Due {date}",
+  "@tileDueOn": {
+    "description": "Accessibility: due date of a task",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "tileEdit": "Edit",
+  "@tileEdit": {
+    "description": "Action: open the task editor"
+  },
+  "tileEditTitle": "Edit title",
+  "@tileEditTitle": {
+    "description": "Action: rename a task inline"
+  },
+  "tileEstimate": "{minutes} min",
+  "@tileEstimate": {
+    "description": "Chip: estimated duration",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "tileHasNote": "Has a note",
+  "@tileHasNote": {
+    "description": "Accessibility label of the note icon"
+  },
+  "tileMenu": "More actions",
+  "@tileMenu": {
+    "description": "Tooltip of the task row overflow menu"
+  },
+  "tileMoreTags": "{count} more tags",
+  "@tileMoreTags": {
+    "description": "Accessibility label of the +n tag chip",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tileOverdueDays": "{count, plural, one{1 day overdue} other{{count} days overdue}}",
+  "@tileOverdueDays": {
+    "description": "Due date chip of an overdue task",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tilePostponedTimes": "Postponed ×{count}",
+  "@tilePostponedTimes": {
+    "description": "Chip: how often a task was postponed",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tilePriorityLabel": "Priority {priority}",
+  "@tilePriorityLabel": {
+    "description": "Accessibility: priority of a task",
+    "placeholders": {
+      "priority": {
+        "type": "String"
+      }
+    }
+  },
+  "tileReopen": "Reopen",
+  "@tileReopen": {
+    "description": "Action: mark a done task open again"
+  },
+  "tileRepeats": "Repeats",
+  "@tileRepeats": {
+    "description": "Accessibility label of the recurrence icon"
+  },
+  "tileSelect": "Select",
+  "@tileSelect": {
+    "description": "Action: start multi-select with this task"
+  },
+  "tileSelected": "Selected",
+  "@tileSelected": {
+    "description": "Accessibility state of a selected task row"
+  },
+  "tileSubtasksDone": "{done} of {total} subtasks done",
+  "@tileSubtasksDone": {
+    "description": "Accessibility: subtask progress",
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "tileTitleHint": "Task title",
+  "@tileTitleHint": {
+    "description": "Hint of the inline title field"
+  },
+  "todayDurationH": "{hours} h",
+  "@todayDurationH": {
+    "description": "Duration in whole hours",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "todayDurationHm": "{hours} h {minutes} min",
+  "@todayDurationHm": {
+    "description": "Duration with hours and minutes",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "todayDurationM": "{minutes} min",
+  "@todayDurationM": {
+    "description": "Duration in minutes",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "todayEmptyBody": "Nothing left on your plate. Enjoy the rest of the day.",
+  "@todayEmptyBody": {
+    "description": "Empty state text"
+  },
+  "todayEmptyTitle": "All done for today",
+  "@todayEmptyTitle": {
+    "description": "Empty state title"
+  },
+  "todayErrorTitle": "Could not load today's tasks",
+  "@todayErrorTitle": {
+    "description": "Error state title"
+  },
+  "todayFocus": "Focus mode",
+  "@todayFocus": {
+    "description": "AppBar action"
+  },
+  "todayMinutesLeft": "{duration} left",
+  "@todayMinutesLeft": {
+    "description": "Estimated time of the remaining tasks",
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "todayNoEstimate": "No time estimates",
+  "@todayNoEstimate": {
+    "description": "Header text when no task has an estimate"
+  },
+  "todayProgress": "{done} of {total} done",
+  "@todayProgress": {
+    "description": "Progress line in the Today header",
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "todayRescheduleAll": "Reschedule all",
+  "@todayRescheduleAll": {
+    "description": "Button on the overdue section"
+  },
+  "todayRetry": "Retry",
+  "@todayRetry": {
+    "description": "Retry button"
+  },
+  "todayReview": "Daily review",
+  "@todayReview": {
+    "description": "AppBar action"
+  },
+  "todaySearch": "Search (coming soon)",
+  "@todaySearch": {
+    "description": "Disabled AppBar action"
+  },
+  "todaySectionAfternoon": "Afternoon",
+  "@todaySectionAfternoon": {
+    "description": "Today section: 12:00 to 17:59"
+  },
+  "todaySectionAnytime": "Anytime",
+  "@todaySectionAnytime": {
+    "description": "Today section: tasks without a time"
+  },
+  "todaySectionCompleted": "Completed today",
+  "@todaySectionCompleted": {
+    "description": "Today section"
+  },
+  "todaySectionEvening": "Evening",
+  "@todaySectionEvening": {
+    "description": "Today section: from 18:00"
+  },
+  "todaySectionMorning": "Morning",
+  "@todaySectionMorning": {
+    "description": "Today section: before 12:00"
+  },
+  "todaySectionOverdue": "Overdue",
+  "@todaySectionOverdue": {
+    "description": "Today section"
+  },
+  "todaySectionToggle": "Show or hide {section}",
+  "@todaySectionToggle": {
+    "description": "Tooltip of a section header",
+    "placeholders": {
+      "section": {
+        "type": "String"
+      }
+    }
+  },
+  "todayTitle": "Today",
+  "@todayTitle": {
+    "description": "Title of the Today screen"
+  },
+  "undoAction": "Undo",
+  "@undoAction": {
+    "description": "Snackbar action"
+  },
+  "undoCompleted": "{count, plural, one{Task completed} other{{count} tasks completed}}",
+  "@undoCompleted": {
+    "description": "Snackbar after completing tasks",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "undoDeleted": "{count, plural, one{Task deleted} other{{count} tasks deleted}}",
+  "@undoDeleted": {
+    "description": "Snackbar after deleting tasks",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "undoPostponed": "{count, plural, one{Task postponed} other{{count} tasks postponed}}",
+  "@undoPostponed": {
+    "description": "Snackbar after postponing tasks",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "undoUpdated": "{count, plural, one{Task updated} other{{count} tasks updated}}",
+  "@undoUpdated": {
+    "description": "Snackbar after changing tasks",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

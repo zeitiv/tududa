@@ -7,6 +7,8 @@ import '../../auth/screens/server_config_screen.dart';
 import '../../auth/screens/login_screen.dart';
 import '../../tasks/screens/tasks_screen.dart';
 import '../../tasks/screens/today_screen.dart';
+import '../../tasks/screens/focus_screen.dart';
+import '../../tasks/screens/daily_review_screen.dart';
 import '../../tasks/screens/task_list_screen.dart';
 import '../../tasks/screens/task_detail_screen.dart';
 import '../../tasks/screens/task_form_screen.dart';
@@ -21,6 +23,7 @@ import '../../settings/screens/settings_screen.dart';
 import '../../settings/screens/sync_screen.dart';
 import '../../common/widgets/shell_scaffold.dart';
 import 'auth_redirect.dart';
+import 'deep_link.dart';
 import 'router_refresh.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -36,6 +39,8 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/today',
     refreshListenable: refresh,
     redirect: (context, state) {
+      final deepLink = deepLinkLocation(state.uri);
+      if (deepLink != null) return deepLink;
       final authState = ref.read(authProvider);
       final serverUrl = authState.serverUrl;
       return authRedirect(
@@ -67,6 +72,18 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/today',
                 builder: (context, state) => const TodayScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'focus',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (context, state) => const FocusScreen(),
+                  ),
+                  GoRoute(
+                    path: 'review',
+                    parentNavigatorKey: rootNavigatorKey,
+                    builder: (context, state) => const DailyReviewScreen(),
+                  ),
+                ],
               ),
             ],
           ),

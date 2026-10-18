@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../core/api/api_providers.dart';
+import '../../core/api/secure_cookie_storage.dart';
+import '../../core/platform/session_bridge.dart';
 import '../../core/time/user_clock.dart';
 import 'server_config.dart';
 import 'session_controller.dart';
@@ -14,8 +16,8 @@ import 'session_controller.dart';
 /// (`<app documents>/.cookies/`, as before) is resolved on first use, so the
 /// jar can be created synchronously.
 ///
-/// Milestone 7 can replace this with a vault-backed [Storage] by overriding
-/// [cookieJarProvider]; nothing else knows how cookies are stored.
+/// Used off Android; on Android cookies live in the native vault
+/// ([SecureCookieStorage]).
 class LazyFileCookieStorage extends Storage {
   LazyFileCookieStorage({Future<Directory> Function()? directory})
     : _directory = directory ?? getApplicationDocumentsDirectory;
@@ -51,7 +53,11 @@ class LazyFileCookieStorage extends Storage {
 
 /// The session cookie jar shared by every request.
 final cookieJarProvider = Provider<CookieJar>(
-  (ref) => PersistCookieJar(storage: LazyFileCookieStorage()),
+  (ref) => PersistCookieJar(
+    storage: hasNativeBridges
+        ? SecureCookieStorage(ref.watch(sessionBridgeProvider))
+        : LazyFileCookieStorage(),
+  ),
 );
 
 /// Validates a server address before it is saved. Tests override

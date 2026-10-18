@@ -5,12 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('every locale has exactly the keys of the English template', () {
-    Set<String> keys(String l) =>
-        (jsonDecode(File('lib/l10n/arb/app_$l.arb').readAsStringSync())
-                as Map<String, dynamic>)
-            .keys
-            .where((k) => !k.startsWith('@'))
-            .toSet();
+    Set<String> keys(String l) => (jsonDecode(
+      File('lib/l10n/arb/app_$l.arb').readAsStringSync(),
+    ) as Map<String, dynamic>).keys.where((k) => !k.startsWith('@')).toSet();
     final en = keys('en');
     expect(en, isNotEmpty);
     expect(keys('de'), en);

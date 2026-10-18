@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/api/api_client.dart';
 import '../../core/api/api_error.dart';
 import '../../core/api/api_providers.dart';
+import '../../core/platform/session_bridge.dart';
 import '../../core/utils/constants.dart';
 import '../../settings/providers/settings_provider.dart';
 import '../domain/user.dart';
@@ -33,6 +34,7 @@ class SessionController extends Notifier<SessionState>
   CredentialStore get _credentials => ref.read(credentialStoreProvider);
   CookieJar get _jar => ref.read(cookieJarProvider);
   Dio get _dio => ref.read(dioProvider);
+  SessionBridge get _bridge => ref.read(sessionBridgeProvider);
 
   @override
   SessionState build() => const SessionUnknown();
@@ -68,6 +70,7 @@ class SessionController extends Notifier<SessionState>
       } else {
         await _cacheUser(user);
         state = SessionSignedIn(user);
+        await _provisionStored(user);
       }
     } on ApiError catch (e) {
       if (e.isTransient && cached != null && await _hasCookies(config.url)) {
@@ -130,11 +133,18 @@ class SessionController extends Notifier<SessionState>
       final user = await _postLogin(trimmed, password);
       final old = cachedUser;
       if (old != null && old.uid != user.uid) {
+        // The native vault (and widget) must not keep the old account. The
+        // vault also holds the Dart cookies, so write the new session back.
+        final uri = Uri.parse(ref.read(serverConfigProvider)!.url);
+        final cookies = await _jar.loadForRequest(uri);
+        await _clearBridge();
+        if (cookies.isNotEmpty) await _jar.saveFromResponse(uri, cookies);
         await _prefs.remove(AppConstants.userDataKey);
         // Another person's rows and queued changes must not leak or sync.
         await onAccountChanged?.call();
       }
       await _credentials.write(Credentials(email: trimmed, password: password));
+      await _provision(user, trimmed, password);
       await _cacheUser(user);
       state = SessionSignedIn(user);
       return user;
@@ -176,10 +186,58 @@ class SessionController extends Notifier<SessionState>
   /// outbox, sync state). Only used for sign-out, a different server or a
   /// different account; a plain session expiry keeps queued changes.
   Future<void> _wipeSession() async {
+    // The vault goes first: it logs the native session out and wipes the
+    // widget's data before anything local disappears.
+    await _clearBridge();
     await _jar.deleteAll();
     await _credentials.clear();
     await _prefs.remove(AppConstants.userDataKey);
     await onAccountChanged?.call();
+  }
+
+  /// Hands the credentials to the native vault (widget silent login, Dart
+  /// re-login after a restart). Failures never break sign-in.
+  Future<void> _provision(User user, String email, String password) async {
+    final config = ref.read(serverConfigProvider);
+    if (config == null) return;
+    try {
+      await _bridge.provision(
+        serverUrl: config.url,
+        allowInsecureHttp: config.allowInsecure,
+        email: email,
+        password: password,
+        accountUid: user.uid,
+      );
+    } catch (e) {
+      if (kDebugMode) debugPrint('provision failed: ${e.runtimeType}');
+    }
+  }
+
+  /// After a bootstrap with a still-valid cookie: makes sure the vault holds
+  /// this account, without re-enabling a silent login the server rejected.
+  Future<void> _provisionStored(User user) async {
+    try {
+      final config = ref.read(serverConfigProvider);
+      if (config == null) return;
+      final vault = await _bridge.state();
+      if (vault.provisioned &&
+          vault.accountUid == user.uid &&
+          vault.serverUrl == config.url) {
+        return;
+      }
+      final creds = await _credentials.read();
+      if (creds != null) await _provision(user, creds.email, creds.password);
+    } catch (e) {
+      if (kDebugMode) debugPrint('provision check failed: ${e.runtimeType}');
+    }
+  }
+
+  Future<void> _clearBridge() async {
+    try {
+      await _bridge.clear();
+    } catch (e) {
+      if (kDebugMode) debugPrint('vault clear failed: ${e.runtimeType}');
+    }
   }
 
   /// Renews the session with the stored credentials. Concurrent callers share

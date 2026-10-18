@@ -1,0 +1,299 @@
+{
+ "tileComplete": {
+  "en": "Complete",
+  "de": "Erledigen",
+  "zh": "完成",
+  "description": "Action: mark a task done"
+ },
+ "tileReopen": {
+  "en": "Reopen",
+  "de": "Wieder öffnen",
+  "zh": "重新打开",
+  "description": "Action: mark a done task open again"
+ },
+ "tileEdit": {
+  "en": "Edit",
+  "de": "Bearbeiten",
+  "zh": "编辑",
+  "description": "Action: open the task editor"
+ },
+ "tileEditTitle": {
+  "en": "Edit title",
+  "de": "Titel bearbeiten",
+  "zh": "编辑标题",
+  "description": "Action: rename a task inline"
+ },
+ "tileTitleHint": {
+  "en": "Task title",
+  "de": "Aufgabentitel",
+  "zh": "任务标题",
+  "description": "Hint of the inline title field"
+ },
+ "tileMenu": {
+  "en": "More actions",
+  "de": "Weitere Aktionen",
+  "zh": "更多操作",
+  "description": "Tooltip of the task row overflow menu"
+ },
+ "tileSelect": {
+  "en": "Select",
+  "de": "Auswählen",
+  "zh": "选择",
+  "description": "Action: start multi-select with this task"
+ },
+ "tileSelected": {
+  "en": "Selected",
+  "de": "Ausgewählt",
+  "zh": "已选中",
+  "description": "Accessibility state of a selected task row"
+ },
+ "tileDueOn": {
+  "en": "Due {date}",
+  "de": "Fällig {date}",
+  "zh": "截止 {date}",
+  "description": "Accessibility: due date of a task",
+  "placeholders": {
+   "date": {
+    "type": "String"
+   }
+  }
+ },
+ "tilePriorityLabel": {
+  "en": "Priority {priority}",
+  "de": "Priorität {priority}",
+  "zh": "优先级 {priority}",
+  "description": "Accessibility: priority of a task",
+  "placeholders": {
+   "priority": {
+    "type": "String"
+   }
+  }
+ },
+ "tileOverdueDays": {
+  "en": "{count, plural, one{1 day overdue} other{{count} days overdue}}",
+  "de": "{count, plural, one{1 Tag überfällig} other{{count} Tage überfällig}}",
+  "zh": "{count, plural, other{已逾期 {count} 天}}",
+  "description": "Due date chip of an overdue task",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "tileSubtasksDone": {
+  "en": "{done} of {total} subtasks done",
+  "de": "{done} von {total} Teilaufgaben erledigt",
+  "zh": "{done}/{total} 个子任务已完成",
+  "description": "Accessibility: subtask progress",
+  "placeholders": {
+   "done": {
+    "type": "int"
+   },
+   "total": {
+    "type": "int"
+   }
+  }
+ },
+ "tilePostponedTimes": {
+  "en": "Postponed ×{count}",
+  "de": "{count}× verschoben",
+  "zh": "已推迟 {count} 次",
+  "description": "Chip: how often a task was postponed",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "tileBlocked": {
+  "en": "Blocked",
+  "de": "Blockiert",
+  "zh": "已阻塞",
+  "description": "Chip: task is blocked by another task"
+ },
+ "tileEstimate": {
+  "en": "{minutes} min",
+  "de": "{minutes} Min.",
+  "zh": "{minutes} 分钟",
+  "description": "Chip: estimated duration",
+  "placeholders": {
+   "minutes": {
+    "type": "int"
+   }
+  }
+ },
+ "tileHasNote": {
+  "en": "Has a note",
+  "de": "Hat eine Notiz",
+  "zh": "有备注",
+  "description": "Accessibility label of the note icon"
+ },
+ "tileRepeats": {
+  "en": "Repeats",
+  "de": "Wiederholt sich",
+  "zh": "重复",
+  "description": "Accessibility label of the recurrence icon"
+ },
+ "tileMoreTags": {
+  "en": "{count} more tags",
+  "de": "{count} weitere Tags",
+  "zh": "另外 {count} 个标签",
+  "description": "Accessibility label of the +n tag chip",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "postponeTitle": {
+  "en": "Postpone",
+  "de": "Verschieben",
+  "zh": "推迟",
+  "description": "Title of the postpone sheet and action"
+ },
+ "postponeTomorrow": {
+  "en": "Tomorrow",
+  "de": "Morgen",
+  "zh": "明天",
+  "description": "Postpone option"
+ },
+ "postponeWeekend": {
+  "en": "This weekend",
+  "de": "Dieses Wochenende",
+  "zh": "本周末",
+  "description": "Postpone option: next Saturday"
+ },
+ "postponeNextWeek": {
+  "en": "Next week",
+  "de": "Nächste Woche",
+  "zh": "下周",
+  "description": "Postpone option: first day of next week"
+ },
+ "postponePickDate": {
+  "en": "Pick a date…",
+  "de": "Datum wählen …",
+  "zh": "选择日期…",
+  "description": "Postpone option: open a date picker"
+ },
+ "postponeSomeday": {
+  "en": "Someday (no date)",
+  "de": "Irgendwann (ohne Datum)",
+  "zh": "将来某天（无日期）",
+  "description": "Postpone option: clear the due date"
+ },
+ "postponeSkipOccurrence": {
+  "en": "Skip this occurrence",
+  "de": "Diesen Termin überspringen",
+  "zh": "跳过本次",
+  "description": "Postpone option for recurring tasks"
+ },
+ "bulkSelectedCount": {
+  "en": "{count} selected",
+  "de": "{count} ausgewählt",
+  "zh": "已选 {count} 项",
+  "description": "Bulk bar: number of selected tasks",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "bulkClear": {
+  "en": "Clear selection",
+  "de": "Auswahl aufheben",
+  "zh": "取消选择",
+  "description": "Bulk bar: leave selection mode"
+ },
+ "bulkComplete": {
+  "en": "Complete",
+  "de": "Erledigen",
+  "zh": "完成",
+  "description": "Bulk bar action"
+ },
+ "bulkPostpone": {
+  "en": "Postpone",
+  "de": "Verschieben",
+  "zh": "推迟",
+  "description": "Bulk bar action"
+ },
+ "bulkPriority": {
+  "en": "Priority",
+  "de": "Priorität",
+  "zh": "优先级",
+  "description": "Bulk bar action"
+ },
+ "bulkMoveProject": {
+  "en": "Move to project",
+  "de": "In Projekt verschieben",
+  "zh": "移到项目",
+  "description": "Bulk bar action"
+ },
+ "bulkNoProject": {
+  "en": "No project",
+  "de": "Kein Projekt",
+  "zh": "无项目",
+  "description": "Bulk move: remove from project"
+ },
+ "bulkTag": {
+  "en": "Set tag",
+  "de": "Tag setzen",
+  "zh": "添加标签",
+  "description": "Bulk bar action: add a tag to all selected tasks"
+ },
+ "bulkDelete": {
+  "en": "Delete",
+  "de": "Löschen",
+  "zh": "删除",
+  "description": "Bulk bar action"
+ },
+ "undoAction": {
+  "en": "Undo",
+  "de": "Rückgängig",
+  "zh": "撤销",
+  "description": "Snackbar action"
+ },
+ "undoCompleted": {
+  "en": "{count, plural, one{Task completed} other{{count} tasks completed}}",
+  "de": "{count, plural, one{Aufgabe erledigt} other{{count} Aufgaben erledigt}}",
+  "zh": "{count, plural, other{已完成 {count} 项任务}}",
+  "description": "Snackbar after completing tasks",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "undoPostponed": {
+  "en": "{count, plural, one{Task postponed} other{{count} tasks postponed}}",
+  "de": "{count, plural, one{Aufgabe verschoben} other{{count} Aufgaben verschoben}}",
+  "zh": "{count, plural, other{已推迟 {count} 项任务}}",
+  "description": "Snackbar after postponing tasks",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "undoDeleted": {
+  "en": "{count, plural, one{Task deleted} other{{count} tasks deleted}}",
+  "de": "{count, plural, one{Aufgabe gelöscht} other{{count} Aufgaben gelöscht}}",
+  "zh": "{count, plural, other{已删除 {count} 项任务}}",
+  "description": "Snackbar after deleting tasks",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "undoUpdated": {
+  "en": "{count, plural, one{Task updated} other{{count} tasks updated}}",
+  "de": "{count, plural, one{Aufgabe aktualisiert} other{{count} Aufgaben aktualisiert}}",
+  "zh": "{count, plural, other{已更新 {count} 项任务}}",
+  "description": "Snackbar after changing tasks",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ }
+}

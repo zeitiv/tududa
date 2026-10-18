@@ -94,6 +94,17 @@ class TaskRepository(
         return state.value
     }
 
+    /**
+     * Drops the in-memory board and re-reads the vault cache on next use. Called after the vault
+     * changed underneath the repository (provision, clear), so another account's tasks never linger.
+     */
+    suspend fun reset() {
+        mutex.withLock {
+            cacheLoaded = false
+            _state.value = BoardState()
+        }
+    }
+
     /** Refreshes unless fresh data is already present; used by widget updates to avoid loops. */
     suspend fun refreshIfStale(maxAgeMillis: Long = 60_000): BoardState {
         val s = state.value

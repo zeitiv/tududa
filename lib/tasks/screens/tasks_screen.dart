@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
+import '../../common/widgets/async_states.dart';
 import '../../core/ids.dart';
-import '../../core/time/calendar_date.dart';
+import '../../l10n/l10n_ext.dart';
 import '../../projects/data/project_tasks_source.dart';
+import '../../projects/widgets/kanban_board.dart';
 import '../domain/task.dart';
 import '../providers/task_provider.dart';
 import '../widgets/api_error_message.dart';
-import '../../core/design/token_lookup.dart';
-import '../../core/design/tokens.dart';
-import '../../common/widgets/surface_card.dart';
-import '../../projects/widgets/kanban_board.dart';
-import '../../l10n/l10n_ext.dart';
+import '../widgets/bulk_action_bar.dart';
+import '../widgets/task_tile.dart';
 
-/// Main tasks screen with filter tabs (Today/Upcoming/Someday/Completed).
+/// "All tasks" (under More): filter chips, list/board toggle and sort. Adding
+/// tasks is done from the shell's global quick-add button.
 class TasksScreen extends ConsumerStatefulWidget {
   const TasksScreen({super.key});
 
@@ -57,11 +56,6 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     final current = ref.watch(selectedTaskFilterProvider);
     final sortState = ref.watch(taskSortProvider);
     final async = ref.watch(taskListProvider(current));
-    final tasks = sortTasks(
-      async.value ?? const <Task>[],
-      sortState.sort,
-      ascending: sortState.ascending,
-    );
     final strings = context.l10n;
     final actions = ref.read(taskActionsProvider);
 
@@ -69,7 +63,6 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
       appBar: AppBar(
         title: Text(strings.taskListTitle),
         actions: [
-          // Kanban/List toggle
           IconButton(
             icon: Icon(
               _isKanbanView
@@ -108,9 +101,9 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: const BulkActionBar(),
       body: Column(
         children: [
-          // Filter chips
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -118,7 +111,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               children: TaskFilter.values.map((filter) {
                 final isSelected = current == filter;
                 return Padding(
-                  padding: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsetsDirectional.only(end: 8),
                   child: FilterChip(
                     label: Text(_filterLabel(filter, strings)),
                     selected: isSelected,
@@ -140,69 +133,65 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               }).toList(),
             ),
           ),
-
-          // Task content (list or kanban)
           Expanded(
-            child: !async.hasValue && async.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : !async.hasValue && async.hasError
-                ? _ErrorView(
-                    error: apiErrorMessage(strings, async.error!),
-                    onRetry: () =>
-                        ref.read(taskListProvider(current).notifier).refresh(),
-                  )
-                : tasks.isEmpty
-                ? _EmptyView(filter: current)
-                : _isKanbanView
-                ? // Kanban board view
-                  KanbanBoard(
+            child: AsyncStateView<List<Task>>(
+              value: async,
+              emptyIcon: _filterIcon(current),
+              emptyTitle: _emptyText(current, strings),
+              onRetry: () => ref.invalidate(taskListProvider(current)),
+              data: (all) {
+                final tasks = sortTasks(
+                  all,
+                  sortState.sort,
+                  ascending: sortState.ascending,
+                );
+                if (_isKanbanView) {
+                  return KanbanBoard(
                     tasks: [for (final t in tasks) _boardRef(t)],
-                    onTaskTap: (ref) => _openTask(_byUid(tasks, ref.uid)),
-                    onTaskStatusChanged: (ref, newStatus) async {
+                    onTaskTap: (r) => _openTask(_byUid(tasks, r.uid)),
+                    onTaskStatusChanged: (r, newStatus) async {
                       final result = await actions.setStatus(
-                        _byUid(tasks, ref.uid),
+                        _byUid(tasks, r.uid),
                         TaskStatus.fromCode(newStatus),
                       );
                       if (result.error != null) _showError(result.error!);
                     },
-                  )
-                : // List view
-                  RefreshIndicator(
-                    onRefresh: () async {
-                      try {
-                        await ref
-                            .read(taskListProvider(current).notifier)
-                            .refresh();
-                      } catch (e) {
-                        _showError(e);
-                      }
-                    },
-                    child: ListView.builder(
-                      padding: const EdgeInsets.only(bottom: 88),
-                      itemCount: tasks.length,
-                      itemBuilder: (context, index) {
-                        final task = tasks[index];
-                        return _TaskListItem(
-                          task: task,
-                          onTap: () => _openTask(task),
-                          onToggle: () async {
-                            final result = await actions.toggleComplete(task);
-                            if (result.error != null) _showError(result.error!);
-                          },
-                        );
-                      },
+                  );
+                }
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    try {
+                      await ref
+                          .read(taskListProvider(current).notifier)
+                          .refresh();
+                    } catch (e) {
+                      _showError(e);
+                    }
+                  },
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(bottom: 96),
+                    itemCount: tasks.length,
+                    itemBuilder: (context, i) => TaskTile(
+                      key: ValueKey('task-${tasks[i].uid.value}'),
+                      task: tasks[i],
                     ),
                   ),
+                );
+              },
+            ),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push('/tasks/new'),
-        icon: const Icon(Icons.add_rounded),
-        label: Text(strings.taskNewButton),
-      ),
     );
   }
+
+  String _emptyText(TaskFilter filter, AppLocalizations strings) =>
+      switch (filter) {
+        TaskFilter.today => strings.taskEmptyToday,
+        TaskFilter.completed => strings.taskEmptyCompleted,
+        _ => strings.taskEmptyAll,
+      };
 
   String _filterLabel(TaskFilter filter, AppLocalizations strings) {
     switch (filter) {
@@ -232,252 +221,5 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
       case TaskFilter.all:
         return Icons.list_rounded;
     }
-  }
-}
-
-class _TaskListItem extends StatelessWidget {
-  final Task task;
-  final VoidCallback onTap;
-  final VoidCallback onToggle;
-
-  const _TaskListItem({
-    required this.task,
-    required this.onTap,
-    required this.onToggle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final priorityColor = context.tokens.priorityFor(task.priority.code);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: SurfaceCard(
-        borderRadius: BorderRadius.circular(20),
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 2,
-          ),
-          leading: InkWell(
-            onTap: onToggle,
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: task.isCompleted
-                      ? theme.colorScheme.primary
-                      : priorityColor.withValues(alpha: 0.6),
-                  width: 2,
-                ),
-                color: task.isCompleted
-                    ? theme.colorScheme.primary
-                    : Colors.transparent,
-              ),
-              child: task.isCompleted
-                  ? Icon(
-                      Icons.check_rounded,
-                      size: 16,
-                      color: theme.colorScheme.onPrimary,
-                    )
-                  : null,
-            ),
-          ),
-          title: Text(
-            task.name,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              decoration: task.isCompleted ? TextDecoration.lineThrough : null,
-              color: task.isCompleted
-                  ? theme.colorScheme.onSurfaceVariant
-                  : theme.colorScheme.onSurface,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          subtitle: _buildSubtitle(context),
-          trailing: _buildTrailing(context),
-          onTap: onTap,
-        ),
-      ),
-    );
-  }
-
-  Widget? _buildSubtitle(BuildContext context) {
-    final theme = Theme.of(context);
-    final parts = <Widget>[];
-
-    if (task.projectName != null) {
-      parts.add(
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.folder_outlined,
-              size: 12,
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(width: 3),
-            Flexible(
-              child: Text(
-                task.projectName!,
-                style: theme.textTheme.bodySmall,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (task.dueDate != null) {
-      final isOverdue = task.isOverdue(
-        CalendarDate.fromDateTime(DateTime.now()),
-      );
-      parts.add(
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.schedule_rounded,
-              size: 12,
-              color: isOverdue
-                  ? theme.colorScheme.error
-                  : theme.colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(width: 3),
-            Text(
-              DateFormat.MMMd(Localizations.localeOf(context).toString())
-                  .format(task.dueDate!.toLocalDateTime()),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: isOverdue ? theme.colorScheme.error : null,
-                fontWeight: isOverdue ? FontWeight.w600 : null,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (task.isRecurring) {
-      parts.add(
-        Icon(Icons.repeat_rounded, size: 14, color: theme.colorScheme.tertiary),
-      );
-    }
-
-    // Local edits the server has not confirmed yet.
-    if (task.hasPendingSync) {
-      parts.add(
-        Icon(
-          Icons.sync_rounded,
-          key: const ValueKey('pending-sync'),
-          size: 14,
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
-      );
-    }
-
-    if (parts.isEmpty) return null;
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 4),
-      child: Wrap(spacing: 12, runSpacing: 4, children: parts),
-    );
-  }
-
-  Widget? _buildTrailing(BuildContext context) {
-    if (task.priority != Priority.low) {
-      final color = context.tokens.priorityFor(task.priority.code);
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Text(
-          task.priority == Priority.high ? '!!!' : '!!',
-          style: TextStyle(
-            color: color,
-            fontWeight: FontWeight.w700,
-            fontSize: 12,
-          ),
-        ),
-      );
-    }
-    return null;
-  }
-}
-
-class _EmptyView extends StatelessWidget {
-  final TaskFilter filter;
-  const _EmptyView({required this.filter});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final strings = context.l10n;
-    String message;
-    IconData icon;
-    switch (filter) {
-      case TaskFilter.today:
-        message = strings.taskEmptyToday;
-        icon = Icons.celebration_outlined;
-        break;
-      case TaskFilter.completed:
-        message = strings.taskEmptyCompleted;
-        icon = Icons.check_circle_outline;
-        break;
-      default:
-        message = strings.taskEmptyAll;
-        icon = Icons.task_outlined;
-    }
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 64, color: theme.colorScheme.outlineVariant),
-          const SizedBox(height: 16),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ErrorView extends StatelessWidget {
-  final String error;
-  final VoidCallback onRetry;
-  const _ErrorView({required this.error, required this.onRetry});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.error_outline,
-            size: 48,
-            color: Theme.of(context).colorScheme.error,
-          ),
-          const SizedBox(height: 16),
-          Text(error, textAlign: TextAlign.center),
-          const SizedBox(height: 16),
-          FilledButton.tonal(
-            onPressed: onRetry,
-            child: Text(context.l10n.taskRetry),
-          ),
-        ],
-      ),
-    );
   }
 }

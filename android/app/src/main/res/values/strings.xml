@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Tududa Today</string>
+    <string name="widget_description">Today\'s tasks with progress, checkboxes and quick add</string>
+
+    <string name="page_today">Today</string>
+    <string name="page_overdue">Overdue</string>
+    <string name="page_done">Done</string>
+    <string name="due_today">Today</string>
+
+    <string name="empty_today">All clear for today</string>
+    <string name="empty_overdue">Nothing overdue</string>
+    <string name="empty_done">Nothing done yet</string>
+
+    <string name="state_loading">Loading…</string>
+    <string name="state_signed_out">Not signed in</string>
+    <string name="state_signed_out_hint">Open Tududa and sign in to see your tasks here.</string>
+    <string name="state_login_failed">Sign-in failed</string>
+    <string name="state_login_failed_hint">The saved login was rejected. Open Tududa to sign in again.</string>
+    <string name="state_offline">Offline · showing saved tasks</string>
+    <string name="state_offline_empty">Can\'t reach the server</string>
+    <string name="state_offline_empty_hint">Check Wi-Fi or Tailscale, then refresh.</string>
+    <string name="state_error">Could not load tasks</string>
+    <string name="state_error_hint">Something went wrong. Refresh or open Tududa.</string>
+
+    <string name="action_open_app">Open Tududa</string>
+    <string name="action_add_task">New task</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_switch_list">Switch list</string>
+    <string name="action_mark_done">Mark done</string>
+    <string name="action_mark_open">Mark not done</string>
+    <string name="action_undo">Undo</string>
+    <string name="widget_completed">Done!</string>
+    <string name="widget_completed_task">Completed “%1$s”</string>
+    <string name="widget_progress">%1$d of %2$d done</string>
+    <string name="widget_progress_all">All done</string>
+    <string name="widget_progress_none">No tasks today</string>
+    <string name="widget_progress_description">%1$d of %2$d tasks done today</string>
+</resources>

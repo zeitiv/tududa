@@ -69,6 +69,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get areasTitle => '区域管理';
 
   @override
+  String get asyncStateErrorTitle => '出错了';
+
+  @override
+  String get asyncStateLoading => '加载中';
+
+  @override
+  String get asyncStateOfflineHint => '此设备上尚无已保存的数据。请联网以加载。';
+
+  @override
+  String get asyncStateOfflineTitle => '你已离线';
+
+  @override
+  String get asyncStateRetry => '重试';
+
+  @override
   String get authCancel => '取消';
 
   @override
@@ -173,6 +188,35 @@ class AppLocalizationsZh extends AppLocalizations {
   String get authWelcome => '欢迎使用 Tududa';
 
   @override
+  String get bulkClear => '取消选择';
+
+  @override
+  String get bulkComplete => '完成';
+
+  @override
+  String get bulkDelete => '删除';
+
+  @override
+  String get bulkMoveProject => '移到项目';
+
+  @override
+  String get bulkNoProject => '无项目';
+
+  @override
+  String get bulkPostpone => '推迟';
+
+  @override
+  String get bulkPriority => '优先级';
+
+  @override
+  String bulkSelectedCount(int count) {
+    return '已选 $count 项';
+  }
+
+  @override
+  String get bulkTag => '添加标签';
+
+  @override
   String get commonAdd => '添加';
 
   @override
@@ -238,6 +282,35 @@ class AppLocalizationsZh extends AppLocalizations {
   String get coreYesterday => '昨天';
 
   @override
+  String get focusBack => '返回今天';
+
+  @override
+  String get focusDone => '完成';
+
+  @override
+  String get focusEmptyBody => '今天没有剩余任务了。';
+
+  @override
+  String get focusEmptyTitle => '没有需要专注的任务';
+
+  @override
+  String focusPosition(int index, int total) {
+    return '第 $index/$total';
+  }
+
+  @override
+  String get focusPostpone => '推迟';
+
+  @override
+  String get focusSkip => '跳过';
+
+  @override
+  String get focusSubtasks => '子任务';
+
+  @override
+  String get focusTitle => '专注';
+
+  @override
   String get inboxEmpty => '收件箱为空';
 
   @override
@@ -248,6 +321,72 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get inboxTelegramHint => '来自 Telegram 的项目将显示在这里';
+
+  @override
+  String inboxV2AgeDays(int count) {
+    return '$count天前';
+  }
+
+  @override
+  String inboxV2AgeHours(int count) {
+    return '$count小时前';
+  }
+
+  @override
+  String inboxV2AgeMinutes(int count) {
+    return '$count分钟前';
+  }
+
+  @override
+  String get inboxV2AgeNow => '刚刚';
+
+  @override
+  String get inboxV2CaptureFailed => '无法保存该项目';
+
+  @override
+  String get inboxV2CaptureHint => '记录想法、链接或灵感…';
+
+  @override
+  String get inboxV2CaptureSend => '添加到收件箱';
+
+  @override
+  String get inboxV2ConvertNote => '转为笔记';
+
+  @override
+  String get inboxV2ConvertTask => '转为任务';
+
+  @override
+  String get inboxV2Deleted => '项目已删除';
+
+  @override
+  String get inboxV2EmptyHint => '在上方记录内容，或通过 Telegram 发送';
+
+  @override
+  String get inboxV2Ignored => '已忽略';
+
+  @override
+  String get inboxV2ItemActions => '更多操作';
+
+  @override
+  String get inboxV2LoadFailed => '无法加载收件箱';
+
+  @override
+  String get inboxV2MarkedProcessed => '已标记为已处理';
+
+  @override
+  String get inboxV2OpenNote => '打开';
+
+  @override
+  String get inboxV2SavedAsNote => '已保存为笔记';
+
+  @override
+  String get inboxV2Undo => '撤销';
+
+  @override
+  String get inboxV2UnsortedHint => '为它们安排项目或日期';
+
+  @override
+  String get inboxV2UnsortedTasks => '没有项目或日期的任务';
 
   @override
   String get kanbanNoTasks => '暂无任务\n点击 + 新建';
@@ -275,6 +414,91 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get kanbanStatusWaiting => '等待中';
+
+  @override
+  String kanbanV2ColumnSummary(String status, int count) {
+    return '$status，$count个任务';
+  }
+
+  @override
+  String get kanbanV2CurrentColumn => '当前';
+
+  @override
+  String get kanbanV2DropHere => '放在这里';
+
+  @override
+  String get kanbanV2EmptyColumn => '暂无任务';
+
+  @override
+  String get kanbanV2MoveTo => '移动到…';
+
+  @override
+  String kanbanV2MoveToStatus(String status) {
+    return '移动到$status';
+  }
+
+  @override
+  String kanbanV2Moved(String status) {
+    return '已移动到$status';
+  }
+
+  @override
+  String get listAllTasks => '所有任务';
+
+  @override
+  String get listComingSoon => '即将推出';
+
+  @override
+  String get listEmptyCompletedHint => '已完成的任务会在这里保留 30 天。';
+
+  @override
+  String get listEmptyCompletedTitle => '还没有已完成的任务';
+
+  @override
+  String get listEmptyOverdueHint => '没有任务超过截止日期。';
+
+  @override
+  String get listEmptyOverdueTitle => '没有逾期任务';
+
+  @override
+  String get listEmptySomedayHint => '没有截止日期的任务会显示在这里。';
+
+  @override
+  String get listEmptySomedayTitle => '没有将来某天的任务';
+
+  @override
+  String get listEmptyUpcomingHint => '未来 7 天到期的任务会显示在这里。';
+
+  @override
+  String get listEmptyUpcomingTitle => '近期没有任务';
+
+  @override
+  String get listLoadMore => '加载更多';
+
+  @override
+  String get listMoreSection => '列表与更多';
+
+  @override
+  String get listNoDate => '无日期';
+
+  @override
+  String get listOverdue => '已逾期';
+
+  @override
+  String get listRescheduleAll => '全部改到今天';
+
+  @override
+  String listRescheduled(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '已将 $count 个任务改到今天',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get listTags => '标签';
 
   @override
   String get navInbox => '收件箱';
@@ -326,6 +550,69 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get noteTitleHint => '笔记标题';
+
+  @override
+  String get noteV2ClearSearch => '清除搜索';
+
+  @override
+  String get noteV2Discard => '放弃';
+
+  @override
+  String get noteV2DiscardBody => '未保存的更改将会丢失。';
+
+  @override
+  String get noteV2DiscardTitle => '放弃更改？';
+
+  @override
+  String get noteV2KeepEditing => '继续编辑';
+
+  @override
+  String get noteV2ModeEdit => '编辑';
+
+  @override
+  String get noteV2ModePreview => '预览';
+
+  @override
+  String get noteV2NoResults => '没有匹配的笔记';
+
+  @override
+  String get noteV2PreviewEmpty => '暂无可预览内容';
+
+  @override
+  String get noteV2Search => '搜索笔记';
+
+  @override
+  String get noteV2Tags => '标签';
+
+  @override
+  String get noteV2Untitled => '无标题';
+
+  @override
+  String get noteV2ViewGrid => '网格视图';
+
+  @override
+  String get noteV2ViewList => '列表视图';
+
+  @override
+  String get postponeNextWeek => '下周';
+
+  @override
+  String get postponePickDate => '选择日期…';
+
+  @override
+  String get postponeSkipOccurrence => '跳过本次';
+
+  @override
+  String get postponeSomeday => '将来某天（无日期）';
+
+  @override
+  String get postponeTitle => '推迟';
+
+  @override
+  String get postponeTomorrow => '明天';
+
+  @override
+  String get postponeWeekend => '本周末';
 
   @override
   String get projectAddTask => '添加任务';
@@ -451,6 +738,238 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get projectsTitle => '项目';
+
+  @override
+  String get quickAddAddAnother => '继续添加';
+
+  @override
+  String quickAddAdded(String name) {
+    return '已添加 $name';
+  }
+
+  @override
+  String get quickAddApply => '应用';
+
+  @override
+  String get quickAddClose => '关闭';
+
+  @override
+  String get quickAddHint => '任务，例如 每月 缴房租 !!';
+
+  @override
+  String get quickAddInlineHint => '添加任务';
+
+  @override
+  String get quickAddKeepAsText => '点按以保留为普通文本';
+
+  @override
+  String get quickAddMoreOptions => '更多选项';
+
+  @override
+  String quickAddNextOccurrences(String dates) {
+    return '接下来：$dates';
+  }
+
+  @override
+  String get quickAddNone => '无';
+
+  @override
+  String get quickAddNoteHint => '添加备注';
+
+  @override
+  String get quickAddPickArea => '领域';
+
+  @override
+  String get quickAddPickDate => '截止日期';
+
+  @override
+  String get quickAddPickNote => '备注';
+
+  @override
+  String get quickAddPickPriority => '优先级';
+
+  @override
+  String get quickAddPickProject => '项目';
+
+  @override
+  String get quickAddPickRepeat => '重复';
+
+  @override
+  String get quickAddPickTags => '标签';
+
+  @override
+  String get quickAddPickTime => '时间';
+
+  @override
+  String get quickAddRecurAfterCompletion => '完成后';
+
+  @override
+  String quickAddRecurDaily(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '每 $count 天',
+      one: '每天',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String quickAddRecurMonthly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '每 $count 个月',
+      one: '每月',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get quickAddRecurMonthlyLastDay => '每月最后一天';
+
+  @override
+  String quickAddRecurMonthlyOnDay(int count, int day) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '每 $count 个月$day日',
+      one: '每月$day日',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String quickAddRecurMonthlyWeekday(String week, String weekday) {
+    String _temp0 = intl.Intl.selectLogic(week, {
+      '1': '第一个',
+      '2': '第二个',
+      '3': '第三个',
+      '4': '第四个',
+      'other': '最后一个',
+    });
+    return '每月$_temp0$weekday';
+  }
+
+  @override
+  String quickAddRecurUntil(String date) {
+    return '截至 $date';
+  }
+
+  @override
+  String get quickAddRecurWeekdays => '每个工作日';
+
+  @override
+  String quickAddRecurWeekly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '每 $count 周',
+      one: '每周',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String quickAddRecurWeeklyOn(int count, String days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '每 $count 周$days',
+      one: '每周$days',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get quickAddRepeatNone => '不重复';
+
+  @override
+  String get quickAddSubmit => '添加任务';
+
+  @override
+  String get quickAddTagHint => '添加标签';
+
+  @override
+  String get quickAddTitle => '快速添加';
+
+  @override
+  String get quickAddUndo => '撤销';
+
+  @override
+  String get quickAddYearlyUnsupported => 'Tududi 不支持每年重复。';
+
+  @override
+  String get reviewClose => '返回今天';
+
+  @override
+  String get reviewDone => '完成';
+
+  @override
+  String get reviewKeep => '保留';
+
+  @override
+  String get reviewPickDate => '选择日期';
+
+  @override
+  String reviewProgress(int index, int total) {
+    return '第 $index/$total 项任务';
+  }
+
+  @override
+  String get reviewSomeday => '以后再说';
+
+  @override
+  String reviewSummaryDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '已完成 $count 项任务',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewSummaryEmpty => '没有需要回顾的任务。';
+
+  @override
+  String reviewSummaryKept(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '保留 $count 项任务',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reviewSummaryMoved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '已改期 $count 项任务',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reviewSummarySomeday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count 项任务移至以后再说',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewSummaryTitle => '回顾完成';
+
+  @override
+  String get reviewTitle => '每日回顾';
+
+  @override
+  String get reviewTomorrow => '明天';
 
   @override
   String get settingsAbout => '关于 Tududa';
@@ -1052,4 +1571,198 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get taskViewList => '列表';
+
+  @override
+  String get tileBlocked => '已阻塞';
+
+  @override
+  String get tileComplete => '完成';
+
+  @override
+  String tileDueOn(String date) {
+    return '截止 $date';
+  }
+
+  @override
+  String get tileEdit => '编辑';
+
+  @override
+  String get tileEditTitle => '编辑标题';
+
+  @override
+  String tileEstimate(int minutes) {
+    return '$minutes 分钟';
+  }
+
+  @override
+  String get tileHasNote => '有备注';
+
+  @override
+  String get tileMenu => '更多操作';
+
+  @override
+  String tileMoreTags(int count) {
+    return '另外 $count 个标签';
+  }
+
+  @override
+  String tileOverdueDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '已逾期 $count 天',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String tilePostponedTimes(int count) {
+    return '已推迟 $count 次';
+  }
+
+  @override
+  String tilePriorityLabel(String priority) {
+    return '优先级 $priority';
+  }
+
+  @override
+  String get tileReopen => '重新打开';
+
+  @override
+  String get tileRepeats => '重复';
+
+  @override
+  String get tileSelect => '选择';
+
+  @override
+  String get tileSelected => '已选中';
+
+  @override
+  String tileSubtasksDone(int done, int total) {
+    return '$done/$total 个子任务已完成';
+  }
+
+  @override
+  String get tileTitleHint => '任务标题';
+
+  @override
+  String todayDurationH(int hours) {
+    return '$hours 小时';
+  }
+
+  @override
+  String todayDurationHm(int hours, int minutes) {
+    return '$hours 小时 $minutes 分钟';
+  }
+
+  @override
+  String todayDurationM(int minutes) {
+    return '$minutes 分钟';
+  }
+
+  @override
+  String get todayEmptyBody => '没有待办事项了，享受剩下的时光吧。';
+
+  @override
+  String get todayEmptyTitle => '今天的任务都完成了';
+
+  @override
+  String get todayErrorTitle => '无法加载今日任务';
+
+  @override
+  String get todayFocus => '专注模式';
+
+  @override
+  String todayMinutesLeft(String duration) {
+    return '剩余 $duration';
+  }
+
+  @override
+  String get todayNoEstimate => '无时间估算';
+
+  @override
+  String todayProgress(int done, int total) {
+    return '已完成 $done/$total';
+  }
+
+  @override
+  String get todayRescheduleAll => '全部改期';
+
+  @override
+  String get todayRetry => '重试';
+
+  @override
+  String get todayReview => '每日回顾';
+
+  @override
+  String get todaySearch => '搜索（即将推出）';
+
+  @override
+  String get todaySectionAfternoon => '下午';
+
+  @override
+  String get todaySectionAnytime => '全天';
+
+  @override
+  String get todaySectionCompleted => '今日已完成';
+
+  @override
+  String get todaySectionEvening => '晚上';
+
+  @override
+  String get todaySectionMorning => '上午';
+
+  @override
+  String get todaySectionOverdue => '已逾期';
+
+  @override
+  String todaySectionToggle(String section) {
+    return '显示或隐藏$section';
+  }
+
+  @override
+  String get todayTitle => '今天';
+
+  @override
+  String get undoAction => '撤销';
+
+  @override
+  String undoCompleted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '已完成 $count 项任务',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String undoDeleted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '已删除 $count 项任务',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String undoPostponed(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '已推迟 $count 项任务',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String undoUpdated(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '已更新 $count 项任务',
+    );
+    return '$_temp0';
+  }
 }

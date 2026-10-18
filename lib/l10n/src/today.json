@@ -1,0 +1,344 @@
+{
+ "todayTitle": {
+  "en": "Today",
+  "de": "Heute",
+  "zh": "今天",
+  "description": "Title of the Today screen"
+ },
+ "todayProgress": {
+  "en": "{done} of {total} done",
+  "de": "{done} von {total} erledigt",
+  "zh": "已完成 {done}/{total}",
+  "description": "Progress line in the Today header",
+  "placeholders": {
+   "done": {
+    "type": "int"
+   },
+   "total": {
+    "type": "int"
+   }
+  }
+ },
+ "todayMinutesLeft": {
+  "en": "{duration} left",
+  "de": "noch {duration}",
+  "zh": "剩余 {duration}",
+  "description": "Estimated time of the remaining tasks",
+  "placeholders": {
+   "duration": {
+    "type": "String"
+   }
+  }
+ },
+ "todayDurationHm": {
+  "en": "{hours} h {minutes} min",
+  "de": "{hours} Std. {minutes} Min.",
+  "zh": "{hours} 小时 {minutes} 分钟",
+  "description": "Duration with hours and minutes",
+  "placeholders": {
+   "hours": {
+    "type": "int"
+   },
+   "minutes": {
+    "type": "int"
+   }
+  }
+ },
+ "todayDurationH": {
+  "en": "{hours} h",
+  "de": "{hours} Std.",
+  "zh": "{hours} 小时",
+  "description": "Duration in whole hours",
+  "placeholders": {
+   "hours": {
+    "type": "int"
+   }
+  }
+ },
+ "todayDurationM": {
+  "en": "{minutes} min",
+  "de": "{minutes} Min.",
+  "zh": "{minutes} 分钟",
+  "description": "Duration in minutes",
+  "placeholders": {
+   "minutes": {
+    "type": "int"
+   }
+  }
+ },
+ "todayNoEstimate": {
+  "en": "No time estimates",
+  "de": "Keine Zeitschätzung",
+  "zh": "无时间估算",
+  "description": "Header text when no task has an estimate"
+ },
+ "todaySectionOverdue": {
+  "en": "Overdue",
+  "de": "Überfällig",
+  "zh": "已逾期",
+  "description": "Today section"
+ },
+ "todaySectionMorning": {
+  "en": "Morning",
+  "de": "Morgens",
+  "zh": "上午",
+  "description": "Today section: before 12:00"
+ },
+ "todaySectionAfternoon": {
+  "en": "Afternoon",
+  "de": "Nachmittags",
+  "zh": "下午",
+  "description": "Today section: 12:00 to 17:59"
+ },
+ "todaySectionEvening": {
+  "en": "Evening",
+  "de": "Abends",
+  "zh": "晚上",
+  "description": "Today section: from 18:00"
+ },
+ "todaySectionAnytime": {
+  "en": "Anytime",
+  "de": "Jederzeit",
+  "zh": "全天",
+  "description": "Today section: tasks without a time"
+ },
+ "todaySectionCompleted": {
+  "en": "Completed today",
+  "de": "Heute erledigt",
+  "zh": "今日已完成",
+  "description": "Today section"
+ },
+ "todaySectionToggle": {
+  "en": "Show or hide {section}",
+  "de": "{section} ein- oder ausblenden",
+  "zh": "显示或隐藏{section}",
+  "description": "Tooltip of a section header",
+  "placeholders": {
+   "section": {
+    "type": "String"
+   }
+  }
+ },
+ "todayRescheduleAll": {
+  "en": "Reschedule all",
+  "de": "Alle verschieben",
+  "zh": "全部改期",
+  "description": "Button on the overdue section"
+ },
+ "todayEmptyTitle": {
+  "en": "All done for today",
+  "de": "Für heute ist alles erledigt",
+  "zh": "今天的任务都完成了",
+  "description": "Empty state title"
+ },
+ "todayEmptyBody": {
+  "en": "Nothing left on your plate. Enjoy the rest of the day.",
+  "de": "Nichts mehr offen. Genieße den restlichen Tag.",
+  "zh": "没有待办事项了，享受剩下的时光吧。",
+  "description": "Empty state text"
+ },
+ "todayErrorTitle": {
+  "en": "Could not load today's tasks",
+  "de": "Heutige Aufgaben konnten nicht geladen werden",
+  "zh": "无法加载今日任务",
+  "description": "Error state title"
+ },
+ "todayRetry": {
+  "en": "Retry",
+  "de": "Erneut versuchen",
+  "zh": "重试",
+  "description": "Retry button"
+ },
+ "todayFocus": {
+  "en": "Focus mode",
+  "de": "Fokusmodus",
+  "zh": "专注模式",
+  "description": "AppBar action"
+ },
+ "todayReview": {
+  "en": "Daily review",
+  "de": "Tagesrückblick",
+  "zh": "每日回顾",
+  "description": "AppBar action"
+ },
+ "todaySearch": {
+  "en": "Search (coming soon)",
+  "de": "Suche (bald verfügbar)",
+  "zh": "搜索（即将推出）",
+  "description": "Disabled AppBar action"
+ },
+ "focusTitle": {
+  "en": "Focus",
+  "de": "Fokus",
+  "zh": "专注",
+  "description": "Title of the focus screen"
+ },
+ "focusPosition": {
+  "en": "{index} of {total}",
+  "de": "{index} von {total}",
+  "zh": "第 {index}/{total}",
+  "description": "Position in the focus queue",
+  "placeholders": {
+   "index": {
+    "type": "int"
+   },
+   "total": {
+    "type": "int"
+   }
+  }
+ },
+ "focusDone": {
+  "en": "Done",
+  "de": "Erledigt",
+  "zh": "完成",
+  "description": "Focus button"
+ },
+ "focusPostpone": {
+  "en": "Postpone",
+  "de": "Verschieben",
+  "zh": "推迟",
+  "description": "Focus button"
+ },
+ "focusSkip": {
+  "en": "Skip",
+  "de": "Überspringen",
+  "zh": "跳过",
+  "description": "Focus button: show the next task"
+ },
+ "focusSubtasks": {
+  "en": "Subtasks",
+  "de": "Unteraufgaben",
+  "zh": "子任务",
+  "description": "Heading of the subtask list"
+ },
+ "focusEmptyTitle": {
+  "en": "Nothing to focus on",
+  "de": "Nichts zu tun",
+  "zh": "没有需要专注的任务",
+  "description": "Focus empty state title"
+ },
+ "focusEmptyBody": {
+  "en": "You have no tasks left for today.",
+  "de": "Für heute sind keine Aufgaben mehr offen.",
+  "zh": "今天没有剩余任务了。",
+  "description": "Focus empty state text"
+ },
+ "focusBack": {
+  "en": "Back to Today",
+  "de": "Zurück zu Heute",
+  "zh": "返回今天",
+  "description": "Focus empty state button"
+ },
+ "reviewTitle": {
+  "en": "Daily review",
+  "de": "Tagesrückblick",
+  "zh": "每日回顾",
+  "description": "Title of the review screen"
+ },
+ "reviewProgress": {
+  "en": "Task {index} of {total}",
+  "de": "Aufgabe {index} von {total}",
+  "zh": "第 {index}/{total} 项任务",
+  "description": "Progress in the review",
+  "placeholders": {
+   "index": {
+    "type": "int"
+   },
+   "total": {
+    "type": "int"
+   }
+  }
+ },
+ "reviewDone": {
+  "en": "Done",
+  "de": "Erledigt",
+  "zh": "完成",
+  "description": "Review button"
+ },
+ "reviewTomorrow": {
+  "en": "Tomorrow",
+  "de": "Morgen",
+  "zh": "明天",
+  "description": "Review button"
+ },
+ "reviewPickDate": {
+  "en": "Pick date",
+  "de": "Datum wählen",
+  "zh": "选择日期",
+  "description": "Review button"
+ },
+ "reviewSomeday": {
+  "en": "Someday",
+  "de": "Irgendwann",
+  "zh": "以后再说",
+  "description": "Review button"
+ },
+ "reviewKeep": {
+  "en": "Keep",
+  "de": "Behalten",
+  "zh": "保留",
+  "description": "Review button: leave the task as it is"
+ },
+ "reviewSummaryTitle": {
+  "en": "Review complete",
+  "de": "Rückblick abgeschlossen",
+  "zh": "回顾完成",
+  "description": "Summary title"
+ },
+ "reviewSummaryEmpty": {
+  "en": "No open tasks to review.",
+  "de": "Keine offenen Aufgaben zum Durchsehen.",
+  "zh": "没有需要回顾的任务。",
+  "description": "Summary when nothing was reviewed"
+ },
+ "reviewSummaryDone": {
+  "en": "{count, plural, one{{count} task completed} other{{count} tasks completed}}",
+  "de": "{count, plural, one{{count} Aufgabe erledigt} other{{count} Aufgaben erledigt}}",
+  "zh": "{count, plural, other{已完成 {count} 项任务}}",
+  "description": "Summary line",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "reviewSummaryMoved": {
+  "en": "{count, plural, one{{count} task rescheduled} other{{count} tasks rescheduled}}",
+  "de": "{count, plural, one{{count} Aufgabe verschoben} other{{count} Aufgaben verschoben}}",
+  "zh": "{count, plural, other{已改期 {count} 项任务}}",
+  "description": "Summary line",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "reviewSummarySomeday": {
+  "en": "{count, plural, one{{count} task moved to Someday} other{{count} tasks moved to Someday}}",
+  "de": "{count, plural, one{{count} Aufgabe auf Irgendwann gesetzt} other{{count} Aufgaben auf Irgendwann gesetzt}}",
+  "zh": "{count, plural, other{{count} 项任务移至以后再说}}",
+  "description": "Summary line",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "reviewSummaryKept": {
+  "en": "{count, plural, one{{count} task kept} other{{count} tasks kept}}",
+  "de": "{count, plural, one{{count} Aufgabe behalten} other{{count} Aufgaben behalten}}",
+  "zh": "{count, plural, other{保留 {count} 项任务}}",
+  "description": "Summary line",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "reviewClose": {
+  "en": "Back to Today",
+  "de": "Zurück zu Heute",
+  "zh": "返回今天",
+  "description": "Summary button"
+ }
+}

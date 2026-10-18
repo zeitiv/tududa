@@ -70,6 +70,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get areasTitle => 'Bereiche';
 
   @override
+  String get asyncStateErrorTitle => 'Etwas ist schiefgelaufen';
+
+  @override
+  String get asyncStateLoading => 'Wird geladen';
+
+  @override
+  String get asyncStateOfflineHint =>
+      'Auf diesem Gerät ist noch nichts gespeichert. Verbinde dich, um Daten zu laden.';
+
+  @override
+  String get asyncStateOfflineTitle => 'Du bist offline';
+
+  @override
+  String get asyncStateRetry => 'Erneut versuchen';
+
+  @override
   String get authCancel => 'Abbrechen';
 
   @override
@@ -180,6 +196,35 @@ class AppLocalizationsDe extends AppLocalizations {
   String get authWelcome => 'Willkommen bei Tududa';
 
   @override
+  String get bulkClear => 'Auswahl aufheben';
+
+  @override
+  String get bulkComplete => 'Erledigen';
+
+  @override
+  String get bulkDelete => 'Löschen';
+
+  @override
+  String get bulkMoveProject => 'In Projekt verschieben';
+
+  @override
+  String get bulkNoProject => 'Kein Projekt';
+
+  @override
+  String get bulkPostpone => 'Verschieben';
+
+  @override
+  String get bulkPriority => 'Priorität';
+
+  @override
+  String bulkSelectedCount(int count) {
+    return '$count ausgewählt';
+  }
+
+  @override
+  String get bulkTag => 'Tag setzen';
+
+  @override
   String get commonAdd => 'Hinzufügen';
 
   @override
@@ -247,6 +292,35 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coreYesterday => 'Gestern';
 
   @override
+  String get focusBack => 'Zurück zu Heute';
+
+  @override
+  String get focusDone => 'Erledigt';
+
+  @override
+  String get focusEmptyBody => 'Für heute sind keine Aufgaben mehr offen.';
+
+  @override
+  String get focusEmptyTitle => 'Nichts zu tun';
+
+  @override
+  String focusPosition(int index, int total) {
+    return '$index von $total';
+  }
+
+  @override
+  String get focusPostpone => 'Verschieben';
+
+  @override
+  String get focusSkip => 'Überspringen';
+
+  @override
+  String get focusSubtasks => 'Unteraufgaben';
+
+  @override
+  String get focusTitle => 'Fokus';
+
+  @override
   String get inboxEmpty => 'Posteingang ist leer';
 
   @override
@@ -257,6 +331,73 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get inboxTelegramHint => 'Einträge aus Telegram erscheinen hier';
+
+  @override
+  String inboxV2AgeDays(int count) {
+    return 'vor $count Tg.';
+  }
+
+  @override
+  String inboxV2AgeHours(int count) {
+    return 'vor $count Std.';
+  }
+
+  @override
+  String inboxV2AgeMinutes(int count) {
+    return 'vor $count Min.';
+  }
+
+  @override
+  String get inboxV2AgeNow => 'Gerade eben';
+
+  @override
+  String get inboxV2CaptureFailed => 'Eintrag konnte nicht gespeichert werden';
+
+  @override
+  String get inboxV2CaptureHint => 'Gedanken, Link oder Idee festhalten…';
+
+  @override
+  String get inboxV2CaptureSend => 'Zum Posteingang hinzufügen';
+
+  @override
+  String get inboxV2ConvertNote => 'In Notiz umwandeln';
+
+  @override
+  String get inboxV2ConvertTask => 'In Aufgabe umwandeln';
+
+  @override
+  String get inboxV2Deleted => 'Eintrag gelöscht';
+
+  @override
+  String get inboxV2EmptyHint =>
+      'Erfasse oben etwas oder sende es über Telegram';
+
+  @override
+  String get inboxV2Ignored => 'Ignoriert';
+
+  @override
+  String get inboxV2ItemActions => 'Weitere Aktionen';
+
+  @override
+  String get inboxV2LoadFailed => 'Posteingang konnte nicht geladen werden';
+
+  @override
+  String get inboxV2MarkedProcessed => 'Als erledigt markiert';
+
+  @override
+  String get inboxV2OpenNote => 'Öffnen';
+
+  @override
+  String get inboxV2SavedAsNote => 'Als Notiz gespeichert';
+
+  @override
+  String get inboxV2Undo => 'Rückgängig';
+
+  @override
+  String get inboxV2UnsortedHint => 'Gib ihnen ein Projekt oder ein Datum';
+
+  @override
+  String get inboxV2UnsortedTasks => 'Aufgaben ohne Projekt oder Datum';
 
   @override
   String get kanbanNoTasks =>
@@ -285,6 +426,101 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get kanbanStatusWaiting => 'Wartend';
+
+  @override
+  String kanbanV2ColumnSummary(String status, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben',
+      one: '1 Aufgabe',
+    );
+    return '$status, $_temp0';
+  }
+
+  @override
+  String get kanbanV2CurrentColumn => 'Aktuell';
+
+  @override
+  String get kanbanV2DropHere => 'Hier ablegen';
+
+  @override
+  String get kanbanV2EmptyColumn => 'Nichts hier';
+
+  @override
+  String get kanbanV2MoveTo => 'Verschieben nach…';
+
+  @override
+  String kanbanV2MoveToStatus(String status) {
+    return 'Verschieben nach $status';
+  }
+
+  @override
+  String kanbanV2Moved(String status) {
+    return 'Verschoben nach $status';
+  }
+
+  @override
+  String get listAllTasks => 'Alle Aufgaben';
+
+  @override
+  String get listComingSoon => 'Demnächst';
+
+  @override
+  String get listEmptyCompletedHint =>
+      'Erledigte Aufgaben bleiben hier 30 Tage erhalten.';
+
+  @override
+  String get listEmptyCompletedTitle => 'Noch nichts erledigt';
+
+  @override
+  String get listEmptyOverdueHint => 'Keine Aufgabe ist überfällig.';
+
+  @override
+  String get listEmptyOverdueTitle => 'Alles erledigt';
+
+  @override
+  String get listEmptySomedayHint =>
+      'Aufgaben ohne Fälligkeitsdatum stehen hier.';
+
+  @override
+  String get listEmptySomedayTitle => 'Keine Irgendwann-Aufgaben';
+
+  @override
+  String get listEmptyUpcomingHint =>
+      'Aufgaben der nächsten 7 Tage erscheinen hier.';
+
+  @override
+  String get listEmptyUpcomingTitle => 'Nichts geplant';
+
+  @override
+  String get listLoadMore => 'Mehr laden';
+
+  @override
+  String get listMoreSection => 'Listen & mehr';
+
+  @override
+  String get listNoDate => 'Ohne Datum';
+
+  @override
+  String get listOverdue => 'Überfällig';
+
+  @override
+  String get listRescheduleAll => 'Alle auf heute verschieben';
+
+  @override
+  String listRescheduled(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben auf heute verschoben',
+      one: '1 Aufgabe auf heute verschoben',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get listTags => 'Tags';
 
   @override
   String get navInbox => 'Posteingang';
@@ -338,6 +574,70 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get noteTitleHint => 'Titel der Notiz';
+
+  @override
+  String get noteV2ClearSearch => 'Suche löschen';
+
+  @override
+  String get noteV2Discard => 'Verwerfen';
+
+  @override
+  String get noteV2DiscardBody =>
+      'Nicht gespeicherte Änderungen gehen verloren.';
+
+  @override
+  String get noteV2DiscardTitle => 'Änderungen verwerfen?';
+
+  @override
+  String get noteV2KeepEditing => 'Weiter bearbeiten';
+
+  @override
+  String get noteV2ModeEdit => 'Bearbeiten';
+
+  @override
+  String get noteV2ModePreview => 'Vorschau';
+
+  @override
+  String get noteV2NoResults => 'Keine Notizen passen zur Suche';
+
+  @override
+  String get noteV2PreviewEmpty => 'Noch nichts zur Vorschau';
+
+  @override
+  String get noteV2Search => 'Notizen durchsuchen';
+
+  @override
+  String get noteV2Tags => 'Tags';
+
+  @override
+  String get noteV2Untitled => 'Ohne Titel';
+
+  @override
+  String get noteV2ViewGrid => 'Rasteransicht';
+
+  @override
+  String get noteV2ViewList => 'Listenansicht';
+
+  @override
+  String get postponeNextWeek => 'Nächste Woche';
+
+  @override
+  String get postponePickDate => 'Datum wählen …';
+
+  @override
+  String get postponeSkipOccurrence => 'Diesen Termin überspringen';
+
+  @override
+  String get postponeSomeday => 'Irgendwann (ohne Datum)';
+
+  @override
+  String get postponeTitle => 'Verschieben';
+
+  @override
+  String get postponeTomorrow => 'Morgen';
+
+  @override
+  String get postponeWeekend => 'Dieses Wochenende';
 
   @override
   String get projectAddTask => 'Aufgabe hinzufügen';
@@ -465,6 +765,243 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get projectsTitle => 'Projekte';
+
+  @override
+  String get quickAddAddAnother => 'Weitere hinzufügen';
+
+  @override
+  String quickAddAdded(String name) {
+    return '$name hinzugefügt';
+  }
+
+  @override
+  String get quickAddApply => 'Übernehmen';
+
+  @override
+  String get quickAddClose => 'Schließen';
+
+  @override
+  String get quickAddHint => 'Aufgabe, z. B. Miete zahlen jeden Monat !!';
+
+  @override
+  String get quickAddInlineHint => 'Aufgabe hinzufügen';
+
+  @override
+  String get quickAddKeepAsText => 'Tippen, um als Text zu behalten';
+
+  @override
+  String get quickAddMoreOptions => 'Mehr Optionen';
+
+  @override
+  String quickAddNextOccurrences(String dates) {
+    return 'Nächste: $dates';
+  }
+
+  @override
+  String get quickAddNone => 'Keine';
+
+  @override
+  String get quickAddNoteHint => 'Notiz hinzufügen';
+
+  @override
+  String get quickAddPickArea => 'Bereich';
+
+  @override
+  String get quickAddPickDate => 'Fälligkeitsdatum';
+
+  @override
+  String get quickAddPickNote => 'Notiz';
+
+  @override
+  String get quickAddPickPriority => 'Priorität';
+
+  @override
+  String get quickAddPickProject => 'Projekt';
+
+  @override
+  String get quickAddPickRepeat => 'Wiederholen';
+
+  @override
+  String get quickAddPickTags => 'Tags';
+
+  @override
+  String get quickAddPickTime => 'Uhrzeit';
+
+  @override
+  String get quickAddRecurAfterCompletion => 'nach Erledigung';
+
+  @override
+  String quickAddRecurDaily(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Alle $count Tage',
+      one: 'Jeden Tag',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String quickAddRecurMonthly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Alle $count Monate',
+      one: 'Jeden Monat',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get quickAddRecurMonthlyLastDay => 'Letzter Tag jedes Monats';
+
+  @override
+  String quickAddRecurMonthlyOnDay(int count, int day) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Alle $count Monate am $day.',
+      one: 'Monatlich am $day.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String quickAddRecurMonthlyWeekday(String week, String weekday) {
+    String _temp0 = intl.Intl.selectLogic(week, {
+      '1': 'ersten',
+      '2': 'zweiten',
+      '3': 'dritten',
+      '4': 'vierten',
+      'other': 'letzten',
+    });
+    return 'Jeden $_temp0 $weekday im Monat';
+  }
+
+  @override
+  String quickAddRecurUntil(String date) {
+    return 'bis $date';
+  }
+
+  @override
+  String get quickAddRecurWeekdays => 'Jeden Werktag';
+
+  @override
+  String quickAddRecurWeekly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Alle $count Wochen',
+      one: 'Jede Woche',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String quickAddRecurWeeklyOn(int count, String days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Alle $count Wochen am $days',
+      one: 'Jede Woche am $days',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get quickAddRepeatNone => 'Wiederholt sich nicht';
+
+  @override
+  String get quickAddSubmit => 'Aufgabe hinzufügen';
+
+  @override
+  String get quickAddTagHint => 'Tag hinzufügen';
+
+  @override
+  String get quickAddTitle => 'Schnell hinzufügen';
+
+  @override
+  String get quickAddUndo => 'Rückgängig';
+
+  @override
+  String get quickAddYearlyUnsupported =>
+      'Jährliche Wiederholungen werden von Tududi nicht unterstützt.';
+
+  @override
+  String get reviewClose => 'Zurück zu Heute';
+
+  @override
+  String get reviewDone => 'Erledigt';
+
+  @override
+  String get reviewKeep => 'Behalten';
+
+  @override
+  String get reviewPickDate => 'Datum wählen';
+
+  @override
+  String reviewProgress(int index, int total) {
+    return 'Aufgabe $index von $total';
+  }
+
+  @override
+  String get reviewSomeday => 'Irgendwann';
+
+  @override
+  String reviewSummaryDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben erledigt',
+      one: '$count Aufgabe erledigt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewSummaryEmpty => 'Keine offenen Aufgaben zum Durchsehen.';
+
+  @override
+  String reviewSummaryKept(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben behalten',
+      one: '$count Aufgabe behalten',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reviewSummaryMoved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben verschoben',
+      one: '$count Aufgabe verschoben',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reviewSummarySomeday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben auf Irgendwann gesetzt',
+      one: '$count Aufgabe auf Irgendwann gesetzt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewSummaryTitle => 'Rückblick abgeschlossen';
+
+  @override
+  String get reviewTitle => 'Tagesrückblick';
+
+  @override
+  String get reviewTomorrow => 'Morgen';
 
   @override
   String get settingsAbout => 'Über Tududa';
@@ -1098,4 +1635,203 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get taskViewList => 'Liste';
+
+  @override
+  String get tileBlocked => 'Blockiert';
+
+  @override
+  String get tileComplete => 'Erledigen';
+
+  @override
+  String tileDueOn(String date) {
+    return 'Fällig $date';
+  }
+
+  @override
+  String get tileEdit => 'Bearbeiten';
+
+  @override
+  String get tileEditTitle => 'Titel bearbeiten';
+
+  @override
+  String tileEstimate(int minutes) {
+    return '$minutes Min.';
+  }
+
+  @override
+  String get tileHasNote => 'Hat eine Notiz';
+
+  @override
+  String get tileMenu => 'Weitere Aktionen';
+
+  @override
+  String tileMoreTags(int count) {
+    return '$count weitere Tags';
+  }
+
+  @override
+  String tileOverdueDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Tage überfällig',
+      one: '1 Tag überfällig',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String tilePostponedTimes(int count) {
+    return '$count× verschoben';
+  }
+
+  @override
+  String tilePriorityLabel(String priority) {
+    return 'Priorität $priority';
+  }
+
+  @override
+  String get tileReopen => 'Wieder öffnen';
+
+  @override
+  String get tileRepeats => 'Wiederholt sich';
+
+  @override
+  String get tileSelect => 'Auswählen';
+
+  @override
+  String get tileSelected => 'Ausgewählt';
+
+  @override
+  String tileSubtasksDone(int done, int total) {
+    return '$done von $total Teilaufgaben erledigt';
+  }
+
+  @override
+  String get tileTitleHint => 'Aufgabentitel';
+
+  @override
+  String todayDurationH(int hours) {
+    return '$hours Std.';
+  }
+
+  @override
+  String todayDurationHm(int hours, int minutes) {
+    return '$hours Std. $minutes Min.';
+  }
+
+  @override
+  String todayDurationM(int minutes) {
+    return '$minutes Min.';
+  }
+
+  @override
+  String get todayEmptyBody => 'Nichts mehr offen. Genieße den restlichen Tag.';
+
+  @override
+  String get todayEmptyTitle => 'Für heute ist alles erledigt';
+
+  @override
+  String get todayErrorTitle => 'Heutige Aufgaben konnten nicht geladen werden';
+
+  @override
+  String get todayFocus => 'Fokusmodus';
+
+  @override
+  String todayMinutesLeft(String duration) {
+    return 'noch $duration';
+  }
+
+  @override
+  String get todayNoEstimate => 'Keine Zeitschätzung';
+
+  @override
+  String todayProgress(int done, int total) {
+    return '$done von $total erledigt';
+  }
+
+  @override
+  String get todayRescheduleAll => 'Alle verschieben';
+
+  @override
+  String get todayRetry => 'Erneut versuchen';
+
+  @override
+  String get todayReview => 'Tagesrückblick';
+
+  @override
+  String get todaySearch => 'Suche (bald verfügbar)';
+
+  @override
+  String get todaySectionAfternoon => 'Nachmittags';
+
+  @override
+  String get todaySectionAnytime => 'Jederzeit';
+
+  @override
+  String get todaySectionCompleted => 'Heute erledigt';
+
+  @override
+  String get todaySectionEvening => 'Abends';
+
+  @override
+  String get todaySectionMorning => 'Morgens';
+
+  @override
+  String get todaySectionOverdue => 'Überfällig';
+
+  @override
+  String todaySectionToggle(String section) {
+    return '$section ein- oder ausblenden';
+  }
+
+  @override
+  String get todayTitle => 'Heute';
+
+  @override
+  String get undoAction => 'Rückgängig';
+
+  @override
+  String undoCompleted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben erledigt',
+      one: 'Aufgabe erledigt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String undoDeleted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben gelöscht',
+      one: 'Aufgabe gelöscht',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String undoPostponed(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben verschoben',
+      one: 'Aufgabe verschoben',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String undoUpdated(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben aktualisiert',
+      one: 'Aufgabe aktualisiert',
+    );
+    return '$_temp0';
+  }
 }

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/design/app_theme.dart';
 import 'core/router/app_router.dart';
 import 'core/sync/sync_triggers.dart';
+import 'core/sync/widget_reconciler.dart';
 import 'l10n/gen/app_localizations.dart';
 import 'l10n/locale_resolver.dart';
 import 'settings/providers/settings_provider.dart';
@@ -51,6 +52,8 @@ class _TududiAppState extends ConsumerState<TududiApp>
     final router = ref.watch(routerProvider);
     // Keeps the sync engine reacting to connectivity, resume and local writes.
     ref.watch(syncTriggersProvider);
+    // Applies changes made from the home-screen widget to the local store.
+    ref.watch(widgetReconcilerProvider);
     final settings = ref.watch(settingsProvider);
 
     final mode = switch (settings.themeMode) {

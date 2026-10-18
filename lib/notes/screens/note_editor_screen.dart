@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,6 +9,7 @@ import '../../core/ids.dart';
 import '../data/note_patch.dart';
 import '../domain/note.dart';
 import '../providers/note_provider.dart';
+import '../widgets/note_card.dart' show parseNoteColor;
 import '../../projects/providers/project_provider.dart';
 import '../../l10n/l10n_ext.dart';
 
@@ -34,6 +36,34 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
   bool _isLoading = false;
   bool _isEdit = false;
 
+  /// Markdown preview instead of the content field.
+  bool _preview = false;
+
+  /// Tags of the loaded note (shown as chips; edited on the server side).
+  List<String> _tagNames = const [];
+
+  // What the form held when it was opened / loaded, for the unsaved guard.
+  String _initialTitle = '';
+  String _initialContent = '';
+  String? _initialColor;
+  String? _initialProjectUid;
+
+  /// Set once saved, deleted or discarded so leaving does not ask again.
+  bool _leaving = false;
+  bool _wasDirty = false;
+
+  bool get _dirty =>
+      !_leaving &&
+      (_titleController.text != _initialTitle ||
+          _contentController.text != _initialContent ||
+          _color != _initialColor ||
+          _projectUid != _initialProjectUid);
+
+  void _syncDirty() {
+    final d = _dirty;
+    if (d != _wasDirty) setState(() => _wasDirty = d);
+  }
+
   static const _colors = [
     null,
     '#FFD6D6',
@@ -48,6 +78,8 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
   @override
   void initState() {
     super.initState();
+    _titleController.addListener(_syncDirty);
+    _contentController.addListener(_syncDirty);
     if (widget.noteId != null) {
       _isEdit = true;
       _loadNote();
@@ -75,6 +107,12 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
       setState(() {
         _projectUid = note.projectUid?.value;
         _color = note.color;
+        _tagNames = [for (final t in note.tags) t.name];
+        _initialTitle = _titleController.text;
+        _initialContent = _contentController.text;
+        _initialColor = _color;
+        _initialProjectUid = _projectUid;
+        _wasDirty = false;
         _isLoading = false;
       });
     } on ApiError {
@@ -126,6 +164,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
     if (mounted) {
       setState(() => _isLoading = false);
       if (success) {
+        _leaving = true;
         context.pop();
       } else {
         ScaffoldMessenger.of(context)
@@ -160,7 +199,36 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
         // Stay on the screen so the user can retry.
         return;
       }
-      if (mounted) context.pop();
+      if (mounted) {
+        _leaving = true;
+        context.pop();
+      }
+    }
+  }
+
+  /// Back with unsaved changes: ask before throwing them away.
+  Future<void> _confirmDiscard() async {
+    final strings = context.l10n;
+    final discard = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(strings.noteV2DiscardTitle),
+        content: Text(strings.noteV2DiscardBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(strings.noteV2KeepEditing),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(strings.noteV2Discard),
+          ),
+        ],
+      ),
+    );
+    if (discard == true && mounted) {
+      _leaving = true;
+      context.pop();
     }
   }
 
@@ -177,151 +245,243 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
     final projects = ref.watch(projectListProvider).value ?? const [];
     final strings = context.l10n;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_isEdit ? strings.noteEdit : strings.noteNew),
-        actions: [
-          if (_isEdit)
-            IconButton(
-              tooltip: strings.commonDelete,
-              icon: Icon(Icons.delete_outline, color: theme.colorScheme.error),
-              onPressed: _delete,
+    final selectedProject = _projectUid == null
+        ? null
+        : projects.where((p) => p.uid.value == _projectUid).firstOrNull;
+
+    return PopScope(
+      canPop: !_dirty,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _confirmDiscard();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_isEdit ? strings.noteEdit : strings.noteNew),
+          actions: [
+            if (_isEdit)
+              IconButton(
+                tooltip: strings.commonDelete,
+                icon: Icon(
+                  Icons.delete_outline,
+                  color: theme.colorScheme.error,
+                ),
+                onPressed: _delete,
+              ),
+            TextButton(
+              onPressed: _isLoading ? null : _save,
+              child: _isLoading
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text(strings.commonSave),
             ),
-          TextButton(
-            onPressed: _isLoading ? null : _save,
-            child: _isLoading
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Text(strings.commonSave),
-          ),
-        ],
-      ),
-      body: _isLoading && _isEdit
-          ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                // Title
-                TextFormField(
-                  controller: _titleController,
-                  autofocus: !_isEdit,
-                  textCapitalization: TextCapitalization.sentences,
-                  style: theme.textTheme.titleLarge,
-                  decoration: InputDecoration(
-                    hintText: strings.noteTitleHint,
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    fillColor: Colors.transparent,
-                    filled: false,
-                    hintStyle: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant.withValues(
-                        alpha: 0.5,
+          ],
+        ),
+        body: _isLoading && _isEdit
+            ? const Center(child: CircularProgressIndicator())
+            : ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  // Title
+                  TextFormField(
+                    controller: _titleController,
+                    autofocus: !_isEdit,
+                    textCapitalization: TextCapitalization.sentences,
+                    style: theme.textTheme.titleLarge,
+                    decoration: InputDecoration(
+                      hintText: strings.noteTitleHint,
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      fillColor: Colors.transparent,
+                      filled: false,
+                      hintStyle: theme.textTheme.titleLarge?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant.withValues(
+                          alpha: 0.5,
+                        ),
                       ),
                     ),
                   ),
-                ),
 
-                const Divider(),
-
-                // Content
-                TextFormField(
-                  controller: _contentController,
-                  maxLines: null,
-                  minLines: 12,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    hintText: strings.noteContentHint,
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    fillColor: Colors.transparent,
-                    filled: false,
-                    hintStyle: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant.withValues(
-                        alpha: 0.4,
+                  // Project and tag chips
+                  if (selectedProject != null || _tagNames.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        children: [
+                          if (selectedProject != null)
+                            Chip(
+                              avatar: const Icon(Icons.folder_outlined),
+                              label: Text(selectedProject.name),
+                            ),
+                          for (final tag in _tagNames)
+                            Chip(
+                              avatar: const Icon(Icons.sell_outlined),
+                              label: Text(tag),
+                            ),
+                        ],
                       ),
                     ),
+
+                  // Edit / preview toggle (chips: the app bar's Save is the
+                  // screen's only TextButton)
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      for (final (preview, icon, label) in [
+                        (false, Icons.edit_outlined, strings.noteV2ModeEdit),
+                        (
+                          true,
+                          Icons.visibility_outlined,
+                          strings.noteV2ModePreview,
+                        ),
+                      ])
+                        ChoiceChip(
+                          avatar: Icon(icon),
+                          label: Text(label),
+                          selected: _preview == preview,
+                          showCheckmark: false,
+                          onSelected: (_) {
+                            FocusScope.of(context).unfocus();
+                            setState(() => _preview = preview);
+                          },
+                        ),
+                    ],
                   ),
-                  style: theme.textTheme.bodyLarge,
-                ),
+                  const SizedBox(height: 8),
 
-                const Divider(height: 32),
-
-                // Color picker
-                Text(strings.noteColor, style: theme.textTheme.labelLarge),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 10,
-                  children: _colors.map((c) {
-                    final isSelected = _color == c;
-                    final displayColor = c != null
-                        ? Color(
-                            int.parse(
-                              'FF${c.replaceFirst('#', '')}',
-                              radix: 16,
+                  // Content
+                  if (_preview)
+                    _contentController.text.trim().isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 24),
+                            child: Text(
+                              strings.noteV2PreviewEmpty,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
                             ),
                           )
-                        : theme.colorScheme.surface;
-                    return GestureDetector(
-                      onTap: () => setState(() => _color = c),
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: displayColor,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: isSelected
-                                ? theme.colorScheme.primary
-                                : theme.colorScheme.outline,
-                            width: isSelected ? 2.5 : 1,
+                        : MarkdownBody(
+                            data: _contentController.text,
+                            styleSheet: MarkdownStyleSheet.fromTheme(theme)
+                                .copyWith(p: theme.textTheme.bodyLarge),
+                          )
+                  else
+                    TextFormField(
+                      controller: _contentController,
+                      maxLines: null,
+                      minLines: 12,
+                      textCapitalization: TextCapitalization.sentences,
+                      decoration: InputDecoration(
+                        hintText: strings.noteContentHint,
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        fillColor: Colors.transparent,
+                        filled: false,
+                        hintStyle: theme.textTheme.bodyLarge?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant.withValues(
+                            alpha: 0.4,
                           ),
                         ),
-                        child: c == null
-                            ? Icon(
-                                Icons.format_color_reset,
-                                size: 16,
-                                color: theme.colorScheme.onSurfaceVariant,
-                              )
-                            : null,
                       ),
-                    );
-                  }).toList(),
-                ),
+                      style: theme.textTheme.bodyLarge,
+                    ),
 
-                const SizedBox(height: 16),
+                  const Divider(height: 32),
 
-                // Project
-                DropdownButtonFormField<String?>(
-                  initialValue: _projectUid,
-                  decoration: InputDecoration(
-                    labelText: strings.noteProject,
-                    prefixIcon: const Icon(Icons.folder_outlined),
+                  // Color picker
+                  Text(strings.noteColor, style: theme.textTheme.labelLarge),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: _colors.map((c) {
+                      final isSelected = _color == c;
+                      final displayColor =
+                          parseNoteColor(c) ?? theme.colorScheme.surface;
+                      return Semantics(
+                        button: true,
+                        selected: isSelected,
+                        label: strings.noteColor,
+                        child: InkResponse(
+                          radius: 24,
+                          onTap: () {
+                            setState(() => _color = c);
+                            _syncDirty();
+                          },
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: displayColor,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isSelected
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.outline,
+                                width: isSelected ? 2.5 : 1,
+                              ),
+                            ),
+                            child: c == null
+                                ? Icon(
+                                    Icons.format_color_reset,
+                                    size: 16,
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  )
+                                : isSelected
+                                ? const Icon(
+                                    Icons.check,
+                                    size: 18,
+                                    color: Colors.black87,
+                                  )
+                                : null,
+                          ),
+                        ),
+                      );
+                    }).toList(),
                   ),
-                  items: [
-                    DropdownMenuItem(
-                      value: null,
-                      child: Text(strings.commonNone),
+
+                  const SizedBox(height: 16),
+
+                  // Project
+                  DropdownButtonFormField<String?>(
+                    initialValue: _projectUid,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      labelText: strings.noteProject,
+                      prefixIcon: const Icon(Icons.folder_outlined),
                     ),
-                    ...projects.map(
-                      (p) => DropdownMenuItem(
-                        value: p.uid.value,
-                        child: Text(p.name),
+                    items: [
+                      DropdownMenuItem(
+                        value: null,
+                        child: Text(strings.commonNone),
                       ),
-                    ),
-                  ],
-                  onChanged: (v) => setState(() {
-                    _projectUid = v;
-                    _projectChanged = true;
-                  }),
-                ),
-                const SizedBox(height: 80),
-              ],
-            ),
+                      ...projects.map(
+                        (p) => DropdownMenuItem(
+                          value: p.uid.value,
+                          child: Text(p.name, overflow: TextOverflow.ellipsis),
+                        ),
+                      ),
+                    ],
+                    onChanged: (v) {
+                      setState(() {
+                        _projectUid = v;
+                        _projectChanged = true;
+                      });
+                      _syncDirty();
+                    },
+                  ),
+                  const SizedBox(height: 80),
+                ],
+              ),
+      ),
     );
   }
 }

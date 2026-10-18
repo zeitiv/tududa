@@ -4,6 +4,7 @@ import com.tududi.core.FakeTududi
 import com.tududi.core.TududiCore
 import com.tududi.core.vault.InMemoryVault
 import com.tududi.core.vault.VaultData
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -99,7 +100,8 @@ class SessionManagerTest {
     }
 
     @Test
-    fun `clear logs out with the native cookie and wipes everything`() = runTest {
+    // runBlocking, not runTest: the logout is real IO under a 5 s timeout, which virtual time would skip.
+    fun `clear logs out with the native cookie and wipes everything`() = runBlocking {
         provision()
         core.repository.refresh()
         core.changeLog.append("a", 2)

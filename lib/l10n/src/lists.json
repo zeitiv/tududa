@@ -1,0 +1,30 @@
+{
+  "listOverdue": {"en": "Overdue", "de": "Überfällig", "zh": "已逾期", "description": "Title of the overdue tasks list"},
+  "listNoDate": {"en": "No date", "de": "Ohne Datum", "zh": "无日期", "description": "Group header in Upcoming for tasks without a due day"},
+  "listRescheduleAll": {"en": "Reschedule all to today", "de": "Alle auf heute verschieben", "zh": "全部改到今天", "description": "Button that moves every overdue task to today"},
+  "listRescheduled": {
+    "en": "{count, plural, =1{1 task moved to today} other{{count} tasks moved to today}}",
+    "de": "{count, plural, =1{1 Aufgabe auf heute verschoben} other{{count} Aufgaben auf heute verschoben}}",
+    "zh": "{count, plural, other{已将 {count} 个任务改到今天}}",
+    "description": "Snackbar after rescheduling overdue tasks",
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "listLoadMore": {"en": "Load more", "de": "Mehr laden", "zh": "加载更多", "description": "Button that shows older completed tasks"},
+  "listEmptyUpcomingTitle": {"en": "Nothing coming up", "de": "Nichts geplant", "zh": "近期没有任务", "description": "Empty Upcoming list title"},
+  "listEmptyUpcomingHint": {"en": "Tasks due in the next 7 days show up here.", "de": "Aufgaben der nächsten 7 Tage erscheinen hier.", "zh": "未来 7 天到期的任务会显示在这里。", "description": "Empty Upcoming list hint"},
+  "listEmptyOverdueTitle": {"en": "All caught up", "de": "Alles erledigt", "zh": "没有逾期任务", "description": "Empty Overdue list title"},
+  "listEmptyOverdueHint": {"en": "No task is past its due date.", "de": "Keine Aufgabe ist überfällig.", "zh": "没有任务超过截止日期。", "description": "Empty Overdue list hint"},
+  "listEmptySomedayTitle": {"en": "No someday tasks", "de": "Keine Irgendwann-Aufgaben", "zh": "没有将来某天的任务", "description": "Empty Someday list title"},
+  "listEmptySomedayHint": {"en": "Tasks without a due date live here.", "de": "Aufgaben ohne Fälligkeitsdatum stehen hier.", "zh": "没有截止日期的任务会显示在这里。", "description": "Empty Someday list hint"},
+  "listEmptyCompletedTitle": {"en": "Nothing completed yet", "de": "Noch nichts erledigt", "zh": "还没有已完成的任务", "description": "Empty Completed list title"},
+  "listEmptyCompletedHint": {"en": "Finished tasks are kept here for 30 days.", "de": "Erledigte Aufgaben bleiben hier 30 Tage erhalten.", "zh": "已完成的任务会在这里保留 30 天。", "description": "Empty Completed list hint"},
+  "listMoreSection": {"en": "Lists & more", "de": "Listen & mehr", "zh": "列表与更多", "description": "Section of the More screen linking to lists"},
+  "listAllTasks": {"en": "All tasks", "de": "Alle Aufgaben", "zh": "所有任务", "description": "Link to the all tasks screen"},
+  "listTags": {"en": "Tags", "de": "Tags", "zh": "标签", "description": "Link to the tags screen"},
+  "listComingSoon": {"en": "Coming soon", "de": "Demnächst", "zh": "即将推出", "description": "Subtitle of a disabled link"},
+  "asyncStateLoading": {"en": "Loading", "de": "Wird geladen", "zh": "加载中", "description": "Accessibility label of the loading placeholder"},
+  "asyncStateOfflineTitle": {"en": "You are offline", "de": "Du bist offline", "zh": "你已离线", "description": "Offline state title"},
+  "asyncStateOfflineHint": {"en": "Nothing is saved on this device yet. Connect to load your data.", "de": "Auf diesem Gerät ist noch nichts gespeichert. Verbinde dich, um Daten zu laden.", "zh": "此设备上尚无已保存的数据。请联网以加载。", "description": "Offline state hint"},
+  "asyncStateErrorTitle": {"en": "Something went wrong", "de": "Etwas ist schiefgelaufen", "zh": "出错了", "description": "Error state title"},
+  "asyncStateRetry": {"en": "Try again", "de": "Erneut versuchen", "zh": "重试", "description": "Retry button of the error and offline states"}
+}

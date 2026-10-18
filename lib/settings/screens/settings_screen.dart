@@ -82,6 +82,34 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
 
+          _SectionHeader(title: strings.listMoreSection),
+
+          for (final (icon, label, path) in [
+            (Icons.warning_amber_rounded, strings.listOverdue, '/overdue'),
+            (Icons.cloud_outlined, strings.taskFilterSomeday, '/someday'),
+            (
+              Icons.check_circle_outline,
+              strings.taskFilterCompleted,
+              '/completed',
+            ),
+            (Icons.list_rounded, strings.listAllTasks, '/tasks'),
+            (Icons.sticky_note_2_outlined, strings.navNotes, '/notes'),
+            (Icons.layers_outlined, strings.settingsAreas, '/more/areas'),
+          ])
+            ListTile(
+              leading: Icon(icon),
+              title: Text(label),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push(path),
+            ),
+          // No tags screen exists yet.
+          ListTile(
+            enabled: false,
+            leading: const Icon(Icons.sell_outlined),
+            title: Text(strings.listTags),
+            subtitle: Text(strings.listComingSoon),
+          ),
+
           _SectionHeader(title: strings.settingsNavigation),
 
           ListTile(

@@ -69,6 +69,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get areasTitle => 'Areas';
 
   @override
+  String get asyncStateErrorTitle => 'Something went wrong';
+
+  @override
+  String get asyncStateLoading => 'Loading';
+
+  @override
+  String get asyncStateOfflineHint =>
+      'Nothing is saved on this device yet. Connect to load your data.';
+
+  @override
+  String get asyncStateOfflineTitle => 'You are offline';
+
+  @override
+  String get asyncStateRetry => 'Try again';
+
+  @override
   String get authCancel => 'Cancel';
 
   @override
@@ -176,6 +192,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authWelcome => 'Welcome to Tududa';
 
   @override
+  String get bulkClear => 'Clear selection';
+
+  @override
+  String get bulkComplete => 'Complete';
+
+  @override
+  String get bulkDelete => 'Delete';
+
+  @override
+  String get bulkMoveProject => 'Move to project';
+
+  @override
+  String get bulkNoProject => 'No project';
+
+  @override
+  String get bulkPostpone => 'Postpone';
+
+  @override
+  String get bulkPriority => 'Priority';
+
+  @override
+  String bulkSelectedCount(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get bulkTag => 'Set tag';
+
+  @override
   String get commonAdd => 'Add';
 
   @override
@@ -243,6 +288,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coreYesterday => 'Yesterday';
 
   @override
+  String get focusBack => 'Back to Today';
+
+  @override
+  String get focusDone => 'Done';
+
+  @override
+  String get focusEmptyBody => 'You have no tasks left for today.';
+
+  @override
+  String get focusEmptyTitle => 'Nothing to focus on';
+
+  @override
+  String focusPosition(int index, int total) {
+    return '$index of $total';
+  }
+
+  @override
+  String get focusPostpone => 'Postpone';
+
+  @override
+  String get focusSkip => 'Skip';
+
+  @override
+  String get focusSubtasks => 'Subtasks';
+
+  @override
+  String get focusTitle => 'Focus';
+
+  @override
   String get inboxEmpty => 'Inbox is empty';
 
   @override
@@ -253,6 +327,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get inboxTelegramHint => 'Items from Telegram will appear here';
+
+  @override
+  String inboxV2AgeDays(int count) {
+    return '$count d ago';
+  }
+
+  @override
+  String inboxV2AgeHours(int count) {
+    return '$count h ago';
+  }
+
+  @override
+  String inboxV2AgeMinutes(int count) {
+    return '$count min ago';
+  }
+
+  @override
+  String get inboxV2AgeNow => 'Just now';
+
+  @override
+  String get inboxV2CaptureFailed => 'Could not save the item';
+
+  @override
+  String get inboxV2CaptureHint => 'Capture a thought, link or idea…';
+
+  @override
+  String get inboxV2CaptureSend => 'Add to inbox';
+
+  @override
+  String get inboxV2ConvertNote => 'Convert to note';
+
+  @override
+  String get inboxV2ConvertTask => 'Convert to task';
+
+  @override
+  String get inboxV2Deleted => 'Item deleted';
+
+  @override
+  String get inboxV2EmptyHint =>
+      'Capture something above or send it from Telegram';
+
+  @override
+  String get inboxV2Ignored => 'Ignored';
+
+  @override
+  String get inboxV2ItemActions => 'More actions';
+
+  @override
+  String get inboxV2LoadFailed => 'Could not load the inbox';
+
+  @override
+  String get inboxV2MarkedProcessed => 'Marked as processed';
+
+  @override
+  String get inboxV2OpenNote => 'Open';
+
+  @override
+  String get inboxV2SavedAsNote => 'Saved as note';
+
+  @override
+  String get inboxV2Undo => 'Undo';
+
+  @override
+  String get inboxV2UnsortedHint => 'Give these a home or a due date';
+
+  @override
+  String get inboxV2UnsortedTasks => 'Tasks without project or date';
 
   @override
   String get kanbanNoTasks => 'No tasks found.\nTap + to create one.';
@@ -280,6 +421,100 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get kanbanStatusWaiting => 'Waiting';
+
+  @override
+  String kanbanV2ColumnSummary(String status, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tasks',
+      one: '1 task',
+    );
+    return '$status, $_temp0';
+  }
+
+  @override
+  String get kanbanV2CurrentColumn => 'Current';
+
+  @override
+  String get kanbanV2DropHere => 'Drop here';
+
+  @override
+  String get kanbanV2EmptyColumn => 'Nothing here';
+
+  @override
+  String get kanbanV2MoveTo => 'Move to…';
+
+  @override
+  String kanbanV2MoveToStatus(String status) {
+    return 'Move to $status';
+  }
+
+  @override
+  String kanbanV2Moved(String status) {
+    return 'Moved to $status';
+  }
+
+  @override
+  String get listAllTasks => 'All tasks';
+
+  @override
+  String get listComingSoon => 'Coming soon';
+
+  @override
+  String get listEmptyCompletedHint =>
+      'Finished tasks are kept here for 30 days.';
+
+  @override
+  String get listEmptyCompletedTitle => 'Nothing completed yet';
+
+  @override
+  String get listEmptyOverdueHint => 'No task is past its due date.';
+
+  @override
+  String get listEmptyOverdueTitle => 'All caught up';
+
+  @override
+  String get listEmptySomedayHint => 'Tasks without a due date live here.';
+
+  @override
+  String get listEmptySomedayTitle => 'No someday tasks';
+
+  @override
+  String get listEmptyUpcomingHint =>
+      'Tasks due in the next 7 days show up here.';
+
+  @override
+  String get listEmptyUpcomingTitle => 'Nothing coming up';
+
+  @override
+  String get listLoadMore => 'Load more';
+
+  @override
+  String get listMoreSection => 'Lists & more';
+
+  @override
+  String get listNoDate => 'No date';
+
+  @override
+  String get listOverdue => 'Overdue';
+
+  @override
+  String get listRescheduleAll => 'Reschedule all to today';
+
+  @override
+  String listRescheduled(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tasks moved to today',
+      one: '1 task moved to today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get listTags => 'Tags';
 
   @override
   String get navInbox => 'Inbox';
@@ -331,6 +566,69 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noteTitleHint => 'Note Title';
+
+  @override
+  String get noteV2ClearSearch => 'Clear search';
+
+  @override
+  String get noteV2Discard => 'Discard';
+
+  @override
+  String get noteV2DiscardBody => 'You have unsaved changes that will be lost.';
+
+  @override
+  String get noteV2DiscardTitle => 'Discard changes?';
+
+  @override
+  String get noteV2KeepEditing => 'Keep editing';
+
+  @override
+  String get noteV2ModeEdit => 'Edit';
+
+  @override
+  String get noteV2ModePreview => 'Preview';
+
+  @override
+  String get noteV2NoResults => 'No notes match your search';
+
+  @override
+  String get noteV2PreviewEmpty => 'Nothing to preview yet';
+
+  @override
+  String get noteV2Search => 'Search notes';
+
+  @override
+  String get noteV2Tags => 'Tags';
+
+  @override
+  String get noteV2Untitled => 'Untitled';
+
+  @override
+  String get noteV2ViewGrid => 'Grid view';
+
+  @override
+  String get noteV2ViewList => 'List view';
+
+  @override
+  String get postponeNextWeek => 'Next week';
+
+  @override
+  String get postponePickDate => 'Pick a date…';
+
+  @override
+  String get postponeSkipOccurrence => 'Skip this occurrence';
+
+  @override
+  String get postponeSomeday => 'Someday (no date)';
+
+  @override
+  String get postponeTitle => 'Postpone';
+
+  @override
+  String get postponeTomorrow => 'Tomorrow';
+
+  @override
+  String get postponeWeekend => 'This weekend';
 
   @override
   String get projectAddTask => 'Add Task';
@@ -457,6 +755,243 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get projectsTitle => 'Projects';
+
+  @override
+  String get quickAddAddAnother => 'Add another';
+
+  @override
+  String quickAddAdded(String name) {
+    return 'Added $name';
+  }
+
+  @override
+  String get quickAddApply => 'Apply';
+
+  @override
+  String get quickAddClose => 'Close';
+
+  @override
+  String get quickAddHint => 'Task, e.g. Pay rent every month !!';
+
+  @override
+  String get quickAddInlineHint => 'Add a task';
+
+  @override
+  String get quickAddKeepAsText => 'Tap to keep as plain text';
+
+  @override
+  String get quickAddMoreOptions => 'More options';
+
+  @override
+  String quickAddNextOccurrences(String dates) {
+    return 'Next: $dates';
+  }
+
+  @override
+  String get quickAddNone => 'None';
+
+  @override
+  String get quickAddNoteHint => 'Add a note';
+
+  @override
+  String get quickAddPickArea => 'Area';
+
+  @override
+  String get quickAddPickDate => 'Due date';
+
+  @override
+  String get quickAddPickNote => 'Note';
+
+  @override
+  String get quickAddPickPriority => 'Priority';
+
+  @override
+  String get quickAddPickProject => 'Project';
+
+  @override
+  String get quickAddPickRepeat => 'Repeat';
+
+  @override
+  String get quickAddPickTags => 'Tags';
+
+  @override
+  String get quickAddPickTime => 'Time';
+
+  @override
+  String get quickAddRecurAfterCompletion => 'after completion';
+
+  @override
+  String quickAddRecurDaily(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Every $count days',
+      one: 'Every day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String quickAddRecurMonthly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Every $count months',
+      one: 'Every month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get quickAddRecurMonthlyLastDay => 'Last day of every month';
+
+  @override
+  String quickAddRecurMonthlyOnDay(int count, int day) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Every $count months on day $day',
+      one: 'Monthly on day $day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String quickAddRecurMonthlyWeekday(String week, String weekday) {
+    String _temp0 = intl.Intl.selectLogic(week, {
+      '1': 'first',
+      '2': 'second',
+      '3': 'third',
+      '4': 'fourth',
+      'other': 'last',
+    });
+    return 'Every $_temp0 $weekday of the month';
+  }
+
+  @override
+  String quickAddRecurUntil(String date) {
+    return 'until $date';
+  }
+
+  @override
+  String get quickAddRecurWeekdays => 'Every weekday';
+
+  @override
+  String quickAddRecurWeekly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Every $count weeks',
+      one: 'Every week',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String quickAddRecurWeeklyOn(int count, String days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Every $count weeks on $days',
+      one: 'Every week on $days',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get quickAddRepeatNone => 'Does not repeat';
+
+  @override
+  String get quickAddSubmit => 'Add task';
+
+  @override
+  String get quickAddTagHint => 'Add tag';
+
+  @override
+  String get quickAddTitle => 'Quick add';
+
+  @override
+  String get quickAddUndo => 'Undo';
+
+  @override
+  String get quickAddYearlyUnsupported =>
+      'Yearly repeats are not supported by Tududi.';
+
+  @override
+  String get reviewClose => 'Back to Today';
+
+  @override
+  String get reviewDone => 'Done';
+
+  @override
+  String get reviewKeep => 'Keep';
+
+  @override
+  String get reviewPickDate => 'Pick date';
+
+  @override
+  String reviewProgress(int index, int total) {
+    return 'Task $index of $total';
+  }
+
+  @override
+  String get reviewSomeday => 'Someday';
+
+  @override
+  String reviewSummaryDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tasks completed',
+      one: '$count task completed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewSummaryEmpty => 'No open tasks to review.';
+
+  @override
+  String reviewSummaryKept(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tasks kept',
+      one: '$count task kept',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reviewSummaryMoved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tasks rescheduled',
+      one: '$count task rescheduled',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reviewSummarySomeday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tasks moved to Someday',
+      one: '$count task moved to Someday',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reviewSummaryTitle => 'Review complete';
+
+  @override
+  String get reviewTitle => 'Daily review';
+
+  @override
+  String get reviewTomorrow => 'Tomorrow';
 
   @override
   String get settingsAbout => 'About Tududa';
@@ -1074,4 +1609,204 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taskViewList => 'List';
+
+  @override
+  String get tileBlocked => 'Blocked';
+
+  @override
+  String get tileComplete => 'Complete';
+
+  @override
+  String tileDueOn(String date) {
+    return 'Due $date';
+  }
+
+  @override
+  String get tileEdit => 'Edit';
+
+  @override
+  String get tileEditTitle => 'Edit title';
+
+  @override
+  String tileEstimate(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get tileHasNote => 'Has a note';
+
+  @override
+  String get tileMenu => 'More actions';
+
+  @override
+  String tileMoreTags(int count) {
+    return '$count more tags';
+  }
+
+  @override
+  String tileOverdueDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days overdue',
+      one: '1 day overdue',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String tilePostponedTimes(int count) {
+    return 'Postponed ×$count';
+  }
+
+  @override
+  String tilePriorityLabel(String priority) {
+    return 'Priority $priority';
+  }
+
+  @override
+  String get tileReopen => 'Reopen';
+
+  @override
+  String get tileRepeats => 'Repeats';
+
+  @override
+  String get tileSelect => 'Select';
+
+  @override
+  String get tileSelected => 'Selected';
+
+  @override
+  String tileSubtasksDone(int done, int total) {
+    return '$done of $total subtasks done';
+  }
+
+  @override
+  String get tileTitleHint => 'Task title';
+
+  @override
+  String todayDurationH(int hours) {
+    return '$hours h';
+  }
+
+  @override
+  String todayDurationHm(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String todayDurationM(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get todayEmptyBody =>
+      'Nothing left on your plate. Enjoy the rest of the day.';
+
+  @override
+  String get todayEmptyTitle => 'All done for today';
+
+  @override
+  String get todayErrorTitle => 'Could not load today\'s tasks';
+
+  @override
+  String get todayFocus => 'Focus mode';
+
+  @override
+  String todayMinutesLeft(String duration) {
+    return '$duration left';
+  }
+
+  @override
+  String get todayNoEstimate => 'No time estimates';
+
+  @override
+  String todayProgress(int done, int total) {
+    return '$done of $total done';
+  }
+
+  @override
+  String get todayRescheduleAll => 'Reschedule all';
+
+  @override
+  String get todayRetry => 'Retry';
+
+  @override
+  String get todayReview => 'Daily review';
+
+  @override
+  String get todaySearch => 'Search (coming soon)';
+
+  @override
+  String get todaySectionAfternoon => 'Afternoon';
+
+  @override
+  String get todaySectionAnytime => 'Anytime';
+
+  @override
+  String get todaySectionCompleted => 'Completed today';
+
+  @override
+  String get todaySectionEvening => 'Evening';
+
+  @override
+  String get todaySectionMorning => 'Morning';
+
+  @override
+  String get todaySectionOverdue => 'Overdue';
+
+  @override
+  String todaySectionToggle(String section) {
+    return 'Show or hide $section';
+  }
+
+  @override
+  String get todayTitle => 'Today';
+
+  @override
+  String get undoAction => 'Undo';
+
+  @override
+  String undoCompleted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tasks completed',
+      one: 'Task completed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String undoDeleted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tasks deleted',
+      one: 'Task deleted',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String undoPostponed(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tasks postponed',
+      one: 'Task postponed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String undoUpdated(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tasks updated',
+      one: 'Task updated',
+    );
+    return '$_temp0';
+  }
 }

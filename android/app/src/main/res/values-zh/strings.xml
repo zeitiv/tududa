@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Tududa 今天</string>
+    <string name="widget_description">今日任务、进度、勾选和快速添加</string>
+
+    <string name="page_today">今天</string>
+    <string name="page_overdue">已逾期</string>
+    <string name="page_done">已完成</string>
+    <string name="due_today">今天</string>
+
+    <string name="empty_today">今天的任务都完成了</string>
+    <string name="empty_overdue">没有逾期任务</string>
+    <string name="empty_done">还没有完成的任务</string>
+
+    <string name="state_loading">加载中…</string>
+    <string name="state_signed_out">未登录</string>
+    <string name="state_signed_out_hint">打开 Tududa 并登录后即可在此查看任务。</string>
+    <string name="state_login_failed">登录失败</string>
+    <string name="state_login_failed_hint">已保存的登录信息被拒绝。请打开 Tududa 重新登录。</string>
+    <string name="state_offline">离线 · 显示已保存的任务</string>
+    <string name="state_offline_empty">无法连接服务器</string>
+    <string name="state_offline_empty_hint">请检查 Wi-Fi 或 Tailscale，然后刷新。</string>
+    <string name="state_error">无法加载任务</string>
+    <string name="state_error_hint">出了点问题。请刷新或打开 Tududa。</string>
+
+    <string name="action_open_app">打开 Tududa</string>
+    <string name="action_add_task">新建任务</string>
+    <string name="action_refresh">刷新</string>
+    <string name="action_switch_list">切换列表</string>
+    <string name="action_mark_done">标记为已完成</string>
+    <string name="action_mark_open">标记为未完成</string>
+    <string name="action_undo">撤销</string>
+    <string name="widget_completed">已完成！</string>
+    <string name="widget_completed_task">已完成“%1$s”</string>
+    <string name="widget_progress">已完成 %1$d/%2$d</string>
+    <string name="widget_progress_all">全部完成</string>
+    <string name="widget_progress_none">今天没有任务</string>
+    <string name="widget_progress_description">今天已完成 %1$d/%2$d 个任务</string>
+</resources>

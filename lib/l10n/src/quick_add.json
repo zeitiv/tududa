@@ -1,0 +1,266 @@
+{
+ "quickAddTitle": {
+  "en": "Quick add",
+  "de": "Schnell hinzufügen",
+  "zh": "快速添加",
+  "description": "Title of the quick-add sheet"
+ },
+ "quickAddHint": {
+  "en": "Task, e.g. Pay rent every month !!",
+  "de": "Aufgabe, z. B. Miete zahlen jeden Monat !!",
+  "zh": "任务，例如 每月 缴房租 !!",
+  "description": "Hint of the quick-add text field"
+ },
+ "quickAddSubmit": {
+  "en": "Add task",
+  "de": "Aufgabe hinzufügen",
+  "zh": "添加任务",
+  "description": "Submit button of the quick-add sheet"
+ },
+ "quickAddAddAnother": {
+  "en": "Add another",
+  "de": "Weitere hinzufügen",
+  "zh": "继续添加",
+  "description": "Switch that keeps quick add open after saving"
+ },
+ "quickAddMoreOptions": {
+  "en": "More options",
+  "de": "Mehr Optionen",
+  "zh": "更多选项",
+  "description": "Opens the full task form"
+ },
+ "quickAddClose": {
+  "en": "Close",
+  "de": "Schließen",
+  "zh": "关闭",
+  "description": "Closes the quick-add sheet"
+ },
+ "quickAddKeepAsText": {
+  "en": "Tap to keep as plain text",
+  "de": "Tippen, um als Text zu behalten",
+  "zh": "点按以保留为普通文本",
+  "description": "Tooltip of a recognised-token chip"
+ },
+ "quickAddPickDate": {
+  "en": "Due date",
+  "de": "Fälligkeitsdatum",
+  "zh": "截止日期",
+  "description": "Quick-add picker"
+ },
+ "quickAddPickTime": {
+  "en": "Time",
+  "de": "Uhrzeit",
+  "zh": "时间",
+  "description": "Quick-add picker"
+ },
+ "quickAddPickPriority": {
+  "en": "Priority",
+  "de": "Priorität",
+  "zh": "优先级",
+  "description": "Quick-add picker"
+ },
+ "quickAddPickProject": {
+  "en": "Project",
+  "de": "Projekt",
+  "zh": "项目",
+  "description": "Quick-add picker"
+ },
+ "quickAddPickArea": {
+  "en": "Area",
+  "de": "Bereich",
+  "zh": "领域",
+  "description": "Quick-add picker"
+ },
+ "quickAddPickTags": {
+  "en": "Tags",
+  "de": "Tags",
+  "zh": "标签",
+  "description": "Quick-add picker"
+ },
+ "quickAddPickRepeat": {
+  "en": "Repeat",
+  "de": "Wiederholen",
+  "zh": "重复",
+  "description": "Quick-add picker"
+ },
+ "quickAddPickNote": {
+  "en": "Note",
+  "de": "Notiz",
+  "zh": "备注",
+  "description": "Quick-add picker"
+ },
+ "quickAddNoteHint": {
+  "en": "Add a note",
+  "de": "Notiz hinzufügen",
+  "zh": "添加备注",
+  "description": "Hint of the note field in quick add"
+ },
+ "quickAddNone": {
+  "en": "None",
+  "de": "Keine",
+  "zh": "无",
+  "description": "Choice meaning no project, area or priority"
+ },
+ "quickAddApply": {
+  "en": "Apply",
+  "de": "Übernehmen",
+  "zh": "应用",
+  "description": "Confirms a quick-add picker dialog"
+ },
+ "quickAddTagHint": {
+  "en": "Add tag",
+  "de": "Tag hinzufügen",
+  "zh": "添加标签",
+  "description": "Hint of the tag name field"
+ },
+ "quickAddAdded": {
+  "en": "Added {name}",
+  "de": "{name} hinzugefügt",
+  "zh": "已添加 {name}",
+  "description": "Snackbar after saving a task",
+  "placeholders": {
+   "name": {
+    "type": "String"
+   }
+  }
+ },
+ "quickAddUndo": {
+  "en": "Undo",
+  "de": "Rückgängig",
+  "zh": "撤销",
+  "description": "Snackbar action that removes the task just added"
+ },
+ "quickAddYearlyUnsupported": {
+  "en": "Yearly repeats are not supported by Tududi.",
+  "de": "Jährliche Wiederholungen werden von Tududi nicht unterstützt.",
+  "zh": "Tududi 不支持每年重复。",
+  "description": "Hint shown when a yearly phrase is recognised"
+ },
+ "quickAddNextOccurrences": {
+  "en": "Next: {dates}",
+  "de": "Nächste: {dates}",
+  "zh": "接下来：{dates}",
+  "description": "Preview of the next occurrences of a repeating task",
+  "placeholders": {
+   "dates": {
+    "type": "String"
+   }
+  }
+ },
+ "quickAddRepeatNone": {
+  "en": "Does not repeat",
+  "de": "Wiederholt sich nicht",
+  "zh": "不重复",
+  "description": "Recurrence option"
+ },
+ "quickAddInlineHint": {
+  "en": "Add a task",
+  "de": "Aufgabe hinzufügen",
+  "zh": "添加任务",
+  "description": "Hint of the inline add row at the end of lists"
+ },
+ "quickAddRecurDaily": {
+  "en": "{count, plural, =1{Every day} other{Every {count} days}}",
+  "de": "{count, plural, =1{Jeden Tag} other{Alle {count} Tage}}",
+  "zh": "{count, plural, =1{每天} other{每 {count} 天}}",
+  "description": "Recurrence summary",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "quickAddRecurWeekdays": {
+  "en": "Every weekday",
+  "de": "Jeden Werktag",
+  "zh": "每个工作日",
+  "description": "Recurrence summary for Monday to Friday"
+ },
+ "quickAddRecurWeekly": {
+  "en": "{count, plural, =1{Every week} other{Every {count} weeks}}",
+  "de": "{count, plural, =1{Jede Woche} other{Alle {count} Wochen}}",
+  "zh": "{count, plural, =1{每周} other{每 {count} 周}}",
+  "description": "Recurrence summary",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "quickAddRecurWeeklyOn": {
+  "en": "{count, plural, =1{Every week on {days}} other{Every {count} weeks on {days}}}",
+  "de": "{count, plural, =1{Jede Woche am {days}} other{Alle {count} Wochen am {days}}}",
+  "zh": "{count, plural, =1{每周{days}} other{每 {count} 周{days}}}",
+  "description": "Recurrence summary with weekday names",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   },
+   "days": {
+    "type": "String"
+   }
+  }
+ },
+ "quickAddRecurMonthly": {
+  "en": "{count, plural, =1{Every month} other{Every {count} months}}",
+  "de": "{count, plural, =1{Jeden Monat} other{Alle {count} Monate}}",
+  "zh": "{count, plural, =1{每月} other{每 {count} 个月}}",
+  "description": "Recurrence summary",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   }
+  }
+ },
+ "quickAddRecurMonthlyOnDay": {
+  "en": "{count, plural, =1{Monthly on day {day}} other{Every {count} months on day {day}}}",
+  "de": "{count, plural, =1{Monatlich am {day}.} other{Alle {count} Monate am {day}.}}",
+  "zh": "{count, plural, =1{每月{day}日} other{每 {count} 个月{day}日}}",
+  "description": "Recurrence summary with day of month",
+  "placeholders": {
+   "count": {
+    "type": "int"
+   },
+   "day": {
+    "type": "int"
+   }
+  }
+ },
+ "quickAddRecurMonthlyWeekday": {
+  "en": "Every {week, select, 1{first} 2{second} 3{third} 4{fourth} other{last}} {weekday} of the month",
+  "de": "Jeden {week, select, 1{ersten} 2{zweiten} 3{dritten} 4{vierten} other{letzten}} {weekday} im Monat",
+  "zh": "每月{week, select, 1{第一个} 2{第二个} 3{第三个} 4{第四个} other{最后一个}}{weekday}",
+  "description": "Recurrence summary for the n-th weekday of a month",
+  "placeholders": {
+   "week": {
+    "type": "String"
+   },
+   "weekday": {
+    "type": "String"
+   }
+  }
+ },
+ "quickAddRecurMonthlyLastDay": {
+  "en": "Last day of every month",
+  "de": "Letzter Tag jedes Monats",
+  "zh": "每月最后一天",
+  "description": "Recurrence summary"
+ },
+ "quickAddRecurUntil": {
+  "en": "until {date}",
+  "de": "bis {date}",
+  "zh": "截至 {date}",
+  "description": "Recurrence end date suffix",
+  "placeholders": {
+   "date": {
+    "type": "String"
+   }
+  }
+ },
+ "quickAddRecurAfterCompletion": {
+  "en": "after completion",
+  "de": "nach Erledigung",
+  "zh": "完成后",
+  "description": "Recurrence suffix for completion-based rules"
+ }
+}

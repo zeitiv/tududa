@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  HTTPS is the default and the only transport for public servers. Plain HTTP is for self-hosted
+  servers on a LAN: Android cannot list arbitrary LAN addresses here, so cleartext is permitted at
+  this level and enforced in code instead:
+    - the app only offers http:// after an explicit in-app confirmation;
+    - native code (TududiApi) refuses to send the password over http:// unless the vault has
+      allowInsecureHttp = true (set by SessionManager.provision after that confirmation).
+  Only system trust anchors are used. The debug build also lists localhost explicitly.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

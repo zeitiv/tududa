@@ -9,8 +9,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/session/session_controller.dart';
 import '../api/api_error.dart';
 import '../api/api_providers.dart';
+import '../../tasks/data/task_dao.dart';
+import '../../tasks/data/task_fields.dart' show TaskField;
 import '../connectivity/connectivity_service.dart';
 import '../db/app_database.dart';
+import '../db/dirty_fields.dart';
+import '../platform/widget_bridge.dart';
 import '../time/user_clock.dart';
 import '../../auth/session/session_providers.dart';
 import 'id_resolver.dart';
@@ -45,13 +49,16 @@ class SyncEngine {
     this.fullReconcileInterval = const Duration(hours: 6),
     Timer Function(Duration, void Function())? createTimer,
     this.ref,
+    WidgetBridge? widgetBridge,
+    this.widgetRefreshDebounce = const Duration(seconds: 2),
   }) : _handlers = _ordered(handlers),
        _dio = dio,
        _reauthenticate = reauthenticate,
        _isOnline = isOnline ?? (() => true),
        _now = now ?? (() => DateTime.now().toUtc()),
        _policy = retryPolicy ?? RetryPolicy(),
-       _createTimer = createTimer ?? Timer.new;
+       _createTimer = createTimer ?? Timer.new,
+       _widget = widgetBridge;
 
   final AppDatabase db;
   final UserClock clock;
@@ -64,6 +71,12 @@ class SyncEngine {
   final DateTime Function() _now;
   final RetryPolicy _policy;
   final Timer Function(Duration, void Function()) _createTimer;
+
+  /// Home-screen widget (null in tests that do not care). Refreshed after
+  /// task pushes; shown offline completions as overlays.
+  final WidgetBridge? _widget;
+  final Duration widgetRefreshDebounce;
+  Timer? _widgetTimer;
 
   final _controller = StreamController<SyncStatus>.broadcast(sync: true);
   SyncStatus _status = const SyncStatus();
@@ -170,6 +183,7 @@ class SyncEngine {
     if (_signedOut && !forced) return;
     if (!forced && !_isOnline()) {
       _setPhase(SyncPhase.offline);
+      await _overlayPendingCompletions();
       return;
     }
     _signedOut = false;
@@ -220,6 +234,7 @@ class SyncEngine {
       }
     }
     if (epoch != _epoch) return;
+    if (offline) await _overlayPendingCompletions();
     await _finish(epoch, offline: offline, error: error);
   }
 
@@ -381,6 +396,7 @@ class SyncEngine {
       switch (result) {
         case PushOk() || PushDropped():
           await dao.remove(e.id);
+          if (e.entity == SyncEntity.task) _scheduleWidgetRefresh();
           return const _Pushed();
         case PushWaitForDependency():
           await dao.markPending(e.id);
@@ -438,6 +454,46 @@ class SyncEngine {
     }
   }
 
+  /// Tells the widget to re-render once a burst of task pushes is over.
+  void _scheduleWidgetRefresh() {
+    final widget = _widget;
+    if (widget == null || _disposed) return;
+    _widgetTimer?.cancel();
+    _widgetTimer = _createTimer(widgetRefreshDebounce, () {
+      _widgetTimer = null;
+      unawaited(_safely(widget.refresh));
+    });
+  }
+
+  /// While offline, shows queued task status changes (e.g. a completion) on
+  /// the widget only; the server does not know them yet.
+  Future<void> _overlayPendingCompletions() async {
+    final widget = _widget;
+    if (widget == null) return;
+    try {
+      final dao = TaskDao(db);
+      final seen = <String>{};
+      for (final e in await db.outboxDao.all()) {
+        if (e.entity != SyncEntity.task || !seen.add(e.localId)) continue;
+        final row = await dao.byLocalId(e.localId);
+        final uid = row?.uid;
+        if (row == null || uid == null || row.pendingDelete) continue;
+        if (!DirtyFields.decode(row.dirtyFields).isDirty(TaskField.status)) {
+          continue;
+        }
+        await widget.overlay(uid, row.status);
+      }
+    } catch (_) {
+      // The widget is optional; never let it fail a sync.
+    }
+  }
+
+  Future<void> _safely(Future<void> Function() f) async {
+    try {
+      await f();
+    } catch (_) {}
+  }
+
   /// Publishes a conflict notice (also used by user-initiated discards).
   void addNotice(ConflictNotice n) => _addNotice(n);
 
@@ -477,6 +533,7 @@ class SyncEngine {
     _disposed = true;
     _epoch++;
     _wake?.cancel();
+    _widgetTimer?.cancel();
     await _countsSub?.cancel();
     _countsSub = null;
     try {
@@ -538,6 +595,7 @@ final syncEngineProvider = Provider<SyncEngine>((ref) {
     isOnline: () =>
         ref.read(connectivityServiceProvider).current != NetworkStatus.offline,
     ref: ref,
+    widgetBridge: ref.watch(widgetBridgeProvider),
   );
   unawaited(engine.start());
   final session = ref.read(sessionControllerProvider.notifier);

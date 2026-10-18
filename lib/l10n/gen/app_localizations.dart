@@ -214,6 +214,36 @@ abstract class AppLocalizations {
   /// **'Areas'**
   String get areasTitle;
 
+  /// Error state title
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get asyncStateErrorTitle;
+
+  /// Accessibility label of the loading placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Loading'**
+  String get asyncStateLoading;
+
+  /// Offline state hint
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing is saved on this device yet. Connect to load your data.'**
+  String get asyncStateOfflineHint;
+
+  /// Offline state title
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline'**
+  String get asyncStateOfflineTitle;
+
+  /// Retry button of the error and offline states
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get asyncStateRetry;
+
   /// No description provided for @authCancel.
   ///
   /// In en, this message translates to:
@@ -400,6 +430,60 @@ abstract class AppLocalizations {
   /// **'Welcome to Tududa'**
   String get authWelcome;
 
+  /// Bulk bar: leave selection mode
+  ///
+  /// In en, this message translates to:
+  /// **'Clear selection'**
+  String get bulkClear;
+
+  /// Bulk bar action
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get bulkComplete;
+
+  /// Bulk bar action
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get bulkDelete;
+
+  /// Bulk bar action
+  ///
+  /// In en, this message translates to:
+  /// **'Move to project'**
+  String get bulkMoveProject;
+
+  /// Bulk move: remove from project
+  ///
+  /// In en, this message translates to:
+  /// **'No project'**
+  String get bulkNoProject;
+
+  /// Bulk bar action
+  ///
+  /// In en, this message translates to:
+  /// **'Postpone'**
+  String get bulkPostpone;
+
+  /// Bulk bar action
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get bulkPriority;
+
+  /// Bulk bar: number of selected tasks
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String bulkSelectedCount(int count);
+
+  /// Bulk bar action: add a tag to all selected tasks
+  ///
+  /// In en, this message translates to:
+  /// **'Set tag'**
+  String get bulkTag;
+
   /// No description provided for @commonAdd.
   ///
   /// In en, this message translates to:
@@ -502,6 +586,60 @@ abstract class AppLocalizations {
   /// **'Yesterday'**
   String get coreYesterday;
 
+  /// Focus empty state button
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Today'**
+  String get focusBack;
+
+  /// Focus button
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get focusDone;
+
+  /// Focus empty state text
+  ///
+  /// In en, this message translates to:
+  /// **'You have no tasks left for today.'**
+  String get focusEmptyBody;
+
+  /// Focus empty state title
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to focus on'**
+  String get focusEmptyTitle;
+
+  /// Position in the focus queue
+  ///
+  /// In en, this message translates to:
+  /// **'{index} of {total}'**
+  String focusPosition(int index, int total);
+
+  /// Focus button
+  ///
+  /// In en, this message translates to:
+  /// **'Postpone'**
+  String get focusPostpone;
+
+  /// Focus button: show the next task
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get focusSkip;
+
+  /// Heading of the subtask list
+  ///
+  /// In en, this message translates to:
+  /// **'Subtasks'**
+  String get focusSubtasks;
+
+  /// Title of the focus screen
+  ///
+  /// In en, this message translates to:
+  /// **'Focus'**
+  String get focusTitle;
+
   /// No description provided for @inboxEmpty.
   ///
   /// In en, this message translates to:
@@ -525,6 +663,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Items from Telegram will appear here'**
   String get inboxTelegramHint;
+
+  /// No description provided for @inboxV2AgeDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} d ago'**
+  String inboxV2AgeDays(int count);
+
+  /// No description provided for @inboxV2AgeHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} h ago'**
+  String inboxV2AgeHours(int count);
+
+  /// No description provided for @inboxV2AgeMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min ago'**
+  String inboxV2AgeMinutes(int count);
+
+  /// No description provided for @inboxV2AgeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get inboxV2AgeNow;
+
+  /// No description provided for @inboxV2CaptureFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the item'**
+  String get inboxV2CaptureFailed;
+
+  /// Hint of the inbox capture field
+  ///
+  /// In en, this message translates to:
+  /// **'Capture a thought, link or idea…'**
+  String get inboxV2CaptureHint;
+
+  /// Tooltip of the capture send button
+  ///
+  /// In en, this message translates to:
+  /// **'Add to inbox'**
+  String get inboxV2CaptureSend;
+
+  /// No description provided for @inboxV2ConvertNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert to note'**
+  String get inboxV2ConvertNote;
+
+  /// No description provided for @inboxV2ConvertTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert to task'**
+  String get inboxV2ConvertTask;
+
+  /// No description provided for @inboxV2Deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Item deleted'**
+  String get inboxV2Deleted;
+
+  /// No description provided for @inboxV2EmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture something above or send it from Telegram'**
+  String get inboxV2EmptyHint;
+
+  /// No description provided for @inboxV2Ignored.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignored'**
+  String get inboxV2Ignored;
+
+  /// No description provided for @inboxV2ItemActions.
+  ///
+  /// In en, this message translates to:
+  /// **'More actions'**
+  String get inboxV2ItemActions;
+
+  /// No description provided for @inboxV2LoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the inbox'**
+  String get inboxV2LoadFailed;
+
+  /// No description provided for @inboxV2MarkedProcessed.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked as processed'**
+  String get inboxV2MarkedProcessed;
+
+  /// No description provided for @inboxV2OpenNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get inboxV2OpenNote;
+
+  /// No description provided for @inboxV2SavedAsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved as note'**
+  String get inboxV2SavedAsNote;
+
+  /// No description provided for @inboxV2Undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get inboxV2Undo;
+
+  /// No description provided for @inboxV2UnsortedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Give these a home or a due date'**
+  String get inboxV2UnsortedHint;
+
+  /// No description provided for @inboxV2UnsortedTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks without project or date'**
+  String get inboxV2UnsortedTasks;
 
   /// No description provided for @kanbanNoTasks.
   ///
@@ -579,6 +837,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Waiting'**
   String get kanbanStatusWaiting;
+
+  /// No description provided for @kanbanV2ColumnSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{status}, {count, plural, =1{1 task} other{{count} tasks}}'**
+  String kanbanV2ColumnSummary(String status, int count);
+
+  /// No description provided for @kanbanV2CurrentColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get kanbanV2CurrentColumn;
+
+  /// No description provided for @kanbanV2DropHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop here'**
+  String get kanbanV2DropHere;
+
+  /// No description provided for @kanbanV2EmptyColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here'**
+  String get kanbanV2EmptyColumn;
+
+  /// Title of the move menu and accessibility action of a kanban card
+  ///
+  /// In en, this message translates to:
+  /// **'Move to…'**
+  String get kanbanV2MoveTo;
+
+  /// No description provided for @kanbanV2MoveToStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to {status}'**
+  String kanbanV2MoveToStatus(String status);
+
+  /// No description provided for @kanbanV2Moved.
+  ///
+  /// In en, this message translates to:
+  /// **'Moved to {status}'**
+  String kanbanV2Moved(String status);
+
+  /// Link to the all tasks screen
+  ///
+  /// In en, this message translates to:
+  /// **'All tasks'**
+  String get listAllTasks;
+
+  /// Subtitle of a disabled link
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get listComingSoon;
+
+  /// Empty Completed list hint
+  ///
+  /// In en, this message translates to:
+  /// **'Finished tasks are kept here for 30 days.'**
+  String get listEmptyCompletedHint;
+
+  /// Empty Completed list title
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing completed yet'**
+  String get listEmptyCompletedTitle;
+
+  /// Empty Overdue list hint
+  ///
+  /// In en, this message translates to:
+  /// **'No task is past its due date.'**
+  String get listEmptyOverdueHint;
+
+  /// Empty Overdue list title
+  ///
+  /// In en, this message translates to:
+  /// **'All caught up'**
+  String get listEmptyOverdueTitle;
+
+  /// Empty Someday list hint
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks without a due date live here.'**
+  String get listEmptySomedayHint;
+
+  /// Empty Someday list title
+  ///
+  /// In en, this message translates to:
+  /// **'No someday tasks'**
+  String get listEmptySomedayTitle;
+
+  /// Empty Upcoming list hint
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks due in the next 7 days show up here.'**
+  String get listEmptyUpcomingHint;
+
+  /// Empty Upcoming list title
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing coming up'**
+  String get listEmptyUpcomingTitle;
+
+  /// Button that shows older completed tasks
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get listLoadMore;
+
+  /// Section of the More screen linking to lists
+  ///
+  /// In en, this message translates to:
+  /// **'Lists & more'**
+  String get listMoreSection;
+
+  /// Group header in Upcoming for tasks without a due day
+  ///
+  /// In en, this message translates to:
+  /// **'No date'**
+  String get listNoDate;
+
+  /// Title of the overdue tasks list
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get listOverdue;
+
+  /// Button that moves every overdue task to today
+  ///
+  /// In en, this message translates to:
+  /// **'Reschedule all to today'**
+  String get listRescheduleAll;
+
+  /// Snackbar after rescheduling overdue tasks
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 task moved to today} other{{count} tasks moved to today}}'**
+  String listRescheduled(int count);
+
+  /// Link to the tags screen
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get listTags;
 
   /// Bottom navigation label and inbox screen title
   ///
@@ -681,6 +1083,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Note Title'**
   String get noteTitleHint;
+
+  /// No description provided for @noteV2ClearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get noteV2ClearSearch;
+
+  /// No description provided for @noteV2Discard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get noteV2Discard;
+
+  /// No description provided for @noteV2DiscardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved changes that will be lost.'**
+  String get noteV2DiscardBody;
+
+  /// No description provided for @noteV2DiscardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard changes?'**
+  String get noteV2DiscardTitle;
+
+  /// No description provided for @noteV2KeepEditing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get noteV2KeepEditing;
+
+  /// Markdown editor mode
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get noteV2ModeEdit;
+
+  /// Markdown preview mode
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get noteV2ModePreview;
+
+  /// No description provided for @noteV2NoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No notes match your search'**
+  String get noteV2NoResults;
+
+  /// No description provided for @noteV2PreviewEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to preview yet'**
+  String get noteV2PreviewEmpty;
+
+  /// No description provided for @noteV2Search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search notes'**
+  String get noteV2Search;
+
+  /// No description provided for @noteV2Tags.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get noteV2Tags;
+
+  /// No description provided for @noteV2Untitled.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled'**
+  String get noteV2Untitled;
+
+  /// No description provided for @noteV2ViewGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Grid view'**
+  String get noteV2ViewGrid;
+
+  /// No description provided for @noteV2ViewList.
+  ///
+  /// In en, this message translates to:
+  /// **'List view'**
+  String get noteV2ViewList;
+
+  /// Postpone option: first day of next week
+  ///
+  /// In en, this message translates to:
+  /// **'Next week'**
+  String get postponeNextWeek;
+
+  /// Postpone option: open a date picker
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date…'**
+  String get postponePickDate;
+
+  /// Postpone option for recurring tasks
+  ///
+  /// In en, this message translates to:
+  /// **'Skip this occurrence'**
+  String get postponeSkipOccurrence;
+
+  /// Postpone option: clear the due date
+  ///
+  /// In en, this message translates to:
+  /// **'Someday (no date)'**
+  String get postponeSomeday;
+
+  /// Title of the postpone sheet and action
+  ///
+  /// In en, this message translates to:
+  /// **'Postpone'**
+  String get postponeTitle;
+
+  /// Postpone option
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get postponeTomorrow;
+
+  /// Postpone option: next Saturday
+  ///
+  /// In en, this message translates to:
+  /// **'This weekend'**
+  String get postponeWeekend;
 
   /// No description provided for @projectAddTask.
   ///
@@ -915,6 +1443,300 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Projects'**
   String get projectsTitle;
+
+  /// Switch that keeps quick add open after saving
+  ///
+  /// In en, this message translates to:
+  /// **'Add another'**
+  String get quickAddAddAnother;
+
+  /// Snackbar after saving a task
+  ///
+  /// In en, this message translates to:
+  /// **'Added {name}'**
+  String quickAddAdded(String name);
+
+  /// Confirms a quick-add picker dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get quickAddApply;
+
+  /// Closes the quick-add sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get quickAddClose;
+
+  /// Hint of the quick-add text field
+  ///
+  /// In en, this message translates to:
+  /// **'Task, e.g. Pay rent every month !!'**
+  String get quickAddHint;
+
+  /// Hint of the inline add row at the end of lists
+  ///
+  /// In en, this message translates to:
+  /// **'Add a task'**
+  String get quickAddInlineHint;
+
+  /// Tooltip of a recognised-token chip
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to keep as plain text'**
+  String get quickAddKeepAsText;
+
+  /// Opens the full task form
+  ///
+  /// In en, this message translates to:
+  /// **'More options'**
+  String get quickAddMoreOptions;
+
+  /// Preview of the next occurrences of a repeating task
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {dates}'**
+  String quickAddNextOccurrences(String dates);
+
+  /// Choice meaning no project, area or priority
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get quickAddNone;
+
+  /// Hint of the note field in quick add
+  ///
+  /// In en, this message translates to:
+  /// **'Add a note'**
+  String get quickAddNoteHint;
+
+  /// Quick-add picker
+  ///
+  /// In en, this message translates to:
+  /// **'Area'**
+  String get quickAddPickArea;
+
+  /// Quick-add picker
+  ///
+  /// In en, this message translates to:
+  /// **'Due date'**
+  String get quickAddPickDate;
+
+  /// Quick-add picker
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get quickAddPickNote;
+
+  /// Quick-add picker
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get quickAddPickPriority;
+
+  /// Quick-add picker
+  ///
+  /// In en, this message translates to:
+  /// **'Project'**
+  String get quickAddPickProject;
+
+  /// Quick-add picker
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat'**
+  String get quickAddPickRepeat;
+
+  /// Quick-add picker
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get quickAddPickTags;
+
+  /// Quick-add picker
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get quickAddPickTime;
+
+  /// Recurrence suffix for completion-based rules
+  ///
+  /// In en, this message translates to:
+  /// **'after completion'**
+  String get quickAddRecurAfterCompletion;
+
+  /// Recurrence summary
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Every day} other{Every {count} days}}'**
+  String quickAddRecurDaily(int count);
+
+  /// Recurrence summary
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Every month} other{Every {count} months}}'**
+  String quickAddRecurMonthly(int count);
+
+  /// Recurrence summary
+  ///
+  /// In en, this message translates to:
+  /// **'Last day of every month'**
+  String get quickAddRecurMonthlyLastDay;
+
+  /// Recurrence summary with day of month
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Monthly on day {day}} other{Every {count} months on day {day}}}'**
+  String quickAddRecurMonthlyOnDay(int count, int day);
+
+  /// Recurrence summary for the n-th weekday of a month
+  ///
+  /// In en, this message translates to:
+  /// **'Every {week, select, 1{first} 2{second} 3{third} 4{fourth} other{last}} {weekday} of the month'**
+  String quickAddRecurMonthlyWeekday(String week, String weekday);
+
+  /// Recurrence end date suffix
+  ///
+  /// In en, this message translates to:
+  /// **'until {date}'**
+  String quickAddRecurUntil(String date);
+
+  /// Recurrence summary for Monday to Friday
+  ///
+  /// In en, this message translates to:
+  /// **'Every weekday'**
+  String get quickAddRecurWeekdays;
+
+  /// Recurrence summary
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Every week} other{Every {count} weeks}}'**
+  String quickAddRecurWeekly(int count);
+
+  /// Recurrence summary with weekday names
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Every week on {days}} other{Every {count} weeks on {days}}}'**
+  String quickAddRecurWeeklyOn(int count, String days);
+
+  /// Recurrence option
+  ///
+  /// In en, this message translates to:
+  /// **'Does not repeat'**
+  String get quickAddRepeatNone;
+
+  /// Submit button of the quick-add sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Add task'**
+  String get quickAddSubmit;
+
+  /// Hint of the tag name field
+  ///
+  /// In en, this message translates to:
+  /// **'Add tag'**
+  String get quickAddTagHint;
+
+  /// Title of the quick-add sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Quick add'**
+  String get quickAddTitle;
+
+  /// Snackbar action that removes the task just added
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get quickAddUndo;
+
+  /// Hint shown when a yearly phrase is recognised
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly repeats are not supported by Tududi.'**
+  String get quickAddYearlyUnsupported;
+
+  /// Summary button
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Today'**
+  String get reviewClose;
+
+  /// Review button
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get reviewDone;
+
+  /// Review button: leave the task as it is
+  ///
+  /// In en, this message translates to:
+  /// **'Keep'**
+  String get reviewKeep;
+
+  /// Review button
+  ///
+  /// In en, this message translates to:
+  /// **'Pick date'**
+  String get reviewPickDate;
+
+  /// Progress in the review
+  ///
+  /// In en, this message translates to:
+  /// **'Task {index} of {total}'**
+  String reviewProgress(int index, int total);
+
+  /// Review button
+  ///
+  /// In en, this message translates to:
+  /// **'Someday'**
+  String get reviewSomeday;
+
+  /// Summary line
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} task completed} other{{count} tasks completed}}'**
+  String reviewSummaryDone(int count);
+
+  /// Summary when nothing was reviewed
+  ///
+  /// In en, this message translates to:
+  /// **'No open tasks to review.'**
+  String get reviewSummaryEmpty;
+
+  /// Summary line
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} task kept} other{{count} tasks kept}}'**
+  String reviewSummaryKept(int count);
+
+  /// Summary line
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} task rescheduled} other{{count} tasks rescheduled}}'**
+  String reviewSummaryMoved(int count);
+
+  /// Summary line
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} task moved to Someday} other{{count} tasks moved to Someday}}'**
+  String reviewSummarySomeday(int count);
+
+  /// Summary title
+  ///
+  /// In en, this message translates to:
+  /// **'Review complete'**
+  String get reviewSummaryTitle;
+
+  /// Title of the review screen
+  ///
+  /// In en, this message translates to:
+  /// **'Daily review'**
+  String get reviewTitle;
+
+  /// Review button
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get reviewTomorrow;
 
   /// No description provided for @settingsAbout.
   ///
@@ -1917,6 +2739,276 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'List'**
   String get taskViewList;
+
+  /// Chip: task is blocked by another task
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get tileBlocked;
+
+  /// Action: mark a task done
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get tileComplete;
+
+  /// Accessibility: due date of a task
+  ///
+  /// In en, this message translates to:
+  /// **'Due {date}'**
+  String tileDueOn(String date);
+
+  /// Action: open the task editor
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get tileEdit;
+
+  /// Action: rename a task inline
+  ///
+  /// In en, this message translates to:
+  /// **'Edit title'**
+  String get tileEditTitle;
+
+  /// Chip: estimated duration
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String tileEstimate(int minutes);
+
+  /// Accessibility label of the note icon
+  ///
+  /// In en, this message translates to:
+  /// **'Has a note'**
+  String get tileHasNote;
+
+  /// Tooltip of the task row overflow menu
+  ///
+  /// In en, this message translates to:
+  /// **'More actions'**
+  String get tileMenu;
+
+  /// Accessibility label of the +n tag chip
+  ///
+  /// In en, this message translates to:
+  /// **'{count} more tags'**
+  String tileMoreTags(int count);
+
+  /// Due date chip of an overdue task
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 day overdue} other{{count} days overdue}}'**
+  String tileOverdueDays(int count);
+
+  /// Chip: how often a task was postponed
+  ///
+  /// In en, this message translates to:
+  /// **'Postponed ×{count}'**
+  String tilePostponedTimes(int count);
+
+  /// Accessibility: priority of a task
+  ///
+  /// In en, this message translates to:
+  /// **'Priority {priority}'**
+  String tilePriorityLabel(String priority);
+
+  /// Action: mark a done task open again
+  ///
+  /// In en, this message translates to:
+  /// **'Reopen'**
+  String get tileReopen;
+
+  /// Accessibility label of the recurrence icon
+  ///
+  /// In en, this message translates to:
+  /// **'Repeats'**
+  String get tileRepeats;
+
+  /// Action: start multi-select with this task
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get tileSelect;
+
+  /// Accessibility state of a selected task row
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get tileSelected;
+
+  /// Accessibility: subtask progress
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} subtasks done'**
+  String tileSubtasksDone(int done, int total);
+
+  /// Hint of the inline title field
+  ///
+  /// In en, this message translates to:
+  /// **'Task title'**
+  String get tileTitleHint;
+
+  /// Duration in whole hours
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h'**
+  String todayDurationH(int hours);
+
+  /// Duration with hours and minutes
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String todayDurationHm(int hours, int minutes);
+
+  /// Duration in minutes
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String todayDurationM(int minutes);
+
+  /// Empty state text
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing left on your plate. Enjoy the rest of the day.'**
+  String get todayEmptyBody;
+
+  /// Empty state title
+  ///
+  /// In en, this message translates to:
+  /// **'All done for today'**
+  String get todayEmptyTitle;
+
+  /// Error state title
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load today\'s tasks'**
+  String get todayErrorTitle;
+
+  /// AppBar action
+  ///
+  /// In en, this message translates to:
+  /// **'Focus mode'**
+  String get todayFocus;
+
+  /// Estimated time of the remaining tasks
+  ///
+  /// In en, this message translates to:
+  /// **'{duration} left'**
+  String todayMinutesLeft(String duration);
+
+  /// Header text when no task has an estimate
+  ///
+  /// In en, this message translates to:
+  /// **'No time estimates'**
+  String get todayNoEstimate;
+
+  /// Progress line in the Today header
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} done'**
+  String todayProgress(int done, int total);
+
+  /// Button on the overdue section
+  ///
+  /// In en, this message translates to:
+  /// **'Reschedule all'**
+  String get todayRescheduleAll;
+
+  /// Retry button
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get todayRetry;
+
+  /// AppBar action
+  ///
+  /// In en, this message translates to:
+  /// **'Daily review'**
+  String get todayReview;
+
+  /// Disabled AppBar action
+  ///
+  /// In en, this message translates to:
+  /// **'Search (coming soon)'**
+  String get todaySearch;
+
+  /// Today section: 12:00 to 17:59
+  ///
+  /// In en, this message translates to:
+  /// **'Afternoon'**
+  String get todaySectionAfternoon;
+
+  /// Today section: tasks without a time
+  ///
+  /// In en, this message translates to:
+  /// **'Anytime'**
+  String get todaySectionAnytime;
+
+  /// Today section
+  ///
+  /// In en, this message translates to:
+  /// **'Completed today'**
+  String get todaySectionCompleted;
+
+  /// Today section: from 18:00
+  ///
+  /// In en, this message translates to:
+  /// **'Evening'**
+  String get todaySectionEvening;
+
+  /// Today section: before 12:00
+  ///
+  /// In en, this message translates to:
+  /// **'Morning'**
+  String get todaySectionMorning;
+
+  /// Today section
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get todaySectionOverdue;
+
+  /// Tooltip of a section header
+  ///
+  /// In en, this message translates to:
+  /// **'Show or hide {section}'**
+  String todaySectionToggle(String section);
+
+  /// Title of the Today screen
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get todayTitle;
+
+  /// Snackbar action
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undoAction;
+
+  /// Snackbar after completing tasks
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Task completed} other{{count} tasks completed}}'**
+  String undoCompleted(int count);
+
+  /// Snackbar after deleting tasks
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Task deleted} other{{count} tasks deleted}}'**
+  String undoDeleted(int count);
+
+  /// Snackbar after postponing tasks
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Task postponed} other{{count} tasks postponed}}'**
+  String undoPostponed(int count);
+
+  /// Snackbar after changing tasks
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Task updated} other{{count} tasks updated}}'**
+  String undoUpdated(int count);
 }
 
 class _AppLocalizationsDelegate

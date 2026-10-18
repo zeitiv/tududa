@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/platform/session_bridge.dart';
+import 'native_credential_store.dart';
+
 /// Email and password kept so an expired session can be renewed silently.
 ///
 /// SECURITY: the password must never be written to SharedPreferences, files
@@ -52,7 +55,10 @@ class NoopCredentialStore implements CredentialStore {
   Future<void> clear() async {}
 }
 
-/// In memory for now; milestone 7 swaps in the native secure vault.
+/// The native vault on Android; in memory elsewhere (and in tests, which
+/// usually override this with their own store).
 final credentialStoreProvider = Provider<CredentialStore>(
-  (ref) => InMemoryCredentialStore(),
+  (ref) => hasNativeBridges
+      ? NativeCredentialStore(ref.watch(sessionBridgeProvider))
+      : InMemoryCredentialStore(),
 );

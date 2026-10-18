@@ -281,6 +281,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1"
+  dynamic_color:
+    dependency: "direct main"
+    description:
+      name: dynamic_color
+      sha256: "4aeb76de323e8eb660bab5557d826ad7ebbf1434a598f0c6aa8a11a9696a6757"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.9.0"
   equatable:
     dependency: "direct main"
     description:
@@ -343,18 +351,18 @@ packages:
     source: hosted
     version: "6.0.0"
   flutter_localizations:
-    dependency: transitive
+    dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_markdown:
+  flutter_markdown_plus:
     dependency: "direct main"
     description:
-      name: flutter_markdown
-      sha256: "08fb8315236099ff8e90cb87bb2b935e0a724a3af1623000a9cec930468e0f27"
+      name: flutter_markdown_plus
+      sha256: fce641d6c2106cc495de1cd603f97a4f9d615a97a64011928ded380dbdade935
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.7+1"
+    version: "1.0.12"
   flutter_riverpod:
     dependency: "direct main"
     description:

@@ -19,6 +19,8 @@
 
 </div>
 
+> **2.0：** 界面已全部重写（空间化桌面、Karakeep / Memos / Flatastic 集成、桌面与 Web 支持）。最新说明请见 [English README](README.md)，下文描述的是 1.x。
+
 ---
 
 ## ⚠️ 声明

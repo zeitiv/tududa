@@ -16,7 +16,7 @@ import '../utils/constants.dart';
 class ApiService {
   static ApiService? _instance;
   late Dio _dio;
-  late PersistCookieJar _cookieJar;
+  PersistCookieJar? _cookieJar;
   bool _initialized = false;
 
   ApiService._();
@@ -27,7 +27,7 @@ class ApiService {
   }
 
   Dio get dio => _dio;
-  PersistCookieJar get cookieJar => _cookieJar;
+  PersistCookieJar? get cookieJar => _cookieJar;
   bool get isInitialized => _initialized;
 
   /// Initialize the API service with the server URL.
@@ -40,11 +40,14 @@ class ApiService {
       return;
     }
 
-    // Setup persistent cookie jar
-    final appDocDir = await getApplicationDocumentsDirectory();
-    _cookieJar = PersistCookieJar(
-      storage: FileStorage('${appDocDir.path}/.cookies/'),
-    );
+    // Cookies: a jar on disk for the apps; in a browser the browser keeps
+    // them, and requests only need to be sent with credentials.
+    if (!kIsWeb) {
+      final appDocDir = await getApplicationSupportDirectory();
+      _cookieJar = PersistCookieJar(
+        storage: FileStorage('${appDocDir.path}/.cookies/'),
+      );
+    }
 
     _dio = Dio(BaseOptions(
       baseUrl: '$baseUrl/api',
@@ -56,17 +59,17 @@ class ApiService {
         'Accept': 'application/json',
       },
       validateStatus: (status) => status != null && status < 500,
+      extra: {if (kIsWeb) 'withCredentials': true},
     ));
 
-    // Add cookie manager for session persistence
-    _dio.interceptors.add(CookieManager(_cookieJar));
+    if (_cookieJar != null) _dio.interceptors.add(CookieManager(_cookieJar!));
 
     // Logging interceptor (debug only)
     if (kDebugMode) {
       _dio.interceptors.add(LogInterceptor(
-        requestHeader: true,
-        requestBody: true,
-        responseBody: true,
+        requestHeader: false,
+        requestBody: false,
+        responseBody: false,
         responseHeader: false,
         error: true,
         logPrint: (obj) => debugPrint(obj.toString()),
@@ -96,9 +99,7 @@ class ApiService {
 
   /// Clear all cookies (logout)
   Future<void> clearCookies() async {
-    if (_initialized) {
-      await _cookieJar.deleteAll();
-    }
+    await _cookieJar?.deleteAll();
   }
 
   // ---------- Auth API ----------
@@ -236,6 +237,10 @@ class ApiService {
 
   Future<Response> getInboxItems() async {
     return _dio.get('/inbox');
+  }
+
+  Future<Response> createInboxItem(String content) async {
+    return _dio.post('/inbox', data: {'content': content, 'source': 'tududa'});
   }
 
   Future<Response> updateInboxItem(dynamic id, Map<String, dynamic> data) async {

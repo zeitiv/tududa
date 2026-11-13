@@ -83,6 +83,9 @@ class Task extends Equatable {
     this.updatedAt,
   });
 
+  /// What the server addresses a task by, or a local stand-in until it has one.
+  String get key => uid ?? id?.toString() ?? name;
+
   bool get isDone => status == 2;
   bool get isCompleted => status == 2 || status == 3;
   bool get isRecurring => recurrenceType != 'none';
@@ -135,14 +138,18 @@ class Task extends Equatable {
       habitBestStreak: json['habit_best_streak'] as int? ?? 0,
       habitTotalCompletions: json['habit_total_completions'] as int? ?? 0,
       habitLastCompletionAt: _parseDate(json['habit_last_completion_at']),
-      subtasks: json['Subtasks'] != null
-          ? (json['Subtasks'] as List).map((e) => Task.fromJson(e)).toList()
+      subtasks: (json['Subtasks'] ?? json['subtasks']) is List
+          ? ((json['Subtasks'] ?? json['subtasks']) as List)
+              .map((e) => Task.fromJson(e as Map<String, dynamic>))
+              .toList()
           : null,
-      tags: json['Tags'] != null
-          ? (json['Tags'] as List).map((e) => Tag.fromJson(e)).toList()
+      tags: (json['Tags'] ?? json['tags']) is List
+          ? ((json['Tags'] ?? json['tags']) as List)
+              .map((e) => Tag.fromJson(e as Map<String, dynamic>))
+              .toList()
           : null,
-      projectName: json['Project'] != null
-          ? json['Project']['name'] as String?
+      projectName: (json['Project'] ?? json['project']) is Map
+          ? (json['Project'] ?? json['project'])['name'] as String?
           : null,
       createdAt: _parseDate(json['created_at'] ?? json['createdAt']),
       updatedAt: _parseDate(json['updated_at'] ?? json['updatedAt']),
@@ -198,19 +205,24 @@ class Task extends Equatable {
     String? habitFrequencyPeriod,
     List<Task>? subtasks,
     List<Tag>? tags,
+    String? uid,
+    int? parentTaskId,
+    String? projectName,
+    bool clearDue = false,
+    bool clearProject = false,
   }) {
     return Task(
       id: id,
-      uid: uid,
+      uid: uid ?? this.uid,
       name: name ?? this.name,
       note: note ?? this.note,
       status: status ?? this.status,
       priority: priority ?? this.priority,
-      dueDate: dueDate ?? this.dueDate,
+      dueDate: clearDue ? null : (dueDate ?? this.dueDate),
       deferUntil: deferUntil ?? this.deferUntil,
       completedAt: completedAt,
-      projectId: projectId ?? this.projectId,
-      parentTaskId: parentTaskId,
+      projectId: clearProject ? null : (projectId ?? this.projectId),
+      parentTaskId: parentTaskId ?? this.parentTaskId,
       recurringParentId: recurringParentId,
       order: order,
       recurrenceType: recurrenceType ?? this.recurrenceType,
@@ -232,7 +244,7 @@ class Task extends Equatable {
       habitLastCompletionAt: habitLastCompletionAt,
       subtasks: subtasks ?? this.subtasks,
       tags: tags ?? this.tags,
-      projectName: projectName,
+      projectName: clearProject ? null : (projectName ?? this.projectName),
       createdAt: createdAt,
       updatedAt: updatedAt,
     );

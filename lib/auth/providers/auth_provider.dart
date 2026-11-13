@@ -15,7 +15,11 @@ class AuthState {
   final String? error;
   final String? serverUrl;
 
+  /// Demo: sample data on the device, nothing sent anywhere.
+  final bool demo;
+
   const AuthState({
+    this.demo = false,
     this.status = AuthStatus.initial,
     this.user,
     this.error,
@@ -27,8 +31,10 @@ class AuthState {
     User? user,
     String? error,
     String? serverUrl,
+    bool? demo,
   }) {
     return AuthState(
+      demo: demo ?? this.demo,
       status: status ?? this.status,
       user: user ?? this.user,
       error: error,
@@ -46,6 +52,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
     try {
       final prefs = await SharedPreferences.getInstance();
+      if (prefs.getBool(_demoKey) ?? false) {
+        state = _demoState;
+        return;
+      }
       final serverUrl = prefs.getString(AppConstants.serverUrlKey);
 
       if (serverUrl == null || serverUrl.isEmpty) {
@@ -103,6 +113,26 @@ class AuthNotifier extends StateNotifier<AuthState> {
         error: 'Unable to verify session',
       );
     }
+  }
+
+  static const _demoKey = 'demo_mode';
+  static const _demoState = AuthState(
+    status: AuthStatus.authenticated,
+    demo: true,
+    user: User(uid: 'demo', name: 'Alex', email: 'demo@tududa.local'),
+  );
+
+  /// Open the app on sample data.
+  Future<void> enterDemo() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_demoKey, true);
+    state = _demoState;
+  }
+
+  /// Server and sign-in in one step.
+  Future<bool> connect(String url, String email, String password) async {
+    if (!await configureServer(url)) return false;
+    return login(email, password);
   }
 
   /// Configure server URL
@@ -177,7 +207,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = state.copyWith(
         status: AuthStatus.unauthenticated,
-        error: 'Login failed: $e',
+        error: 'Could not reach the server',
       );
       return false;
     }
@@ -185,6 +215,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   /// Logout
   Future<void> logout() async {
+    final p = await SharedPreferences.getInstance();
+    if (state.demo) {
+      await p.remove(_demoKey);
+      state = AuthState(status: AuthStatus.unauthenticated, serverUrl: p.getString(AppConstants.serverUrlKey));
+      return;
+    }
     try {
       await ApiService.instance.logout();
     } catch (_) {}
@@ -194,7 +230,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     await prefs.setBool(AppConstants.isLoggedInKey, false);
     await prefs.remove(AppConstants.userDataKey);
 
-    state = const AuthState(status: AuthStatus.unauthenticated);
+    state = AuthState(status: AuthStatus.unauthenticated, serverUrl: state.serverUrl);
   }
 
   /// Clear server config (go back to server setup)

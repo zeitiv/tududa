@@ -1,86 +1,78 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'app.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'auth/providers/auth_provider.dart';
 import 'core/services/api_service.dart';
+import 'data/prefs.dart';
+import 'os/kit/motion.dart';
+import 'os/kit/tokens.dart';
+import 'os/l10n.dart';
+import 'os/onboarding.dart';
+import 'os/shell.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
-import 'settings/providers/settings_provider.dart';
-
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize API service
   await ApiService.instance.init();
-
-  // Initialize SharedPreferences
-  final sharedPrefs = await SharedPreferences.getInstance();
-
+  await initializeDateFormatting();
+  final prefs = await SharedPreferences.getInstance();
   runApp(
     ProviderScope(
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(sharedPrefs),
-      ],
-      child: const _AppStartup(),
+      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+      child: const TududaApp(),
     ),
   );
 }
 
-/// Handles initial auth check before showing the app.
-class _AppStartup extends ConsumerStatefulWidget {
-  const _AppStartup();
+class TududaApp extends ConsumerStatefulWidget {
+  const TududaApp({super.key});
 
   @override
-  ConsumerState<_AppStartup> createState() => _AppStartupState();
+  ConsumerState<TududaApp> createState() => _TududaAppState();
 }
 
-class _AppStartupState extends ConsumerState<_AppStartup> {
+class _TududaAppState extends ConsumerState<TududaApp> {
+  bool _checked = false;
+
   @override
   void initState() {
     super.initState();
-    // Trigger auth check on startup
-    Future.microtask(() => ref.read(authProvider.notifier).checkAuth());
+    Future.microtask(() async {
+      // On the web, ?demo opens straight on the sample data.
+      if (kIsWeb && Uri.base.queryParameters.containsKey('demo')) {
+        await ref.read(authProvider.notifier).enterDemo();
+      } else {
+        await ref.read(authProvider.notifier).checkAuth();
+      }
+      if (mounted) setState(() => _checked = true);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authProvider);
-
-    // Show splash / loading while checking auth
-    if (authState.status == AuthStatus.initial) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF4A90D9), Color(0xFF7B61FF)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Icon(
-                    Icons.check_circle_outline_rounded,
-                    size: 36,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                const CircularProgressIndicator(),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    return const TududiApp();
+    final prefs = ref.watch(prefsProvider);
+    final signedIn = ref.watch(authProvider.select((s) => s.status == AuthStatus.authenticated));
+    L.code = prefs.locale;
+    final accent = Tk.accents[prefs.accent.clamp(0, Tk.accents.length - 1)];
+    return MaterialApp(
+      title: 'Tududa',
+      debugShowCheckedModeBanner: false,
+      theme: osTheme(accent),
+      builder: (context, child) {
+        Motion.reduced = prefs.reduceMotion || MediaQuery.disableAnimationsOf(context);
+        return BackdropGroup(
+          child: MediaQuery.withClampedTextScaling(maxScaleFactor: 1.4, child: child!),
+        );
+      },
+      home: KeyedSubtree(
+        key: ValueKey('${prefs.locale}-$signedIn-$_checked'),
+        child: !_checked
+            ? const Boot()
+            : signedIn
+                ? const OsShell()
+                : const Onboarding(),
+      ),
+    );
   }
 }
